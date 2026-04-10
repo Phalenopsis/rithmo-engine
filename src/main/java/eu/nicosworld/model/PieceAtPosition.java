@@ -1,0 +1,7 @@
+package eu.nicosworld.model;
+
+public record PieceAtPosition(
+        Piece piece,
+        Position position
+) {
+}
