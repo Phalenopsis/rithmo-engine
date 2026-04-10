@@ -9,6 +9,7 @@
     <groupId>eu.nicosworld</groupId>
     <artifactId>rithmo-engine</artifactId>
     <version>0.1.0-SNAPSHOT</version>
+
     <name>Rithmo Engine</name>
     <description>Core Java engine for Rithmomachia</description>
 
@@ -16,28 +17,26 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+
         <junit.version>5.10.0</junit.version>
     </properties>
 
     <dependencies>
-        <!-- JUnit 5 for testing -->
+
+        <!-- JUnit 5 (includes API + Engine + Params) -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
+            <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Compiler plugin -->
+
+            <!-- Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -49,12 +48,13 @@
                 </configuration>
             </plugin>
 
-            <!-- Surefire plugin for running tests -->
+            <!-- Tests runner (JUnit 5 support) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
             </plugin>
+
         </plugins>
     </build>
 

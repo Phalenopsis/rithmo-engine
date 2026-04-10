@@ -4,7 +4,9 @@ import eu.nicosworld.model.GameState;
 import eu.nicosworld.model.PieceAtPosition;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MovementEngine {
 
@@ -18,15 +20,11 @@ public class MovementEngine {
 
     public List<Move> generateMoves(GameState state, PieceAtPosition pap) {
 
-        List<Move> moves = new ArrayList<>();
+        Set<Move> moves = new HashSet<>();
 
         moves.addAll(regular.generate(state, pap));
         moves.addAll(irregular.generate(state, pap));
 
-        return deduplicate(moves);
-    }
-
-    private List<Move> deduplicate(List<Move> moves) {
-        return moves;
+        return new ArrayList<>(moves);
     }
 }
