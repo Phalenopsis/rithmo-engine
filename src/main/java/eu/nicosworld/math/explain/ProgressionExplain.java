@@ -57,16 +57,12 @@ public final class ProgressionExplain {
     }
 
     private static String formatTriplet(ProgressionTriplet t, ProgressionLanguage lang) {
-        return switch (lang) {
-            case EN -> t.min() + ", " + t.mid() + ", " + t.max();
-            case FR -> t.min() + ", " + t.mid() + ", " + t.max();
-        };
+        return t.min() + ", " + t.mid() + ", " + t.max();
     }
 
     private static String arithmetic(ProgressionTriplet t, ProgressionLanguage lang) {
         int min = t.min();
         int mid = t.mid();
-        int max = t.max();
         int diff = mid - min;
 
         return switch (lang) {
@@ -78,7 +74,6 @@ public final class ProgressionExplain {
     private static String geometric(ProgressionTriplet t, ProgressionLanguage lang) {
         int min = t.min();
         int mid = t.mid();
-        int max = t.max();
 
         int ratio = mid / min; // safe assumption in game context
 

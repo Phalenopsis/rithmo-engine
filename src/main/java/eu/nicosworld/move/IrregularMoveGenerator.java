@@ -5,20 +5,42 @@ import eu.nicosworld.model.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ /**
+ * Implementation of {@link AbstractMoveGenerator} that defines
+ * irregular movement patterns for pieces.
+ *
+ * <p>This generator encodes fixed movement patterns (deltas)
+ * for each piece type and produces all valid moves based on:
+ * <ul>
+ *     <li>board boundaries</li>
+ *     <li>occupation of target squares</li>
+ *     <li>predefined movement offsets (Delta patterns)</li>
+ * </ul>
+ *
+ * <p>Unlike regular movement rules, this implementation does not rely
+ * on dynamic computation or symmetry rules, but instead uses
+ * explicit predefined movement vectors.</p>
+ *
+ * <p>Each move produced is marked as {@link MoveNature#IRREGULAR},
+ * indicating it comes from non-standard movement logic.</p>
+ *
+ * <p>Circle pieces currently have no irregular movement in this variant.</p>
+ */
 public class IrregularMoveGenerator extends AbstractMoveGenerator {
 
-    protected List<Move> generateCircleMoves(GameState state,
-                                             Position from) {
+    @Override
+    protected List<Move> generateCircleMoves(GameState state, Position from) {
         return List.of();
     }
 
-    protected List<Move> generateTriangleMoves(GameState state,
-                                             Position from) {
+    @Override
+    protected List<Move> generateTriangleMoves(GameState state, Position from) {
         return generateFromDeltas(state, from, triangleDeltas());
     }
 
-    protected List<Move> generateSquareMoves(GameState state,
-                                           Position from) {
+    @Override
+    protected List<Move> generateSquareMoves(GameState state, Position from) {
         return generateFromDeltas(state, from, squareDeltas());
     }
 
@@ -26,6 +48,21 @@ public class IrregularMoveGenerator extends AbstractMoveGenerator {
     // CORE
     // =========================
 
+    /**
+     * Generates moves by applying a list of relative offsets (deltas)
+     * to a starting position.
+     *
+     * <p>A move is considered valid if:
+     * <ul>
+     *     <li>the destination is inside the board</li>
+     *     <li>the destination is empty</li>
+     * </ul>
+     *
+     * @param state current game state
+     * @param from starting position
+     * @param deltas movement offsets to apply
+     * @return list of valid moves for the given pattern
+     */
     private List<Move> generateFromDeltas(
             GameState state,
             Position from,
@@ -41,7 +78,7 @@ public class IrregularMoveGenerator extends AbstractMoveGenerator {
                     from.getY() + d.dy()
             );
 
-            if (!isInsideBoard(state, to)) continue;
+            if (isOutsideBoard(state, to)) continue;
 
             if (!state.getBoard().isEmpty(to)) continue;
 
@@ -55,6 +92,10 @@ public class IrregularMoveGenerator extends AbstractMoveGenerator {
     // PATTERNS
     // =========================
 
+    /**
+     * Movement pattern for triangle pieces.
+     * Each delta represents a legal irregular jump.
+     */
     private List<Delta> triangleDeltas() {
         return List.of(
                 new Delta(1, 2),
@@ -68,6 +109,10 @@ public class IrregularMoveGenerator extends AbstractMoveGenerator {
         );
     }
 
+    /**
+     * Movement pattern for square pieces.
+     * Each delta represents a longer irregular jump than triangle.
+     */
     private List<Delta> squareDeltas() {
         return List.of(
                 new Delta(1, 3),

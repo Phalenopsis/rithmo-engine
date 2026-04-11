@@ -111,7 +111,7 @@ public class GlobalMoveTest {
         );
 
         boolean contains = moves.stream()
-                .anyMatch(m -> m.getFrom().equals(from) && m.getTo().equals(to));
+                .anyMatch(m -> m.from().equals(from) && m.to().equals(to));
 
         assertEquals(expected, contains);
     }
