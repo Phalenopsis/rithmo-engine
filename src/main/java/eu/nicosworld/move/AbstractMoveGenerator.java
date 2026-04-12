@@ -50,7 +50,7 @@ import java.util.List;
  *
  * <h2>Board safety</h2>
  * <p>
- * Utility method {@link #isOutsideBoard(GameState, Position)} allows subclasses
+ * Utility method {@link #isInsideBoard(GameState, Position)} allows subclasses
  * to validate whether a move remains within board boundaries.
  * </p>
  *
@@ -99,8 +99,8 @@ public abstract class AbstractMoveGenerator implements MoveGenerator {
      * @param p position to check
      * @return true if the position is outside the board, false otherwise
      */
-    protected boolean isOutsideBoard(GameState state, Position p) {
-        return !state.getBoard().isInside(p);
+    protected boolean isInsideBoard(GameState state, Position p) {
+        return state.getBoard().isInside(p);
     }
 
     /**

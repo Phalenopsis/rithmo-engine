@@ -50,13 +50,8 @@ public class IrregularMoveGenerator extends AbstractMoveGenerator {
 
     /**
      * Generates moves by applying a list of relative offsets (deltas)
-     * to a starting position.
-     *
-     * <p>A move is considered valid if:
-     * <ul>
-     *     <li>the destination is inside the board</li>
-     *     <li>the destination is empty</li>
-     * </ul>
+     * to a starting position.</br>
+     * Only return destinations inside the board
      *
      * @param state current game state
      * @param from starting position
@@ -78,11 +73,9 @@ public class IrregularMoveGenerator extends AbstractMoveGenerator {
                     from.getY() + d.dy()
             );
 
-            if (isOutsideBoard(state, to)) continue;
-
-            if (!state.getBoard().isEmpty(to)) continue;
-
-            moves.add(new Move(from, to, MoveNature.IRREGULAR));
+            if (isInsideBoard(state, to)) {
+                moves.add(new Move(from, to, MoveNature.IRREGULAR));
+            }
         }
 
         return moves;

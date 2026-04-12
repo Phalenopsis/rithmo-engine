@@ -7,27 +7,19 @@ import java.util.List;
 
 /**
  * Implementation of {@link AbstractMoveGenerator} that defines
- * the standard (regular) movement rules of the game.
+ * the geometric reach of standard (regular) movement rules.
  *
- * <p>This generator computes moves based on fixed geometric patterns:
- * orthogonal and diagonal directions combined with a fixed movement distance
- * depending on the piece type.</p>
+ * <p>This generator computes "potential" moves based on fixed geometric patterns.
+ * <b>Note:</b> This class only validates board boundaries. It does NOT check
+ * if the path is blocked or if the destination is occupied; these concerns
+ * are delegated to the {@link MovementEngine}.</p>
  *
- * <p>Unlike irregular movement, regular movement enforces:
+ * <p>Move distances (Theoretical Reach):</p>
  * <ul>
- *     <li>linear movement along a direction (no jumps over arbitrary patterns)</li>
- *     <li>path blocking rules (intermediate squares must be empty)</li>
- *     <li>fixed distance per piece type</li>
+ * <li>Circle → 1 step (Diagonal)</li>
+ * <li>Triangle → 2 steps (Orthogonal)</li>
+ * <li>Square → 3 steps (Orthogonal)</li>
  * </ul>
- *
- * <p>Move distances are defined as:</p>
- * <ul>
- *     <li>Circle → 1 step</li>
- *     <li>Triangle → 2 steps</li>
- *     <li>Square → 3 steps</li>
- * </ul>
- *
- * <p>Each generated move is marked as {@link MoveNature#REGULAR}.</p>
  */
 public class RegularMoveGenerator extends AbstractMoveGenerator {
 
@@ -95,20 +87,14 @@ public class RegularMoveGenerator extends AbstractMoveGenerator {
     }
 
     /**
-     * Applies a set of directional vectors to generate line-based moves.
-     *
-     * <p>A move is valid if:
-     * <ul>
-     *     <li>the destination is inside the board</li>
-     *     <li>the path between origin and destination is not blocked</li>
-     *     <li>the destination square is empty</li>
-     * </ul>
+     * Applies a set of directional vectors to generate line-based moves.</br>
+     * Only return destinations inside the board.
      *
      * @param state current game state
      * @param from starting position
      * @param directions array of direction vectors
      * @param dist movement distance
-     * @return list of valid moves
+     * @return list of moves
      */
     private List<Move> generateLineMoves(
             GameState state,
@@ -123,11 +109,7 @@ public class RegularMoveGenerator extends AbstractMoveGenerator {
 
             Position to = add(from, d[0] * dist, d[1] * dist);
 
-            if (isOutsideBoard(state, to)) continue;
-
-            if (isBlocked(state, from, d, dist)) continue;
-
-            if (state.getBoard().isEmpty(to)) {
+            if (isInsideBoard(state, to)) {
                 moves.add(new Move(from, to, MoveNature.REGULAR));
             }
         }
@@ -135,31 +117,6 @@ public class RegularMoveGenerator extends AbstractMoveGenerator {
         return moves;
     }
 
-    /**
-     * Checks whether a movement path is blocked by another piece.
-     *
-     * <p>The path is checked step-by-step between origin and destination
-     * (excluding both endpoints).</p>
-     *
-     * @param state current game state
-     * @param from starting position
-     * @param d direction vector
-     * @param dist movement distance
-     * @return true if at least one intermediate square is occupied
-     */
-    private boolean isBlocked(GameState state, Position from, int[] d, int dist) {
-
-        for (int step = 1; step < dist; step++) {
-
-            Position p = add(from, d[0] * step, d[1] * step);
-
-            if (!state.getBoard().isEmpty(p)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     /**
      * Utility method to translate a position by a delta.

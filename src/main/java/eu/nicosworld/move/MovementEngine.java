@@ -10,46 +10,64 @@ import java.util.Set;
 
 /**
  * High-level movement engine responsible for aggregating all movement rules
- * and producing the complete set of legal moves for a given piece.
+ * and applying environment constraints (blocking pieces, occupied destinations).
  *
- * <p>This engine delegates move generation to multiple specialized generators:
- * <ul>
- *     <li>{@link RegularMoveGenerator} for standard movement rules</li>
- *     <li>{@link IrregularMoveGenerator} for alternative movement patterns</li>
- * </ul>
- *
- * <p>The final result merges all generated moves and removes duplicates.</p>
- *
- * <p>This class acts as a facade over lower-level movement rule implementations,
- * providing a unified entry point for the game logic.</p>
+ * <p>The engine follows a multi-stage pipeline:
+ * <ol>
+ * <li>Generate theoretical moves from {@link RegularMoveGenerator} and {@link IrregularMoveGenerator}</li>
+ * <li>Filter regular moves using {@link FreePathMovementValidator} to ensure "sliding" paths are clear</li>
+ * <li>Filter all moves to ensure the final destination tile is empty</li>
+ * </ol>
+ * </p>
  */
 public class MovementEngine {
 
     private final RegularMoveGenerator regular;
     private final IrregularMoveGenerator irregular;
+    private final FreePathMovementValidator freePathMovementValidator;
 
     public MovementEngine() {
         regular = new RegularMoveGenerator();
         irregular = new IrregularMoveGenerator();
+        freePathMovementValidator = new FreePathMovementValidator();
     }
 
     /**
-     * Generates all possible moves for a given piece by combining
-     * multiple movement rule sets.
-     *
-     * <p>Duplicate moves are removed using a set-based aggregation.</p>
+     * Generates all legal moves for a given piece.
+     * * <p>A move is considered legal if it matches the piece's pattern,
+     * its path is not obstructed (for regular moves), and its destination is empty.</p>
      *
      * @param state current game state
      * @param pap piece with its position
-     * @return list of all unique legal moves for the piece
+     * @return a filtered list of unique legal moves
      */
     public List<Move> generateMoves(GameState state, PieceAtPosition pap) {
 
         Set<Move> moves = new HashSet<>();
 
-        moves.addAll(regular.generate(state, pap));
+        moves.addAll(getFreePathRegularMoves(state, regular.generate(state, pap)));
         moves.addAll(irregular.generate(state, pap));
 
-        return new ArrayList<>(moves);
+        return moves.stream().filter(m -> isFreeDestination(state, m)).toList();
+
+    }
+
+    /**
+     * Filters a list of moves to keep only those where the path between
+     * 'from' and 'to' contains no other pieces.
+     */
+    private List<Move> getFreePathRegularMoves(GameState state, List<Move> moves) {
+        return moves.stream().filter(m -> isFreePathMove(state, m)).toList();
+    }
+
+    private boolean isFreePathMove(GameState state, Move move) {
+        return !freePathMovementValidator.isBlocked(state, move.from(), move.to());
+    }
+
+    /**
+     * Validates that the destination square of a move is currently unoccupied.
+     */
+    private boolean isFreeDestination(GameState state, Move move) {
+        return state.getBoard().isEmpty(move.to());
     }
 }
