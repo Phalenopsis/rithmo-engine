@@ -27,7 +27,7 @@ public class Board {
         grid[pos.getX()][pos.getY()] = piece;
     }
 
-    List<PieceAtPosition> getPiecesWithPositions() {
+    public List<PieceAtPosition> getPiecesWithPositions() {
         List<PieceAtPosition> result = new ArrayList<>();
 
         for (int x = 0; x < 16; x++) {

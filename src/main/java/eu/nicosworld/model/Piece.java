@@ -1,9 +1,7 @@
 package eu.nicosworld.model;
 
-import java.util.Objects;
-
 public abstract class Piece {
-    private PieceType type;
+    private final PieceType type;
     private Player owner;
     private PieceState state;
     private String id;
@@ -18,7 +16,7 @@ public abstract class Piece {
         this.state = state;
     }
 
-    abstract int getValue();
+    public abstract int getValue();
 
     public Player getPlayer() {
         return owner;
@@ -30,5 +28,14 @@ public abstract class Piece {
 
     public PieceState getState() {
         return state;
+    }
+
+    @Override
+    public String toString() {
+        return  getType()
+                + " "
+                + getPlayer().getColor()
+                + " "
+                + getValue();
     }
 }

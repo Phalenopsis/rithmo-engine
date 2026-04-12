@@ -6,7 +6,7 @@ import java.util.List;
 
 public class GameState {
     private final Board board;
-    private final Player currentPlayer;
+    private Player currentPlayer;
 
     int turnNumber;
     List<Move> history;
@@ -16,6 +16,15 @@ public class GameState {
         this.currentPlayer = currentPlayer;
     }
 
-    public Board getBoard() { return board; }
-    public Player getCurrentPlayer() { return currentPlayer; }
+    public Board getBoard() {
+        return board;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(Player player) {
+        currentPlayer = player;
+    }
 }
