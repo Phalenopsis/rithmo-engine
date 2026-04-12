@@ -50,4 +50,17 @@ Le jeu se joue sur un plateau rectangulaire divisé en cases. Chaque joueur cont
 
 ---
 
-Ce fichier sert d’introduction claire et concise, tout en orientant le lecteur vers les documents détaillés pour chaque aspect du jeu.
+## Sources
+
+Les règles de la rithmomachie sur le site de l'Escale à jeux par Michel Boutin:
+
+https://regle.escaleajeux.fr/rithm_rg.pdf
+
+La rithmomachie, un « jeu pédagogique » du xie au xvie siècle par François Goichot dans Mathématiques récréatives :
+
+https://books.openedition.org/ugaeditions/44846
+
+Le très excellent et ancien Jeu Pythagorique, dit Rithmomachie par Claude Boissière
+
+https://gallica.bnf.fr/ark:/12148/bpt6k5832672x/f4.image
+
