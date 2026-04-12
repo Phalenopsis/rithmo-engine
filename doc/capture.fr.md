@@ -179,7 +179,7 @@ Quand un pion ne peut plus se déplacer par mouvement régulier, il peut être p
 ## La pose
 * Les pions sont réversibles, c'est à dire qu'un joueur peut remettre en jeu une pièce capturée en changeant sa couleur.
 * Il peut réintroduire une pièce capturée quand il le veut dans la colonne 1 pour les noirs et dans la colonne 16 pour les blancs.
-* Cette prose peut donner lieu à une prise (mais ce n'est pas obligatoire).
+* Cette pose peut donner lieu à une prise (mais ce n'est pas obligatoire).
 * L'action d'introduire un pion compte pour un coup, qu'il y a prise ou non.
 ---
 
