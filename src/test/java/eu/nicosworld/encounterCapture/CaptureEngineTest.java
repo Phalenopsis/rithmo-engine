@@ -285,6 +285,63 @@ public class CaptureEngineTest {
                         .againstWhite(PieceType.CIRCLE, 9, 4, 7)
                         .expectCapture(PieceType.CIRCLE, 9)
                         .expectCapture(PieceType.CIRCLE, 9)
+                        .build(),
+                // =============================
+                // PYRAMIDE vs PYRAMIDE - COMPOSANT -> COMPOSANT
+                // =============================
+                blackPyramidAt(2, 2)
+                        .withComponent(PieceType.CIRCLE, 5)
+                        .withComponent(PieceType.SQUARE, 9)
+                        .againstWhitePyramid(3, 3,
+                                new ComponentData(PieceType.TRIANGLE, 5),
+                                new ComponentData(PieceType.CIRCLE, 12))
+                        .expectPartialCapture(PieceType.TRIANGLE, 5)
+                        .build(),
+
+                // =============================
+                // PYRAMIDE vs PYRAMIDE - COMPOSANT -> VALEUR TOTALE
+                // =============================
+                blackPyramidAt(2, 2)
+                        .withComponent(PieceType.CIRCLE, 10)
+                        .againstWhitePyramid(3, 3,
+                                new ComponentData(PieceType.CIRCLE, 4),
+                                new ComponentData(PieceType.CIRCLE, 6)) // total = 10
+                        .expectCapture(PieceType.PYRAMID, 10)
+                        .build(),
+
+                // =============================
+                // PYRAMIDE vs PYRAMIDE - VALEUR TOTALE -> COMPOSANT
+                // =============================
+                blackPyramidAt(2, 2)
+                        .withComponent(PieceType.CIRCLE, 4)
+                        .withComponent(PieceType.CIRCLE, 6) // total = 10
+                        .againstWhitePyramid(3, 3,
+                                new ComponentData(PieceType.SQUARE, 10),
+                                new ComponentData(PieceType.CIRCLE, 3))
+                        .expectPartialCapture(PieceType.SQUARE, 10)
+                        .build(),
+
+                // =============================
+                // PYRAMIDE vs PYRAMIDE - MULTI MATCH
+                // =============================
+                blackPyramidAt(2, 2)
+                        .withComponent(PieceType.CIRCLE, 5)
+                        .againstWhitePyramid(3, 3,
+                                new ComponentData(PieceType.CIRCLE, 5),
+                                new ComponentData(PieceType.TRIANGLE, 5))
+                        .expectPartialCapture(PieceType.CIRCLE, 5)
+                        .expectPartialCapture(PieceType.TRIANGLE, 5)
+                        .build(),
+
+                // =============================
+                // PYRAMIDE vs PYRAMIDE - AUCUNE CORRESPONDANCE
+                // =============================
+                blackPyramidAt(2, 2)
+                        .withComponent(PieceType.CIRCLE, 5)
+                        .againstWhitePyramid(3, 3,
+                                new ComponentData(PieceType.CIRCLE, 6),
+                                new ComponentData(PieceType.TRIANGLE, 7))
+                        .expectNoCapture()
                         .build()
         );
     }
