@@ -19,8 +19,12 @@ public class Board {
         return Objects.isNull(grid[p.getX()][p.getY()]);
     }
 
-    public Piece get(Position pos) {
-        return grid[pos.getX()][pos.getY()];
+    public Piece getPieceAt(Position pos) {
+        return getPieceAt(pos.getX(),pos.getY());
+    }
+
+    public Piece getPieceAt(int x, int y) {
+        return grid[x][y];
     }
 
     public void set(Position pos, Piece piece) {

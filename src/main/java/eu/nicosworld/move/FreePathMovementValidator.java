@@ -19,7 +19,7 @@ public class FreePathMovementValidator {
      *
      * @param state the current game state containing the board
      * @param from  the starting position of the moving or attacking piece
-     * @param to    the target position (destination or piece to be captured)
+     * @param to    the target position (destination or piece to be target)
      * @return {@code true} if at least one square between 'from' and 'to' is occupied,
      * {@code false} if the path is clear or if positions are adjacent.
      */

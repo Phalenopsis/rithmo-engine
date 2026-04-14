@@ -10,6 +10,11 @@ public class Pyramid extends Piece{
         this.components = components;
     }
 
+    public Pyramid(Player player, List<SimplePiece> components) {
+        super(PieceType.PYRAMID, player);
+        this.components = components;
+    }
+
     public int getValue() {
         return components.stream()
                 .mapToInt(SimplePiece::getValue)
@@ -31,5 +36,9 @@ public class Pyramid extends Piece{
 
     public boolean hasSquare() {
         return hasComponent(PieceType.SQUARE);
+    }
+
+    public List<SimplePiece> getComponents() {
+        return components;
     }
 }
