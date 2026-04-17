@@ -89,6 +89,15 @@ public class CaptureTestCase {
         return addExpected(type, value, false, CaptureType.ASSAULT);
     }
 
+    // 4. POWER
+    public CaptureTestCase expectPower(PieceType type, int value) {
+        return addExpected(type, value, true, CaptureType.POWER);
+    }
+
+    public CaptureTestCase expectPartialPower(PieceType type, int value) {
+        return addExpected(type, value, false, CaptureType.POWER);
+    }
+
     // Helper to avoid duplication
     private CaptureTestCase addExpected(PieceType type, int value, boolean isWhole, CaptureType captureType) {
         this.expectedCaptures.add(new ExpectedCapture(type, value, isWhole, captureType));
