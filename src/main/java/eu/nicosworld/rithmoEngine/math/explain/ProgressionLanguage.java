@@ -1,0 +1,9 @@
+package eu.nicosworld.rithmoEngine.math.explain;
+
+/**
+ * Supported languages for progression explanations.
+ */
+public enum ProgressionLanguage {
+    FR,
+    EN
+}
