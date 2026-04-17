@@ -81,6 +81,16 @@ public class CaptureTestCase {
         return this;
     }
 
+    public CaptureTestCase expectAmbush() {
+        return expectAmbushCount(1);
+    }
+
+    public CaptureTestCase expectAmbushCount(int count) {
+        this.expectedCaptureCount = count;
+        this.expectedType = CaptureType.AMBUSH;
+        return this;
+    }
+
     public Arguments build() { return Arguments.of(this); }
 
     // Getters

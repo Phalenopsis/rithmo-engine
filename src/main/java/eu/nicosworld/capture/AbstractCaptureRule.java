@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public abstract class AbstractCaptureRule implements CaptureRule {
 
@@ -77,5 +78,17 @@ public abstract class AbstractCaptureRule implements CaptureRule {
      */
     protected boolean isMatch(CaptureTarget attacker, CaptureTarget target) {
         return attacker.value() == target.value();
+    }
+
+    protected Predicate<Piece> isEnemyOf(Piece piece) {
+        return p -> p.getPlayer() != piece.getPlayer();
+    }
+
+    protected Predicate<Piece> isAllyOf(Piece piece) {
+        return p -> p.getPlayer() == piece.getPlayer();
+    }
+
+    protected Predicate<Piece> isNot(Piece piece) {
+        return p -> !p.equals(piece);
     }
 }
