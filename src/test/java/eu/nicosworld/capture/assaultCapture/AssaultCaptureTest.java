@@ -3,6 +3,7 @@ package eu.nicosworld.capture.assaultCapture;
 import eu.nicosworld.capture.*;
 import eu.nicosworld.capture.capturerule.AssaultRule;
 import eu.nicosworld.model.PieceType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -12,82 +13,103 @@ import java.util.stream.Stream;
 
 import static eu.nicosworld.capture.CaptureTestCase.*;
 
+public class AssaultCaptureTest extends AbstractCaptureTest {
 
-public class AssaultCaptureTest extends AbstractCaptureTest{
-    AssaultCaptureTest() {
-        engine = new CaptureEngine(
-                List.of(new AssaultRule(regularGenerator, pathValidator))
-        );
+    @BeforeEach
+    void setup() {
+        // We inject only the AssaultRule to isolate the behavior
+        this.engine = new CaptureEngine(List.of(new AssaultRule(regularGenerator, pathValidator)));
     }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("assaultTestData")
-    void should_validate_ambush_logic(CaptureTestCase testCase) {
+    void should_validate_assault_logic(CaptureTestCase testCase) {
         launchTestCase(testCase);
     }
 
     static Stream<Arguments> assaultTestData() {
         return Stream.of(
                 // =============================
-                // ASSAUT SIMPLE (Multiplication)
+                // SIMPLE ASSAULT (Multiplication)
                 // =============================
-                // Triangle noir 6 attaque Triangle blanc 12
-                // Distance 1 : [6] (vide) [12] -> dist = 1. 6 * 1 != 12 (Echec)
+
+                // Fail: 6 * 1 empty space = 6 (Target is 12)
                 blackTriangleAt(6, 1, 1)
-                        .againstWhite(PieceType.TRIANGLE, 12, 3, 1) // (3,1) - (1,1) = 2 cases d'écart, donc 2 cases vides
+                        .againstWhite(PieceType.TRIANGLE, 12, 3, 1)
                         .expectNoCapture()
                         .build(),
 
-                // Distance 2 : [6] (v) (v) [12] -> dist = 2. 6 * 2 = 12 (Succès)
+                // Success: 6 * 2 empty spaces = 12
                 blackTriangleAt(6, 1, 1)
-                        .againstWhite(PieceType.TRIANGLE, 12, 4, 1) // (4,1) - (1,1) = 3 cases d'écart, donc 2 cases vides
-                        .expectCapture(PieceType.TRIANGLE, 12)
+                        .againstWhite(PieceType.TRIANGLE, 12, 4, 1)
+                        .expectAssault(PieceType.TRIANGLE, 12)
                         .build(),
 
                 // =============================
-                // ASSAUT SIMPLE (Division)
+                // SIMPLE ASSAULT (Division)
                 // =============================
-                // Rond noir 36 attaque Triangle blanc 12
-                // Distance 3 : [36] (v) (v) (v) [12] -> 36 / 3 = 12 (Succès)
+
+                // Success: 36 / 3 empty spaces = 12
                 blackCircleAt(36, 1, 1)
-                        .againstWhite(PieceType.TRIANGLE, 12, 5, 1) // (5,1) - (1,1) = 4 cases d'écart, donc 3 cases vides
-                        .expectCapture(PieceType.TRIANGLE, 12)
+                        .againstWhite(PieceType.TRIANGLE, 12, 5, 1)
+                        .expectAssault(PieceType.TRIANGLE, 12)
+                        .build(),
+
+                // Fail: 36 / 2 empty spaces = 18 (Target is 12)
+                blackCircleAt(36, 1, 1)
+                        .againstWhite(PieceType.TRIANGLE, 12, 4, 1)
+                        .expectNoCapture()
                         .build(),
 
                 // =============================
-                // OBSTACLES (Le chemin n'est pas libre)
+                // OBSTACLES (Path is blocked)
                 // =============================
                 blackTriangleAt(6, 1, 1)
                         .againstWhite(PieceType.TRIANGLE, 12, 4, 1)
-                        .withObstacleAt(2, 1) // Une pièce bloque le rayon de l'assaut
+                        .withObstacleAt(2, 1)
                         .expectNoCapture()
                         .build(),
 
                 // =============================
-                // DIAGONALES
+                // DIAGONALS
                 // =============================
-                // Distance 2 en diagonale : (1,1) -> (4,4) = 2 cases vides (2,2 et 3,3)
+                // Distance 2 in diagonal: (1,1) -> (4,4) has 2 empty squares (2,2 and 3,3)
+                // 5 * 2 = 10
                 blackCircleAt(5, 1, 1)
                         .againstWhite(PieceType.SQUARE, 10, 4, 4)
-                        .expectCapture(PieceType.SQUARE, 10)
+                        .expectAssault(PieceType.SQUARE, 10)
                         .build(),
 
                 // =============================
-                // PYRAMIDES
+                // PYRAMIDS (Attacker)
                 // =============================
-                // Une pyramide peut attaquer avec l'un de ses composants
+                // A pyramid attacks using its internal component (5)
+                // 5 * 3 empty spaces = 15
                 blackPyramidAt(1, 1)
                         .withComponent(PieceType.CIRCLE, 5)
-                        .againstWhite(PieceType.TRIANGLE, 15, 5, 1) // 3 cases vides : 5 * 3 = 15
-                        .expectCapture(PieceType.TRIANGLE, 15)
+                        .againstWhite(PieceType.TRIANGLE, 15, 5, 1)
+                        .expectAssault(PieceType.TRIANGLE, 15)
                         .build(),
 
-                // Une pyramide cible peut être attaquée sur sa valeur totale
+                // =============================
+                // PYRAMIDS (Target)
+                // =============================
+                // A pyramid target is hit on its total value (16)
+                // 8 * 2 empty spaces = 16
                 blackCircleAt(8, 1, 1)
                         .againstWhitePyramid(4, 1,
                                 new ComponentData(PieceType.CIRCLE, 10),
-                                new ComponentData(PieceType.CIRCLE, 6)) // Total 16. Dist 2: 8 * 2 = 16
-                        .expectCapture(PieceType.PYRAMID, 16)
+                                new ComponentData(PieceType.CIRCLE, 6))
+                        .expectAssault(PieceType.PYRAMID, 16)
+                        .build(),
+
+                // Partial Capture: hitting a specific component of a pyramid via assault
+                // 5 * 4 empty spaces = 20
+                blackCircleAt(5, 1, 1)
+                        .againstWhitePyramid(6, 1,
+                                new ComponentData(PieceType.SQUARE, 20),
+                                new ComponentData(PieceType.CIRCLE, 10))
+                        .expectPartialAssault(PieceType.SQUARE, 20)
                         .build()
         );
     }

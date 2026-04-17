@@ -17,7 +17,6 @@ public class CaptureTestCase {
 
     private final List<ExtraPiece> otherPieces = new ArrayList<>();
     private int expectedCaptureCount = 0;
-    private CaptureType expectedType;
 
     private final List<ExpectedCapture> expectedCaptures = new ArrayList<>();
 
@@ -30,12 +29,12 @@ public class CaptureTestCase {
     public record ComponentData(PieceType type, int value) {}
     public record ExtraPiece(PieceType type, int value, PlayerColor color, Position pos, List<ComponentData> components) {}
 
-    // Entry Points
+    // --- Entry Points ---
     public static CaptureTestCase blackCircleAt(int val, int x, int y) { return new CaptureTestCase(PieceType.CIRCLE, val, x, y); }
     public static CaptureTestCase blackTriangleAt(int val, int x, int y) { return new CaptureTestCase(PieceType.TRIANGLE, val, x, y); }
     public static CaptureTestCase blackSquareAt(int val, int x, int y) { return new CaptureTestCase(PieceType.SQUARE, val, x, y); }
     public static CaptureTestCase blackPyramidAt(int x, int y) { return new CaptureTestCase(PieceType.PYRAMID, 0, x, y); }
-    public static CaptureTestCase whitePyramidAt(int x, int y) { return new CaptureTestCase(PieceType.PYRAMID, 0, x, y); } // For symetry in tests
+    public static CaptureTestCase whitePyramidAt(int x, int y) { return new CaptureTestCase(PieceType.PYRAMID, 0, x, y); }
 
     public CaptureTestCase withComponent(PieceType type, int value) {
         this.attackerComponents.add(new ComponentData(type, value));
@@ -57,91 +56,73 @@ public class CaptureTestCase {
         return this;
     }
 
-    public CaptureTestCase withObstacleAt(int x, int y) { return withBlackAlly(PieceType.CIRCLE, 999, x, y); }
-
-    public CaptureTestCase expectEncounter() { return expectEncounterCount(1); }
-    public CaptureTestCase expectEncounterCount(int count) {
-        this.expectedCaptureCount = count;
-        this.expectedType = CaptureType.ENCOUNTER;
-        return this;
+    public CaptureTestCase withObstacleAt(int x, int y) {
+        return withBlackAlly(PieceType.CIRCLE, 999, x, y);
     }
-    public CaptureTestCase expectNoCapture() { this.expectedCaptureCount = 0; return this; }
 
-    public CaptureTestCase expectCapture(PieceType type, int value) {
-        this.expectedCaptures.add(new ExpectedCapture(type, value, true));
+    // --- EXPECTATIONS (Typed) ---
+
+    // 1. ENCOUNTER
+    public CaptureTestCase expectEncounter(PieceType type, int value) {
+        return addExpected(type, value, true, CaptureType.ENCOUNTER);
+    }
+
+    public CaptureTestCase expectPartialEncounter(PieceType type, int value) {
+        return addExpected(type, value, false, CaptureType.ENCOUNTER);
+    }
+
+    // 2. AMBUSH
+    public CaptureTestCase expectAmbush(PieceType type, int value) {
+        return addExpected(type, value, true, CaptureType.AMBUSH);
+    }
+
+    public CaptureTestCase expectPartialAmbush(PieceType type, int value) {
+        return addExpected(type, value, false, CaptureType.AMBUSH);
+    }
+
+    // 3. ASSAULT
+    public CaptureTestCase expectAssault(PieceType type, int value) {
+        return addExpected(type, value, true, CaptureType.ASSAULT);
+    }
+
+    public CaptureTestCase expectPartialAssault(PieceType type, int value) {
+        return addExpected(type, value, false, CaptureType.ASSAULT);
+    }
+
+    // Helper to avoid duplication
+    private CaptureTestCase addExpected(PieceType type, int value, boolean isWhole, CaptureType captureType) {
+        this.expectedCaptures.add(new ExpectedCapture(type, value, isWhole, captureType));
         this.expectedCaptureCount++;
-        this.expectedType = CaptureType.ENCOUNTER;
         return this;
     }
 
-    public CaptureTestCase expectPartialCapture(PieceType type, int value) {
-        this.expectedCaptures.add(new ExpectedCapture(type, value, false));
-        this.expectedCaptureCount++;
-        this.expectedType = CaptureType.ENCOUNTER;
-        return this;
-    }
-
-    public CaptureTestCase expectAmbush() {
-        return expectAmbushCount(1);
-    }
-
-    public CaptureTestCase expectAmbushCount(int count) {
-        this.expectedCaptureCount = count;
-        this.expectedType = CaptureType.AMBUSH;
+    public CaptureTestCase expectNoCapture() {
+        this.expectedCaptureCount = 0;
+        this.expectedCaptures.clear();
         return this;
     }
 
     public Arguments build() { return Arguments.of(this); }
 
-    // Getters
+    // --- Getters ---
     public PieceType getAttackerType() { return attackerType; }
     public int getAttackerValue() { return attackerValue; }
     public Position getAttackerPos() { return attackerPos; }
     public List<ComponentData> getAttackerComponents() { return attackerComponents; }
     public List<ExtraPiece> getOtherPieces() { return otherPieces; }
     public int getExpectedCaptureCount() { return expectedCaptureCount; }
-    public CaptureType getExpectedType() { return expectedType; }
-
-    public List<ExpectedCapture> getExpectedCaptures() {
-        return expectedCaptures;
-    }
+    public List<ExpectedCapture> getExpectedCaptures() { return expectedCaptures; }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-
-        sb.append("Attacker: ")
-                .append(attackerType)
-                .append("(").append(attackerValue).append(")")
-                .append(" at ").append(attackerPos);
-
-        if (!attackerComponents.isEmpty()) {
-            sb.append(" components=").append(attackerComponents);
-        }
-
+        sb.append("Attacker: ").append(attackerType).append("(").append(attackerValue).append(") at ").append(attackerPos);
+        if (!attackerComponents.isEmpty()) sb.append(" comps=").append(attackerComponents);
         sb.append(" | Targets: ");
-
         for (ExtraPiece p : otherPieces) {
-            sb.append(p.type())
-                    .append("(").append(p.value()).append(")")
-                    .append(" ").append(p.color())
-                    .append(" at ").append(p.pos());
-
-            if (!p.components().isEmpty()) {
-                sb.append(" comps=").append(p.components());
-            }
-
-            sb.append(" ; ");
+            sb.append(p.type()).append("(").append(p.value()).append(") at ").append(p.pos()).append("; ");
         }
-
-        sb.append(" => expected=")
-                .append(expectedCaptureCount)
-                .append(" ").append(expectedType);
-
-        if (!expectedCaptures.isEmpty()) {
-            sb.append(" details=").append(expectedCaptures);
-        }
-
+        sb.append(" => Expected: ").append(expectedCaptures);
         return sb.toString();
     }
 }

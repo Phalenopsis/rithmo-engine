@@ -18,17 +18,16 @@ public abstract class AbstractCaptureTest {
     public CaptureEngine engine;
 
     protected void launchTestCase(CaptureTestCase testCase) {
-
         BoardBuilder bb = new BoardBuilder();
 
-        // 1. Attacker
+        // 1. Attacker Setup
         bb.piece(testCase.getAttackerType(), testCase.getAttackerValue(), PlayerColor.BLACK);
         for (CaptureTestCase.ComponentData comp : testCase.getAttackerComponents()) {
             bb.withComponent(comp.type(), comp.value());
         }
         bb.at(testCase.getAttackerPos().getX(), testCase.getAttackerPos().getY());
 
-        // 2. Others
+        // 2. Other pieces Setup
         for (CaptureTestCase.ExtraPiece p : testCase.getOtherPieces()) {
             bb.piece(p.type(), p.value(), p.color());
             for (CaptureTestCase.ComponentData comp : p.components()) {
@@ -42,30 +41,28 @@ public abstract class AbstractCaptureTest {
                 .at(testCase.getAttackerPos().getX(), testCase.getAttackerPos().getY())
                 .build();
 
-
-
         List<CaptureAction> captures = engine.findCaptures(ctx);
 
-        // 1. count
+        // 1. Verify the number of captures found
         assertEquals(
                 testCase.getExpectedCaptureCount(),
                 captures.size(),
-                "Failure on test case: " + testCase
+                "Incorrect number of captures for test case: " + testCase
         );
 
-        // 2. verify captured pieces exist
+        // 2. Verify each expected capture detail (including the TYPE)
         for (ExpectedCapture expected : testCase.getExpectedCaptures()) {
-
             boolean found = captures.stream().anyMatch(c ->
                     c.capturedPiece().getType() == expected.type()
                             && c.capturedPiece().getValue() == expected.value()
                             && c.isWholeCapture() == expected.isWhole()
+                            && c.type() == expected.captureType() // Now validating the rule type!
             );
 
             assertTrue(found,
-                    "Missing expected ambush capture: " + expected + " in " + testCase);
+                    String.format("Missing expected capture: %s (%s) in test case: %s",
+                            expected.type(), expected.captureType(), testCase));
         }
     }
-
 
 }
