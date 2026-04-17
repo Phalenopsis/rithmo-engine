@@ -3,6 +3,8 @@ package eu.nicosworld.move;
 import eu.nicosworld.model.GameState;
 import eu.nicosworld.model.Position;
 
+import java.util.List;
+
 /**
  * Validator responsible for checking if a movement path is clear of obstacles.
  * * <p>This class is used to validate "sliding" (regular) moves as well as
