@@ -1,12 +1,8 @@
-package eu.nicosworld.ambushCapture;
+package eu.nicosworld.capture.ambushCapture;
 
 import eu.nicosworld.capture.*;
 import eu.nicosworld.capture.capturerule.AmbushRule;
 import eu.nicosworld.model.PieceType;
-import eu.nicosworld.model.PlayerColor;
-import eu.nicosworld.move.FreePathMovementValidator;
-import eu.nicosworld.move.RegularMoveGenerator;
-import eu.nicosworld.setup.BoardBuilder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,66 +11,19 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static eu.nicosworld.capture.CaptureTestCase.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AmbushRuleTest {
+public class AmbushRuleTest extends AbstractCaptureTest {
 
-    private final RegularMoveGenerator regularGenerator = new RegularMoveGenerator();
-    private final FreePathMovementValidator pathValidator = new FreePathMovementValidator();
+    AmbushRuleTest() {
+        engine = new CaptureEngine(
+                List.of(new AmbushRule(regularGenerator, pathValidator))
+        );
+    }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("ambushTestData")
     void should_validate_ambush_logic(CaptureTestCase testCase) {
-
-        BoardBuilder bb = new BoardBuilder();
-
-        // 1. Attacker
-        bb.piece(testCase.getAttackerType(), testCase.getAttackerValue(), PlayerColor.BLACK);
-        for (CaptureTestCase.ComponentData comp : testCase.getAttackerComponents()) {
-            bb.withComponent(comp.type(), comp.value());
-        }
-        bb.at(testCase.getAttackerPos().getX(), testCase.getAttackerPos().getY());
-
-        // 2. Others
-        for (CaptureTestCase.ExtraPiece p : testCase.getOtherPieces()) {
-            bb.piece(p.type(), p.value(), p.color());
-            for (CaptureTestCase.ComponentData comp : p.components()) {
-                bb.withComponent(comp.type(), comp.value());
-            }
-            bb.at(p.pos().getX(), p.pos().getY());
-        }
-
-        CaptureContext ctx = new CaptureContextBuilder()
-                .from(bb)
-                .at(testCase.getAttackerPos().getX(), testCase.getAttackerPos().getY())
-                .build();
-
-        CaptureEngine engine = new CaptureEngine(
-                List.of(new AmbushRule(regularGenerator, pathValidator))
-        );
-
-        List<CaptureAction> captures = engine.findCaptures(ctx);
-
-        // 1. count
-        assertEquals(
-                testCase.getExpectedCaptureCount(),
-                captures.size(),
-                "Failure on test case: " + testCase
-        );
-
-        // 2. verify captured pieces exist
-        for (ExpectedCapture expected : testCase.getExpectedCaptures()) {
-
-            boolean found = captures.stream().anyMatch(c ->
-                    c.capturedPiece().getType() == expected.type()
-                            && c.capturedPiece().getValue() == expected.value()
-                            && c.isWholeCapture() == expected.isWhole()
-            );
-
-            assertTrue(found,
-                    "Missing expected ambush capture: " + expected + " in " + testCase);
-        }
+        launchTestCase(testCase);
     }
 
     static  Stream<Arguments> testOneCase() {
