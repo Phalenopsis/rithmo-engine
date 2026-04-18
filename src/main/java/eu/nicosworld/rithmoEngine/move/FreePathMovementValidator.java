@@ -40,7 +40,7 @@ public class FreePathMovementValidator {
 
         for (int step = 1; step < dist; step++) {
             Position p = add(from, dx * step, dy * step);
-            if (!state.getBoard().isEmpty(p)) {
+            if (!state.board().isEmpty(p)) {
                 return true;
             }
         }

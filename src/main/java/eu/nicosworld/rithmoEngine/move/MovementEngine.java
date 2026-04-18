@@ -67,6 +67,6 @@ public class MovementEngine {
      * Validates that the destination square of a move is currently unoccupied.
      */
     private boolean isFreeDestination(GameState state, Move move) {
-        return state.getBoard().isEmpty(move.to());
+        return state.board().isEmpty(move.to());
     }
 }

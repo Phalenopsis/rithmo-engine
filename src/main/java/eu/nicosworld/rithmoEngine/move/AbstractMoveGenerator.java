@@ -100,7 +100,7 @@ public abstract class AbstractMoveGenerator implements MoveGenerator {
      * @return true if the position is outside the board, false otherwise
      */
     protected boolean isInsideBoard(GameState state, Position p) {
-        return state.getBoard().isInside(p);
+        return state.board().isInside(p);
     }
 
     /**

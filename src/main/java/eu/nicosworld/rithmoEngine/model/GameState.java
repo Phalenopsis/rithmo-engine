@@ -1,30 +1,3 @@
 package eu.nicosworld.rithmoEngine.model;
 
-import eu.nicosworld.rithmoEngine.move.Move;
-
-import java.util.List;
-
-public class GameState {
-    private final Board board;
-    private Player currentPlayer;
-
-    int turnNumber;
-    List<Move> history;
-
-    public GameState(Board board, Player currentPlayer) {
-        this.board = board;
-        this.currentPlayer = currentPlayer;
-    }
-
-    public Board getBoard() {
-        return board;
-    }
-
-    public Player getCurrentPlayer() {
-        return currentPlayer;
-    }
-
-    public void setCurrentPlayer(Player player) {
-        currentPlayer = player;
-    }
-}
+public record GameState(Board board, Player currentPlayer) {}

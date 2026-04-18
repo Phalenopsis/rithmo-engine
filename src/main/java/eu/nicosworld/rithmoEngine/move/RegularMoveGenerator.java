@@ -157,7 +157,7 @@ public class RegularMoveGenerator extends AbstractMoveGenerator {
      *         only positions containing a compatible and filtered piece are included
      */
     public Map<Position, Piece> getAllPieceAround(GameState state, Position from, Predicate<Piece> filter) {
-        Board board = state.getBoard();
+        Board board = state.board();
 
         List<Move> squareMoves = generateSquareMoves(state, from);
         List<Move> circleMoves = generateCircleMoves(state, from);

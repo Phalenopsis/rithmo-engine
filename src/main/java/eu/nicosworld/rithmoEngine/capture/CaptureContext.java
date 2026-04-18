@@ -13,6 +13,6 @@ public record CaptureContext(
         PieceAtPosition actor
 ) {
     public Board board() {
-        return state.getBoard();
+        return state.board();
     }
 }
