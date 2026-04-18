@@ -29,6 +29,15 @@ public class PowerRuleTest extends AbstractCaptureTest {
         launchTestCase(testCase);
     }
 
+    static Stream<Arguments> testOneCase() {
+        return Stream.of(
+                blackSquareAt(100, 1, 1)
+                        .againstWhite(PieceType.CIRCLE, 10, 4, 1)
+                        .expectPower(PieceType.CIRCLE, 10)
+                        .build()
+        );
+    }
+
     static Stream<Arguments> powerTestData() {
         return Stream.of(
                 // =============================
@@ -41,9 +50,9 @@ public class PowerRuleTest extends AbstractCaptureTest {
                         .expectPower(PieceType.TRIANGLE, 16)
                         .build(),
 
-                // Success: sqrt(100) = 10 (Within Square range: orthogonal up to 4)
+                // Success: sqrt(100) = 10 (Within Square range: orthogonal up to 3)
                 blackSquareAt(100, 1, 1)
-                        .againstWhite(PieceType.CIRCLE, 10, 5, 1)
+                        .againstWhite(PieceType.CIRCLE, 10, 4, 1)
                         .expectPower(PieceType.CIRCLE, 10)
                         .build(),
 
@@ -57,9 +66,9 @@ public class PowerRuleTest extends AbstractCaptureTest {
                 // 2. CUBES
                 // =============================
 
-                // Success: 3^3 = 27 (Within Triangle range: orthogonal/diagonal 2 or 3)
+                // Success: 3^3 = 27 (Within Triangle range: orthogonal 2 )
                 blackTriangleAt(3, 1, 1)
-                        .againstWhite(PieceType.SQUARE, 27, 4, 1)
+                        .againstWhite(PieceType.SQUARE, 27, 3, 1)
                         .expectPower(PieceType.SQUARE, 27)
                         .build(),
 

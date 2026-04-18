@@ -19,7 +19,7 @@ public class AmbushRule extends AbstractCaptureRule {
         super(generator, pathValidator);
     }
 
-
+    @Override
     public List<CaptureAction> findCaptures(CaptureContext ctx) {
 
         Set<CaptureAction> captures = new HashSet<>();
