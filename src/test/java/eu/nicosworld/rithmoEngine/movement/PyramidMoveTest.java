@@ -12,63 +12,61 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PyramidMoveTest extends MovementTestBase {
 
+    private Player player() {
+        return new Player(PlayerColor.BLACK);
+    }
+
     // =========================================================
-    // FULL PYRAMID (circle + triangle + square abilities)
+    // FULL PYRAMID - REGULAR MOVES
     // =========================================================
     static Stream<Arguments> fullPyramidMoves() {
         return Stream.of(
 
-                // -------------------------
-                // CIRCLE moves (diagonal 1)
-                // -------------------------
-                MoveTestCase.pyramidAt(4,4).canReach(3,3),
-                MoveTestCase.pyramidAt(4,4).canReach(5,5),
-                MoveTestCase.pyramidAt(4,4).canReach(3,5),
-                MoveTestCase.pyramidAt(4,4).canReach(5,3),
+                // Circle (diagonals 1)
+                Arguments.of(3,3, true),
+                Arguments.of(5,5, true),
+                Arguments.of(3,5, true),
+                Arguments.of(5,3, true),
 
-                // -------------------------
-                // TRIANGLE moves (orthogonal 2)
-                // -------------------------
-                MoveTestCase.pyramidAt(4,4).canReach(4,6),
-                MoveTestCase.pyramidAt(4,4).canReach(6,4),
-                MoveTestCase.pyramidAt(4,4).canReach(4,2),
-                MoveTestCase.pyramidAt(4,4).canReach(2,4),
+                // Triangle (orthogonal 2)
+                Arguments.of(4,6, true),
+                Arguments.of(6,4, true),
+                Arguments.of(4,2, true),
+                Arguments.of(2,4, true),
 
-                // -------------------------
-                // SQUARE moves (orthogonal 3)
-                // -------------------------
-                MoveTestCase.pyramidAt(4,4).canReach(4,7),
-                MoveTestCase.pyramidAt(4,4).canReach(7,4),
-                MoveTestCase.pyramidAt(4,4).canReach(4,1),
-                MoveTestCase.pyramidAt(4,4).canReach(1,4)
-        ).map(MoveTestCase::toArguments);
+                // Square (orthogonal 3)
+                Arguments.of(4,7, true),
+                Arguments.of(7,4, true),
+                Arguments.of(4,1, true),
+                Arguments.of(1,4, true)
+
+        );
     }
 
     @ParameterizedTest
     @MethodSource("fullPyramidMoves")
-    void full_pyramid_moves(
-            PieceType type,
-            Position from,
-            Position to,
-            List<Position> obstacles,
-            boolean expected
-    ) {
-        Player player = new Player(PlayerColor.BLACK);
-        SimplePiece square36 = new SimplePiece(PieceType.SQUARE, player, 36);
-        SimplePiece square25 = new SimplePiece(PieceType.SQUARE, player, 25);
-        SimplePiece triangle16 = new SimplePiece(PieceType.TRIANGLE, player, 16);
-        SimplePiece triangle9 = new SimplePiece(PieceType.TRIANGLE, player, 9);
-        SimplePiece circle4 = new SimplePiece(PieceType.CIRCLE, player, 4);
-        SimplePiece circle1 = new SimplePiece(PieceType.CIRCLE, player, 1);
+    void full_pyramid_moves(int toX, int toY, boolean expected) {
 
-        Pyramid pyramid = new Pyramid(type, player, List.of(square36, square25, triangle16, triangle9, circle4, circle1));
+        Player player = player();
 
-        assertMoveResult(pyramid, from, to, obstacles, expected, MoveNature.REGULAR);
+        Pyramid pyramid = PyramidTestCaseBuilder
+                .forPlayer(player)
+                .full()
+                .at(4, 4)
+                .build();
+
+        assertMoveResult(
+                pyramid,
+                new Position(4, 4),
+                new Position(toX, toY),
+                List.of(),
+                expected,
+                MoveNature.REGULAR
+        );
     }
 
     // =========================================================
@@ -77,246 +75,216 @@ class PyramidMoveTest extends MovementTestBase {
     static Stream<Arguments> pyramidWithoutTriangleMoves() {
         return Stream.of(
 
-                // circle still works
-                MoveTestCase.pyramidAt(4,4).canReach(3,3),
-                MoveTestCase.pyramidAt(4,4).canReach(5,5),
+                Arguments.of(3,3, true),
+                Arguments.of(5,5, true),
 
-                // triangle moves disabled
-                MoveTestCase.pyramidAt(4,4).cannotReach(4,6),
-                MoveTestCase.pyramidAt(4,4).cannotReach(6,4),
+                Arguments.of(4,6, false),
+                Arguments.of(6,4, false),
 
-                // square still works
-                MoveTestCase.pyramidAt(4,4).canReach(4,7),
-                MoveTestCase.pyramidAt(4,4).canReach(7,4)
-        ).map(MoveTestCase::toArguments);
+                Arguments.of(4,7, true),
+                Arguments.of(7,4, true)
+
+        );
     }
 
     @ParameterizedTest
     @MethodSource("pyramidWithoutTriangleMoves")
-    void pyramid_without_triangle(
-            PieceType type,
-            Position from,
-            Position to,
-            List<Position> obstacles,
-            boolean expected
-    ) {
-        Player player = new Player(PlayerColor.BLACK);
-        SimplePiece square36 = new SimplePiece(PieceType.SQUARE, player, 36);
-        SimplePiece square25 = new SimplePiece(PieceType.SQUARE, player, 25);
-        SimplePiece circle4 = new SimplePiece(PieceType.CIRCLE, player, 4);
-        SimplePiece circle1 = new SimplePiece(PieceType.CIRCLE, player, 1);
+    void pyramid_without_triangle(int toX, int toY, boolean expected) {
 
-        Pyramid pyramid = new Pyramid(type, player, List.of(square36, square25, circle4, circle1));
+        Player player = player();
 
-        assertMoveResult(pyramid, from, to, obstacles, expected, MoveNature.REGULAR);
+        Pyramid pyramid = PyramidTestCaseBuilder
+                .forPlayer(player)
+                .full()
+                .withoutTriangle()
+                .at(4, 4)
+                .build();
+
+        assertMoveResult(
+                pyramid,
+                new Position(4, 4),
+                new Position(toX, toY),
+                List.of(),
+                expected,
+                MoveNature.REGULAR
+        );
     }
 
     // =========================================================
-    // PYRAMID WITH ONLY 2 CIRCLES (VERY LIMITED)
+    // MINIMAL PYRAMID
     // =========================================================
     static Stream<Arguments> pyramidMinimalMoves() {
         return Stream.of(
 
-                // only circle-like moves remain
-                MoveTestCase.pyramidAt(4,4).canReach(3,3),
-                MoveTestCase.pyramidAt(4,4).canReach(5,5),
+                Arguments.of(3,3, true),
+                Arguments.of(5,5, true),
 
-                // everything else forbidden
-                MoveTestCase.pyramidAt(4,4).cannotReach(4,6),
-                MoveTestCase.pyramidAt(4,4).cannotReach(4,7)
-        ).map(MoveTestCase::toArguments);
+                Arguments.of(4,6, false),
+                Arguments.of(4,7, false)
+
+        );
     }
 
     @ParameterizedTest
     @MethodSource("pyramidMinimalMoves")
-    void pyramid_minimal(
-            PieceType type,
-            Position from,
-            Position to,
-            List<Position> obstacles,
-            boolean expected
-    ) {
-        Player player = new Player(PlayerColor.BLACK);
-        SimplePiece circle4 = new SimplePiece(PieceType.CIRCLE, player, 4);
-        SimplePiece circle1 = new SimplePiece(PieceType.CIRCLE, player, 1);
+    void pyramid_minimal(int toX, int toY, boolean expected) {
 
-        Pyramid pyramid = new Pyramid(type, player, List.of(circle4, circle1));
+        Player player = player();
 
-        assertMoveResult(pyramid, from, to, obstacles, expected, MoveNature.REGULAR);
+        Pyramid pyramid = PyramidTestCaseBuilder
+                .forPlayer(player)
+                .minimalCirclesOnly()
+                .at(4, 4)
+                .build();
+
+        assertMoveResult(
+                pyramid,
+                new Position(4, 4),
+                new Position(toX, toY),
+                List.of(),
+                expected,
+                MoveNature.REGULAR
+        );
     }
 
+    // =========================================================
+    // FULL PYRAMID - IRREGULAR MOVES
+    // =========================================================
     static Stream<Arguments> fullPyramidIrregularMoves() {
         return Stream.of(
 
-                // =========================================================
-                // TRIANGLE IRREGULAR MOVES
-                // =========================================================
-                MoveTestCase.pyramidAt(4,4).canReach(5,6),
-                MoveTestCase.pyramidAt(4,4).canReach(6,5),
-                MoveTestCase.pyramidAt(4,4).canReach(6,3),
-                MoveTestCase.pyramidAt(4,4).canReach(5,2),
-                MoveTestCase.pyramidAt(4,4).canReach(3,2),
-                MoveTestCase.pyramidAt(4,4).canReach(2,3),
-                MoveTestCase.pyramidAt(4,4).canReach(2,5),
-                MoveTestCase.pyramidAt(4,4).canReach(3,6),
+                Arguments.of(5,6, true),
+                Arguments.of(6,5, true),
+                Arguments.of(6,3, true),
+                Arguments.of(5,2, true),
+                Arguments.of(3,2, true),
+                Arguments.of(2,3, true),
+                Arguments.of(2,5, true),
+                Arguments.of(3,6, true),
 
-                // =========================================================
-                // SQUARE IRREGULAR MOVES
-                // =========================================================
-                MoveTestCase.pyramidAt(4,4).canReach(5,7),
-                MoveTestCase.pyramidAt(4,4).canReach(7,5),
-                MoveTestCase.pyramidAt(4,4).canReach(7,3),
-                MoveTestCase.pyramidAt(4,4).canReach(5,1),
-                MoveTestCase.pyramidAt(4,4).canReach(3,1),
-                MoveTestCase.pyramidAt(4,4).canReach(1,3),
-                MoveTestCase.pyramidAt(4,4).canReach(1,5),
-                MoveTestCase.pyramidAt(4,4).canReach(3,7)
-        ).map(MoveTestCase::toArguments);
+                Arguments.of(5,7, true),
+                Arguments.of(7,5, true),
+                Arguments.of(7,3, true),
+                Arguments.of(5,1, true),
+                Arguments.of(3,1, true),
+                Arguments.of(1,3, true),
+                Arguments.of(1,5, true),
+                Arguments.of(3,7, true)
+
+        );
     }
 
     @ParameterizedTest
     @MethodSource("fullPyramidIrregularMoves")
-    void full_pyramid_irregular_moves(
-            PieceType type,
-            Position from,
-            Position to,
-            List<Position> obstacles,
-            boolean expected
-    ) {
-        Player player = new Player(PlayerColor.BLACK);
+    void full_pyramid_irregular(int toX, int toY, boolean expected) {
 
-        Pyramid pyramid = new Pyramid(
-                type,
-                player,
-                List.of(
-                        new SimplePiece(PieceType.SQUARE, player, 36),
-                        new SimplePiece(PieceType.SQUARE, player, 25),
-                        new SimplePiece(PieceType.TRIANGLE, player, 16),
-                        new SimplePiece(PieceType.TRIANGLE, player, 9),
-                        new SimplePiece(PieceType.CIRCLE, player, 4),
-                        new SimplePiece(PieceType.CIRCLE, player, 1)
-                )
-        );
+        Player player = player();
+
+        Pyramid pyramid = PyramidTestCaseBuilder
+                .forPlayer(player)
+                .full()
+                .at(4, 4)
+                .build();
 
         assertMoveResult(
                 pyramid,
-                from,
-                to,
-                obstacles,
+                new Position(4, 4),
+                new Position(toX, toY),
+                List.of(),
                 expected,
                 MoveNature.IRREGULAR
         );
     }
 
+    // =========================================================
+    // PYRAMID WITHOUT TRIANGLE - IRREGULAR
+    // =========================================================
     static Stream<Arguments> pyramidWithoutTriangleIrregularMoves() {
         return Stream.of(
 
-                // square still active
-                MoveTestCase.pyramidAt(4,4).canReach(5,7),
-                MoveTestCase.pyramidAt(4,4).canReach(7,5),
+                Arguments.of(5,7, true),
+                Arguments.of(7,5, true),
 
-                // triangle disabled
-                MoveTestCase.pyramidAt(4,4).cannotReach(5,6),
-                MoveTestCase.pyramidAt(4,4).cannotReach(6,5)
+                Arguments.of(5,6, false),
+                Arguments.of(6,5, false)
 
-        ).map(MoveTestCase::toArguments);
+        );
     }
 
     @ParameterizedTest
     @MethodSource("pyramidWithoutTriangleIrregularMoves")
-    void pyramid_without_triangle_irregular(
-            PieceType type,
-            Position from,
-            Position to,
-            List<Position> obstacles,
-            boolean expected
-    ) {
-        Player player = new Player(PlayerColor.BLACK);
+    void pyramid_without_triangle_irregular(int toX, int toY, boolean expected) {
 
-        Pyramid pyramid = new Pyramid(
-                type,
-                player,
-                List.of(
-                        new SimplePiece(PieceType.SQUARE, player, 36),
-                        new SimplePiece(PieceType.SQUARE, player, 25),
-                        new SimplePiece(PieceType.CIRCLE, player, 4),
-                        new SimplePiece(PieceType.CIRCLE, player, 1)
-                )
-        );
+        Player player = player();
+
+        Pyramid pyramid = PyramidTestCaseBuilder
+                .forPlayer(player)
+                .full()
+                .withoutTriangle()
+                .at(4, 4)
+                .build();
 
         assertMoveResult(
                 pyramid,
-                from,
-                to,
-                obstacles,
+                new Position(4, 4),
+                new Position(toX, toY),
+                List.of(),
                 expected,
                 MoveNature.IRREGULAR
         );
     }
 
+    // =========================================================
+    // MINIMAL IRREGULAR
+    // =========================================================
     static Stream<Arguments> pyramidMinimalIrregularMoves() {
         return Stream.of(
 
-                // no triangle, no square irregular
-                MoveTestCase.pyramidAt(4,4).cannotReach(5,6),
-                MoveTestCase.pyramidAt(4,4).cannotReach(7,5),
+                Arguments.of(5,6, false),
+                Arguments.of(7,5, false),
+                Arguments.of(3,3, false)
 
-                // circle has no irregular moves
-                MoveTestCase.pyramidAt(4,4).cannotReach(3,3)
-
-        ).map(MoveTestCase::toArguments);
+        );
     }
 
     @ParameterizedTest
     @MethodSource("pyramidMinimalIrregularMoves")
-    void pyramid_minimal_irregular(
-            PieceType type,
-            Position from,
-            Position to,
-            List<Position> obstacles,
-            boolean expected
-    ) {
-        Player player = new Player(PlayerColor.BLACK);
+    void pyramid_minimal_irregular(int toX, int toY, boolean expected) {
 
-        Pyramid pyramid = new Pyramid(
-                type,
-                player,
-                List.of(
-                        new SimplePiece(PieceType.CIRCLE, player, 4),
-                        new SimplePiece(PieceType.CIRCLE, player, 1)
-                )
-        );
+        Player player = player();
+
+        Pyramid pyramid = PyramidTestCaseBuilder
+                .forPlayer(player)
+                .minimalCirclesOnly()
+                .at(4, 4)
+                .build();
 
         assertMoveResult(
                 pyramid,
-                from,
-                to,
-                obstacles,
+                new Position(4, 4),
+                new Position(toX, toY),
+                List.of(),
                 expected,
                 MoveNature.IRREGULAR
         );
     }
 
+    // =========================================================
+    // UNIQUENESS TEST
+    // =========================================================
     @Test
     void pyramid_moves_should_be_unique_and_match_union_of_generators() {
 
+        Player player = player();
+
+        Pyramid pyramid = PyramidTestCaseBuilder
+                .forPlayer(player)
+                .full()
+                .at(4, 4)
+                .build();
+
         Board board = new Board(8, 8);
-        Player player = new Player(PlayerColor.BLACK);
-
         Position from = new Position(4, 4);
-
-        Pyramid pyramid = new Pyramid(
-                PieceType.PYRAMID,
-                player,
-                List.of(
-                        new SimplePiece(PieceType.SQUARE, player, 36),
-                        new SimplePiece(PieceType.SQUARE, player, 25),
-                        new SimplePiece(PieceType.TRIANGLE, player, 16),
-                        new SimplePiece(PieceType.TRIANGLE, player, 9),
-                        new SimplePiece(PieceType.CIRCLE, player, 4),
-                        new SimplePiece(PieceType.CIRCLE, player, 1)
-                )
-        );
 
         board = board.addPiece(from, pyramid);
 
@@ -327,31 +295,14 @@ class PyramidMoveTest extends MovementTestBase {
 
         List<Move> engineMoves = engine.generateMoves(state, pap);
 
-        // =========================================
-        // ORACLE
-        // =========================================
         List<Move> expected = new ArrayList<>();
-
         expected.addAll(new RegularMoveGenerator().generate(state, pap));
         expected.addAll(new IrregularMoveGenerator().generate(state, pap));
 
-        // =========================================
-        // ASSERTIONS
-        // =========================================
-
-        // no duplicates
-        assertEquals(
-                engineMoves.size(),
-                Set.copyOf(engineMoves).size(),
-                "Duplicate moves detected"
-        );
-
-        // equality ignoring order
+        assertEquals(engineMoves.size(), Set.copyOf(engineMoves).size());
         assertEquals(Set.copyOf(expected), Set.copyOf(engineMoves));
-
-        // strict checks
-        assertEquals(expected.size(), engineMoves.size(), "wrong number of moves");
-        assertTrue(engineMoves.containsAll(expected), "missing moves");
-        assertTrue(expected.containsAll(engineMoves), "unexpected moves");
+        assertEquals(expected.size(), engineMoves.size());
+        assertTrue(engineMoves.containsAll(expected));
+        assertTrue(expected.containsAll(engineMoves));
     }
 }
