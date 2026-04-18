@@ -1,73 +1,107 @@
 package eu.nicosworld.rithmoEngine.movement;
 
-import eu.nicosworld.rithmoEngine.model.*;
-import eu.nicosworld.rithmoEngine.move.Move;
-import eu.nicosworld.rithmoEngine.move.MoveNature;
-import eu.nicosworld.rithmoEngine.move.MovementEngine;
+import eu.nicosworld.rithmoEngine.model.PieceType;
+import eu.nicosworld.rithmoEngine.model.Position;
+import org.junit.jupiter.params.provider.Arguments;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+/**
+ * DSL for describing simple piece movement test cases.
+ * Only intended for atomic pieces (Circle, Triangle, Square).
+ */
+public class SimpleMoveTestCase {
 
-abstract class MovementTestBase {
+    private final PieceType type;
+    private final Position from;
+    private Position to;
 
-    protected MovementEngine engine = new MovementEngine();
+    private final List<Position> obstacles = new ArrayList<>();
+    private boolean expected;
 
-    void assertMoveResult(PieceType type,
-                          Position from,
-                          Position to,
-                          List<Position> obstacles,
-                          boolean expected,
-                          MoveNature nature) {
-        Board board = new Board(8, 8);
-        Player player = new Player(PlayerColor.BLACK);
-
-        Piece pieceToMove = new SimplePiece(type, player, 3);
-
-        board = board.addPiece(from, pieceToMove);
-
-        for (Position p : obstacles) {
-            board = board.addPiece(p, new SimplePiece(PieceType.CIRCLE, player, 1));
-        }
-
-        GameState state = new GameState(board, player);
-
-        List<Move> moves = engine.generateMoves(state,
-                new PieceAtPosition(pieceToMove, from)
-        );
-
-        boolean contains = moves.contains(
-                new Move(from, to, nature)
-        );
-
-        assertEquals(expected, contains);
+    private SimpleMoveTestCase(PieceType type, int x, int y) {
+        this.type = type;
+        this.from = new Position(x, y);
     }
 
-    void assertMoveResult(Pyramid pyramid,
-                          Position from,
-                          Position to,
-                          List<Position> obstacles,
-                          boolean expected,
-                          MoveNature nature) {
-        Board board = new Board(8, 8);
-        Player player = new Player(PlayerColor.BLACK);
+    // =========================
+    // ENTRY POINTS
+    // =========================
 
-        board = board.addPiece(from, pyramid);
+    public static SimpleMoveTestCase triangleAt(int x, int y) {
+        return new SimpleMoveTestCase(PieceType.TRIANGLE, x, y);
+    }
 
-        for (Position p : obstacles) {
-            board = board.addPiece(p, new SimplePiece(PieceType.CIRCLE, player, 1));
-        }
+    public static SimpleMoveTestCase squareAt(int x, int y) {
+        return new SimpleMoveTestCase(PieceType.SQUARE, x, y);
+    }
 
-        GameState state = new GameState(board, player);
+    public static SimpleMoveTestCase circleAt(int x, int y) {
+        return new SimpleMoveTestCase(PieceType.CIRCLE, x, y);
+    }
 
-        List<Move> moves = engine.generateMoves(state,
-                new PieceAtPosition(pyramid, from)
-        );
+    // =========================
+    // DSL
+    // =========================
 
-        boolean contains = moves.contains(
-                new Move(from, to, nature)
-        );
+    public SimpleMoveTestCase to(int x, int y) {
+        this.to = new Position(x, y);
+        return this;
+    }
 
-        assertEquals(expected, contains);
+    public SimpleMoveTestCase canReach(int x, int y) {
+        return to(x, y).expect(true);
+    }
+
+    public SimpleMoveTestCase cannotReach(int x, int y) {
+        return to(x, y).expect(false);
+    }
+
+    public SimpleMoveTestCase becauseOccupied() {
+        this.obstacles.add(this.to);
+        return this;
+    }
+
+    public SimpleMoveTestCase becausePathBlockedAt(int x, int y) {
+        this.obstacles.add(new Position(x, y));
+        return this;
+    }
+
+    private SimpleMoveTestCase expect(boolean value) {
+        this.expected = value;
+        return this;
+    }
+
+    // =========================
+    // ACCESSORS
+    // =========================
+
+    public PieceType type() {
+        return type;
+    }
+
+    public Position from() {
+        return from;
+    }
+
+    public Position to() {
+        return to;
+    }
+
+    public List<Position> obstacles() {
+        return obstacles;
+    }
+
+    public boolean expected() {
+        return expected;
+    }
+
+    // =========================
+    // JUnit adapter
+    // =========================
+
+    public Arguments toArguments() {
+        return Arguments.of(type, from, to, obstacles, expected);
     }
 }

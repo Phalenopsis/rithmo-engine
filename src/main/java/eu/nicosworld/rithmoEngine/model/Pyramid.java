@@ -10,8 +10,14 @@ public class Pyramid extends Piece{
         this.components = components;
     }
 
+
     public Pyramid(Player player, List<SimplePiece> components) {
         super(PieceType.PYRAMID, player);
+        this.components = components;
+    }
+
+    public Pyramid(Player player, List<SimplePiece> components, PieceState state, String id) {
+        super(PieceType.PYRAMID, player, state, id);
         this.components = components;
     }
 
@@ -19,6 +25,11 @@ public class Pyramid extends Piece{
         return components.stream()
                 .mapToInt(SimplePiece::getValue)
                 .sum();
+    }
+
+    @Override
+    protected Piece copyWithState(PieceState state) {
+        return new Pyramid(getPlayer(), components, state, getId());
     }
 
     public boolean hasComponent(PieceType type) {

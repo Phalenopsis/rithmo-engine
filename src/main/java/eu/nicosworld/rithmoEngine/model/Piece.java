@@ -11,7 +11,7 @@ import java.util.UUID;
 public abstract class Piece {
     private final PieceType type;
     private final Player owner;
-    private PieceState state;
+    private final PieceState state;
     private final String id;
 
     /**
@@ -32,10 +32,14 @@ public abstract class Piece {
      * @param state  the current status of the piece
      */
     protected Piece(PieceType type, Player player, PieceState state) {
+        this(type, player, state, UUID.randomUUID().toString());
+    }
+
+    protected Piece(PieceType type, Player player, PieceState state, String id) {
         this.type = type;
         this.owner = player;
         this.state = state;
-        this.id = UUID.randomUUID().toString();
+        this.id = id;
     }
 
     /**
@@ -49,9 +53,11 @@ public abstract class Piece {
 
     public PieceState getState() { return state; }
 
-    public void setState(PieceState state) {
-        this.state = state;
+    public Piece withState(PieceState state) {
+        return copyWithState(state);
     }
+
+    protected abstract Piece copyWithState(PieceState state);
 
     public String getId() { return id; }
 
