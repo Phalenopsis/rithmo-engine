@@ -33,9 +33,12 @@ public class Board {
 
     public List<PieceAtPosition> getPiecesWithPositions() {
         List<PieceAtPosition> result = new ArrayList<>();
+        int width = grid.length;
 
-        for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 8; y++) {
+        for (int x = 0; x < width; x++) {
+            int height = grid[x].length;
+
+            for (int y = 0; y < height; y++) {
 
                 Piece p = grid[x][y];
 
@@ -48,8 +51,17 @@ public class Board {
         return result;
     }
 
+    public List<PieceAtPosition> getPiecesForPlayer(Player player) {
+        return getPiecesWithPositions().stream()
+                .filter(pap -> pap.piece().getPlayer().equals(player))
+                .toList();
+    }
+
     List<Piece> getAllPieces() {
-        return new ArrayList<>();
+        return getPiecesWithPositions()
+                .stream()
+                .map(PieceAtPosition::piece)
+                .toList();
     }
 
     public Position findPosition(Piece p) {
@@ -74,5 +86,37 @@ public class Board {
                 && position.getY() >= 0
                 && position.getX() < maxColumn
                 && position.getY() < maxLine;
+    }
+
+    public Board copy() {
+        Board newBoard = new Board(grid.length, grid[0].length);
+
+        for (int x = 0; x < grid.length; x++) {
+            for (int y = 0; y < grid[x].length; y++) {
+                newBoard.grid[x][y] = grid[x][y];
+            }
+        }
+
+        return newBoard;
+    }
+
+    public Board move(Position from, Position to) {
+        Board board = this.copy();
+        Piece piece = board.getPieceAt(from);
+        board.set(from, null);
+        board.set(to, piece);
+        return board;
+    }
+
+    public Board addPiece(Piece piece, Position position) {
+        Board board = this.copy();
+        board.set(position, piece);
+        return board;
+    }
+
+    public Board removePiece(Position position) {
+        Board board = this.copy();
+        board.set(position, null);
+        return board;
     }
 }
