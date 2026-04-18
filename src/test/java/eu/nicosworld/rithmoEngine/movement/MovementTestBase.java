@@ -24,10 +24,10 @@ abstract class MovementTestBase {
 
         Piece pieceToMove = new SimplePiece(type, player, 3);
 
-        board.set(from, pieceToMove);
+        board = board.addPiece(from, pieceToMove);
 
         for (Position p : obstacles) {
-            board.set(p, new SimplePiece(PieceType.CIRCLE, player, 1));
+            board = board.addPiece(p, new SimplePiece(PieceType.CIRCLE, player, 1));
         }
 
         GameState state = new GameState(board, player);
@@ -52,10 +52,10 @@ abstract class MovementTestBase {
         Board board = new Board(8, 8);
         Player player = new Player(PlayerColor.BLACK);
 
-        board.set(from, pyramid);
+        board = board.addPiece(from, pyramid);
 
         for (Position p : obstacles) {
-            board.set(p, new SimplePiece(PieceType.CIRCLE, player, 1));
+            board = board.addPiece(p, new SimplePiece(PieceType.CIRCLE, player, 1));
         }
 
         GameState state = new GameState(board, player);

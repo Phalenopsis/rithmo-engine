@@ -27,7 +27,7 @@ public class Board {
         return grid[x][y];
     }
 
-    public void set(Position pos, Piece piece) {
+    private void set(Position pos, Piece piece) {
         grid[pos.getX()][pos.getY()] = piece;
     }
 
@@ -112,6 +112,10 @@ public class Board {
         Board board = this.copy();
         board.set(position, piece);
         return board;
+    }
+
+    public Board addPiece(Position position, Piece piece) {
+        return this.addPiece(piece, position);
     }
 
     public Board removePiece(Position position) {

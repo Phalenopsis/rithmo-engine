@@ -318,7 +318,7 @@ class PyramidMoveTest extends MovementTestBase {
                 )
         );
 
-        board.set(from, pyramid);
+        board = board.addPiece(from, pyramid);
 
         GameState state = new GameState(board, player);
         PieceAtPosition pap = new PieceAtPosition(pyramid, from);

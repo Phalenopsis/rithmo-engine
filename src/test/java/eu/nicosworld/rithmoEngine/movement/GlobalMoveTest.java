@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GlobalMoveTest {
+public class GlobalMoveTest extends MovementTestBase {
     static Stream<Arguments> globalMovesDSL() {
         return Stream.of(
 
@@ -94,10 +94,10 @@ public class GlobalMoveTest {
         Player player = new Player(PlayerColor.BLACK);
 
         Piece piece = new SimplePiece(type, player, 3);
-        board.set(from, piece);
+        board = board.addPiece(from, piece);
 
         for (Position p : obstacles) {
-            board.set(p, new SimplePiece(PieceType.CIRCLE, player, 1));
+            board = board.addPiece(p, new SimplePiece(PieceType.CIRCLE, player, 1));
         }
 
         GameState state = new GameState(board, player);
@@ -123,7 +123,7 @@ public class GlobalMoveTest {
         Piece triangle = new SimplePiece(PieceType.TRIANGLE, player, 3);
         Position from = new Position(4,4);
 
-        board.set(from, triangle);
+        board = board.addPiece(from, triangle);
 
         GameState state = new GameState(board, player);
         MovementEngine engine = new MovementEngine();
@@ -147,7 +147,7 @@ public class GlobalMoveTest {
         Piece piece = new SimplePiece(PieceType.TRIANGLE, player, 3);
         Position from = new Position(4, 4);
 
-        board.set(from, piece);
+        board = board.addPiece(from, piece);
 
         GameState state = new GameState(board, player);
 

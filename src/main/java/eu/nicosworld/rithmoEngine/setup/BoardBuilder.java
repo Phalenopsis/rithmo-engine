@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class BoardBuilder {
 
-    private final Board board = new Board();
+    private Board board = new Board();
     private final Player white = new Player(PlayerColor.WHITE);
     private final Player black = new Player(PlayerColor.BLACK);
 
@@ -49,11 +49,11 @@ public class BoardBuilder {
             // Re-instantiate to ensure components are immutable/final if needed
             currentPiece = new Pyramid(currentPiece.getPlayer(), new ArrayList<>(currentComponents));
         }
-        board.set(new Position(x, y), currentPiece);
+        board = board.addPiece(currentPiece, new Position(x, y));
         return this;
     }
 
     public Board build() {
-        return board;
+        return board.copy();
     }
 }
