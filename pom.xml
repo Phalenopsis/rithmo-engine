@@ -10,10 +10,12 @@
     <artifactId>rithmo-engine</artifactId>
     <version>0.1.0</version>
 
-
     <name>Rithmo Engine</name>
     <description>Core Java engine for Rithmomachia</description>
 
+    <!-- ===================== -->
+    <!-- Properties -->
+    <!-- ===================== -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
@@ -22,9 +24,12 @@
         <junit.version>5.10.0</junit.version>
     </properties>
 
+    <!-- ===================== -->
+    <!-- Dependencies -->
+    <!-- ===================== -->
     <dependencies>
 
-        <!-- JUnit 5 (includes API + Engine + Params) -->
+        <!-- JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -34,6 +39,9 @@
 
     </dependencies>
 
+    <!-- ===================== -->
+    <!-- BUILD -->
+    <!-- ===================== -->
     <build>
         <plugins>
 
@@ -49,14 +57,47 @@
                 </configuration>
             </plugin>
 
-            <!-- Tests runner (JUnit 5 support) -->
+            <!-- Tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
             </plugin>
 
+            <!-- IMPORTANT: permet packaging propre pour lib -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.1</version>
+            </plugin>
+
+            <!-- (optionnel mais recommandé) sources jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
+
+    <!-- ===================== -->
+    <!-- DEPLOY (GitHub Packages) -->
+    <!-- ===================== -->
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/Phalenopsis/rithmo-engine</url>
+        </repository>
+    </distributionManagement>
 
 </project>
