@@ -123,4 +123,9 @@ public class Board {
         board.set(position, null);
         return board;
     }
+
+    public Board replacePiece(Position position, Pyramid updatedPyramid) {
+        Board newBoard = removePiece(position);
+        return newBoard.addPiece(position, updatedPyramid);
+    }
 }
