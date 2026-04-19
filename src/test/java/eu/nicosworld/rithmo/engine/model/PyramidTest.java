@@ -1,6 +1,6 @@
 package eu.nicosworld.rithmo.engine.model;
 
-import eu.nicosworld.rithmo.engine.testbuilder.PyramidTestCaseBuilder;
+import eu.nicosworld.rithmo.engine.setup.PyramidBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -11,9 +11,8 @@ class PyramidTest {
 
     @Test
     void getValue_fullBlackPyramid_shouldBe91() {
-        Pyramid pyramid = PyramidTestCaseBuilder
-                .forPlayer(new Player(PlayerColor.BLACK))
-                .full()
+        Pyramid pyramid = PyramidBuilder
+                .fullBlack()
                 .build();
 
         int value = pyramid.getValue();
@@ -22,8 +21,19 @@ class PyramidTest {
     }
 
     @Test
+    void getValue_fullWhitePyramid_shouldBe190() {
+        Pyramid pyramid = PyramidBuilder
+                .fullWhite()
+                .build();
+
+        int value = pyramid.getValue();
+
+        assertEquals(190, value);
+    }
+
+    @Test
     void getValue_35PointsPyramid_shouldReturn35() {
-        Pyramid pyramid = PyramidTestCaseBuilder
+        Pyramid pyramid = PyramidBuilder
                 .forPlayer(new Player(PlayerColor.WHITE))
                 .withSquare(20)
                 .withTriangle(10)
@@ -37,9 +47,9 @@ class PyramidTest {
 
     @Test
     void hasSquare_hasSquareType_shouldReturnTrue() {
-        Pyramid pyramid = PyramidTestCaseBuilder
+        Pyramid pyramid = PyramidBuilder
                 .forPlayer(new Player(PlayerColor.BLACK))
-                .full()
+                .fullBlack()
                 .build();
 
         boolean hasSquare = pyramid.hasSquare();
@@ -49,7 +59,7 @@ class PyramidTest {
 
     @Test
     void hasSquare_hasNotSquareType_shouldReturnFalse() {
-        Pyramid pyramid = PyramidTestCaseBuilder
+        Pyramid pyramid = PyramidBuilder
                 .forPlayer(new Player(PlayerColor.WHITE))
                 .withTriangle(10)
                 .withCircle(5)
@@ -62,7 +72,7 @@ class PyramidTest {
 
     @Test
     void removeComponent() {
-        Pyramid pyramid = PyramidTestCaseBuilder
+        Pyramid pyramid = PyramidBuilder
                 .forPlayer(new Player(PlayerColor.WHITE))
                 .withSquare(20)
                 .withTriangle(10)
