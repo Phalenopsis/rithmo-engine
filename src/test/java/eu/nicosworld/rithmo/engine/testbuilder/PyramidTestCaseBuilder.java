@@ -72,6 +72,23 @@ public class PyramidTestCaseBuilder {
         return this;
     }
 
+    public PyramidTestCaseBuilder withSquare(int value) {
+        return with(PieceType.SQUARE, value);
+    }
+
+    public PyramidTestCaseBuilder withTriangle(int value) {
+        return with(PieceType.TRIANGLE, value);
+    }
+
+    public PyramidTestCaseBuilder withCircle(int value) {
+        return with(PieceType.CIRCLE, value);
+    }
+
+    public PyramidTestCaseBuilder with(PieceType type, int value) {
+        components.add(new SimplePiece(type, player, value));
+        return this;
+    }
+
     // =========================================================
     // BUILD
     // =========================================================
