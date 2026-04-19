@@ -1,5 +1,6 @@
 package eu.nicosworld.rithmo.engine.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Pyramid extends Piece{
@@ -51,5 +52,11 @@ public class Pyramid extends Piece{
 
     public List<SimplePiece> getComponents() {
         return components;
+    }
+
+    public Pyramid removeComponent(SimplePiece capturedComponent) {
+        ArrayList<SimplePiece> newComponents = new ArrayList<>(components);
+        newComponents.remove(capturedComponent);
+        return new Pyramid(getPlayer(), newComponents, getState(), getId());
     }
 }
