@@ -1,4 +1,4 @@
-package eu.nicosworld.rithmo.engine.movement;
+package eu.nicosworld.rithmo.engine.testbuilder;
 
 import eu.nicosworld.rithmo.engine.model.*;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * Avoids duplication of Pyramid composition in test classes.
  * </p>
  */
-class PyramidTestCaseBuilder {
+public class PyramidTestCaseBuilder {
 
     private final Player player;
     private final List<SimplePiece> components = new ArrayList<>();
@@ -26,7 +26,7 @@ class PyramidTestCaseBuilder {
     // ENTRY
     // =========================================================
 
-    static PyramidTestCaseBuilder forPlayer(Player player) {
+    public static PyramidTestCaseBuilder forPlayer(Player player) {
         return new PyramidTestCaseBuilder(player);
     }
 
@@ -34,7 +34,7 @@ class PyramidTestCaseBuilder {
     // POSITION
     // =========================================================
 
-    PyramidTestCaseBuilder at(int x, int y) {
+    public PyramidTestCaseBuilder at(int x, int y) {
         this.position = new Position(x, y);
         return this;
     }
@@ -43,7 +43,7 @@ class PyramidTestCaseBuilder {
     // COMPONENTS
     // =========================================================
 
-    PyramidTestCaseBuilder full() {
+    public PyramidTestCaseBuilder full() {
         components.clear();
 
         components.add(new SimplePiece(PieceType.SQUARE, player, 36));
@@ -58,12 +58,12 @@ class PyramidTestCaseBuilder {
         return this;
     }
 
-    PyramidTestCaseBuilder withoutTriangle() {
+    public PyramidTestCaseBuilder withoutTriangle() {
         components.removeIf(p -> p.getType() == PieceType.TRIANGLE);
         return this;
     }
 
-    PyramidTestCaseBuilder minimalCirclesOnly() {
+    public PyramidTestCaseBuilder minimalCirclesOnly() {
         components.clear();
 
         components.add(new SimplePiece(PieceType.CIRCLE, player, 4));
@@ -76,7 +76,7 @@ class PyramidTestCaseBuilder {
     // BUILD
     // =========================================================
 
-    Pyramid build() {
+    public Pyramid build() {
         return new Pyramid(player, List.copyOf(components));
     }
 
