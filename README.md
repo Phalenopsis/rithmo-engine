@@ -1,44 +1,29 @@
-# Rithmomachie
+# Rithmomachie — Engine
 
 Rithmomachie is a historical mathematical strategy board game that combines numerical reasoning with tactical movement and capture mechanics. The objective is to achieve specific victory conditions, either by capturing pieces or by forming numerical progressions on the board.
 
-This repository serves both as:
-- 📘 a **structured documentation** of the game rules
-- ⚙️ an **implementation of a modular game engine**
+This repository contains the **rithmo-engine**, a standalone module responsible for implementing the core rules of the game.
 
 ---
 
-## 📦 Modules
+## ⚙️ rithmo-engine
 
-### ⚙️ rithmo-engine
+The engine is a **pure, rule-based system** that evaluates game situations without managing game flow.
 
-A standalone engine responsible for:
+It is responsible for:
 
-- Piece movement generation (regular & irregular)
-- Capture detection (multiple capture rules)
-- Victory evaluation (initial implementation)
+* Generating piece movements (regular and irregular)
+* Detecting capture opportunities (multiple capture rules)
+* Evaluating victory conditions (initial implementation)
 
-The engine is:
-- stateless
-- rule-driven
-- designed to be reused by higher-level orchestration layers
+### Key characteristics
+
+* **Stateless**: no internal game progression
+* **Deterministic**: same input → same output
+* **Modular**: each rule system (movement, capture, victory) is independent
+* **Reusable**: designed to be used by external orchestrators
 
 **Current version:** `0.3.0`
-
----
-
-## 📚 Documentation
-
-The rules have been carefully analyzed and structured before implementation, in order to handle the many historical variants of the game.
-
-- [Game Rules](doc/rules.fr.md) – Overview and references
-- [Board](doc/board.fr.md) – Board layout and setup
-- [Mathematical Concepts](doc/math.fr.md) – Arithmetic, geometric, harmonic progressions
-- [Piece Movement](doc/move.fr.md) – Movement rules
-- [Captures](doc/capture.fr.md) – Capture mechanics
-- [Victory Conditions](doc/victory.fr.md) – Victory rules
-
-> All documents are in French (`.fr.md`) and include diagrams and examples.
 
 ---
 
@@ -46,13 +31,44 @@ The rules have been carefully analyzed and structured before implementation, in 
 
 This project follows a strict separation of concerns:
 
-- **Engine** → computes what is possible (moves, captures, victory)
-- **Core (future)** → will orchestrate turns, player decisions, and game flow
+* **Engine** → computes what is possible
+* **Core (external)** → decides what is played and applies game rules over time
 
-The engine does **not**:
-- manage turns
-- apply moves
-- mutate game sessions
+The engine deliberately does **not**:
+
+* manage turns
+* apply moves
+* mutate game sessions
+* enforce game flow
+
+---
+
+## 🔗 Related Project
+
+* **rithmo-core** (separate repository)
+  Handles game orchestration:
+
+    * turn processing
+    * move application
+    * capture resolution
+    * game session management
+
+The core uses this engine as a dependency.
+
+---
+
+## 📚 Game Documentation
+
+Before implementing the engine, the rules of the game were carefully analyzed and structured to handle the many historical variations of Rithmomachie.
+
+* [Game Rules](doc/rules.fr.md) – Overview and references
+* [Board](doc/board.fr.md) – Board layout and setup
+* [Mathematical Concepts](doc/math.fr.md) – Arithmetic, geometric, harmonic progressions
+* [Piece Movement](doc/move.fr.md) – Movement rules
+* [Captures](doc/capture.fr.md) – Capture mechanics
+* [Victory Conditions](doc/victory.fr.md) – Victory rules
+
+> All documents are written in French (`.fr.md`) and include diagrams and examples.
 
 ---
 
@@ -60,16 +76,16 @@ The engine does **not**:
 
 The engine currently supports:
 
-- ✅ Movement system (regular + irregular)
-- ✅ Capture system (multiple rules)
-- ✅ Pyramid mechanics (including partial capture)
-- ✅ Victory engine (body condition – initial implementation)
+* ✅ Movement system (regular + irregular)
+* ✅ Capture system (multiple rules)
+* ✅ Pyramid mechanics (including partial capture)
+* ✅ Victory engine (body condition — initial implementation)
 
-Planned next steps:
+Planned improvements:
 
-- Turn orchestration (core module)
-- Move & capture application (state transitions)
-- Additional victory conditions (progressions, etc.)
+* Additional victory conditions (progressions, combinations)
+* Extended rule coverage
+* API stabilization
 
 ---
 
@@ -81,15 +97,15 @@ See [CHANGELOG.md](CHANGELOG.md) for version history and details.
 
 ## 🎯 Purpose
 
-This project is intended for:
+This project aims to:
 
-- studying Rithmomachie in a structured way
-- experimenting with rule formalization
-- building a reusable and testable game engine
+* Provide a **clear and structured model** of Rithmomachie rules
+* Offer a **testable and reusable game engine**
+* Serve as a foundation for building higher-level game systems
 
 ---
 
 ## ⚠️ Notes
 
-- The game has many historical variations; this project implements a **consistent, chosen ruleset**
-- Documentation precedes implementation by design
+* Rithmomachie has many historical variants; this project implements a **consistent and explicit ruleset**
+* The implementation is driven by prior rule formalization, not the other way around
