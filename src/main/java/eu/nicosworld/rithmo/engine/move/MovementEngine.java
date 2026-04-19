@@ -1,8 +1,11 @@
 package eu.nicosworld.rithmo.engine.move;
 
+import eu.nicosworld.rithmo.engine.model.Board;
 import eu.nicosworld.rithmo.engine.model.GameState;
 import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
+import eu.nicosworld.rithmo.engine.model.Player;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,11 +14,11 @@ import java.util.Set;
  * High-level movement engine responsible for aggregating all movement rules
  * and applying environment constraints (blocking pieces, occupied destinations).
  *
- * <p>The engine follows a multi-stage pipeline:
+ * <p>Pipeline:
  * <ol>
- * <li>Generate theoretical moves from {@link RegularMoveGenerator} and {@link IrregularMoveGenerator}</li>
- * <li>Filter regular moves using {@link FreePathMovementValidator} to ensure "sliding" paths are clear</li>
- * <li>Filter all moves to ensure the final destination tile is empty</li>
+ *     <li>Generate raw moves from rule generators</li>
+ *     <li>Filter regular moves (path + destination)</li>
+ *     <li>Filter irregular moves (destination only)</li>
  * </ol>
  * </p>
  */
@@ -26,47 +29,89 @@ public class MovementEngine {
     private final FreePathMovementValidator freePathMovementValidator;
 
     public MovementEngine() {
-        regular = new RegularMoveGenerator();
-        irregular = new IrregularMoveGenerator();
-        freePathMovementValidator = new FreePathMovementValidator();
+        this.regular = new RegularMoveGenerator();
+        this.irregular = new IrregularMoveGenerator();
+        this.freePathMovementValidator = new FreePathMovementValidator();
     }
+
+    // =========================================================
+    // PUBLIC API
+    // =========================================================
 
     /**
      * Generates all legal moves for a given piece.
-     * * <p>A move is considered legal if it matches the piece's pattern,
-     * its path is not obstructed (for regular moves), and its destination is empty.</p>
-     *
-     * @param state current game state
-     * @param pap piece with its position
-     * @return a filtered list of unique legal moves
      */
     public List<Move> generateMoves(GameState state, PieceAtPosition pap) {
 
-        Set<Move> moves = new HashSet<>();
+        Set<Move> result = new HashSet<>();
 
-        moves.addAll(getFreePathRegularMoves(state, regular.generate(state, pap)));
-        moves.addAll(irregular.generate(state, pap));
+        result.addAll(getFreePathRegularMoves(state, pap));
+        result.addAll(getIrregularMoves(state, pap));
 
-        return moves.stream().filter(m -> isFreeDestination(state, m)).toList();
-
+        return result.stream()
+                .filter(m -> isFreeDestination(state, m))
+                .toList();
     }
 
     /**
-     * Filters a list of moves to keep only those where the path between
-     * 'from' and 'to' contains no other pieces.
+     * Generates ONLY regular moves usable after a pre-capture action.
+     * (i.e. movement restricted to "clean sliding rules")
      */
-    private List<Move> getFreePathRegularMoves(GameState state, List<Move> moves) {
-        return moves.stream().filter(m -> isFreePathMove(state, m)).toList();
+    public List<Move> generateFreePathRegularMoves(GameState state, PieceAtPosition pap) {
+        return getFreePathRegularMoves(state, pap);
+    }
+
+    // =========================================================
+    // REGULAR MOVES
+    // =========================================================
+
+    private List<Move> getFreePathRegularMoves(GameState state, PieceAtPosition pap) {
+
+        List<Move> raw = regular.generate(state, pap);
+
+        return raw.stream()
+                .filter(m -> isFreePathMove(state, m))
+                .filter(m -> isFreeDestination(state, m))
+                .toList();
     }
 
     private boolean isFreePathMove(GameState state, Move move) {
         return !freePathMovementValidator.isBlocked(state, move.from(), move.to());
     }
 
-    /**
-     * Validates that the destination square of a move is currently unoccupied.
-     */
+    // =========================================================
+    // IRREGULAR MOVES
+    // =========================================================
+
+    private List<Move> getIrregularMoves(GameState state, PieceAtPosition pap) {
+        return irregular.generate(state, pap);
+    }
+
+    // =========================================================
+    // CONSTRAINTS
+    // =========================================================
+
     private boolean isFreeDestination(GameState state, Move move) {
         return state.board().isEmpty(move.to());
+    }
+
+    // =========================================================
+    // PLAYER LEVEL
+    // =========================================================
+
+    /**
+     * Generates all legal moves available for a given player.
+     */
+    public List<Move> getAllMoves(GameState state, Player player) {
+
+        List<Move> moves = new ArrayList<>();
+
+        Board board = state.board();
+
+        for (PieceAtPosition pap : board.getPiecesForPlayer(player)) {
+            moves.addAll(generateMoves(state, pap));
+        }
+
+        return moves;
     }
 }

@@ -2,6 +2,7 @@ package eu.nicosworld.rithmo.engine.movement;
 
 import eu.nicosworld.rithmo.engine.model.*;
 import eu.nicosworld.rithmo.engine.move.*;
+import eu.nicosworld.rithmo.engine.testbuilder.PyramidTestCaseBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
