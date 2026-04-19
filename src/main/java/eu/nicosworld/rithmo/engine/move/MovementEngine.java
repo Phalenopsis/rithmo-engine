@@ -1,8 +1,11 @@
 package eu.nicosworld.rithmo.engine.move;
 
+import eu.nicosworld.rithmo.engine.model.Board;
 import eu.nicosworld.rithmo.engine.model.GameState;
 import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
+import eu.nicosworld.rithmo.engine.model.Player;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,5 +71,30 @@ public class MovementEngine {
      */
     private boolean isFreeDestination(GameState state, Move move) {
         return state.board().isEmpty(move.to());
+    }
+
+    /**
+     * Generates all legal moves available for a given player in the current game state.
+     *
+     * <p>This method aggregates moves for every piece owned by the specified player by delegating
+     * to {@link #generateMoves(GameState, PieceAtPosition)} for each piece on the board.</p>
+     *
+     * <p>It does not mutate the game state and only evaluates the current board configuration.</p>
+     *
+     * @param state  the current immutable game state
+     * @param player the player for whom available moves are computed
+     * @return a list of all legal moves available to the player in the given state
+     */
+    public List<Move> getAllMoves(GameState state, Player player) {
+        List<Move> moves = new ArrayList<>();
+
+        Board board = state.board();
+        List<PieceAtPosition> piecesAtPosition = board.getPiecesForPlayer(player);
+
+        for(PieceAtPosition pieceAtPosition : piecesAtPosition) {
+            moves.addAll(generateMoves(state, pieceAtPosition));
+        }
+
+        return moves;
     }
 }
