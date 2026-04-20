@@ -102,13 +102,13 @@ public class MovementEngine {
     /**
      * Generates all legal moves available for a given player.
      */
-    public List<Move> getAllMoves(GameState state, Player player) {
+    public List<Move> getAllMoves(GameState state) {
 
         List<Move> moves = new ArrayList<>();
 
         Board board = state.board();
 
-        for (PieceAtPosition pap : board.getPiecesForPlayer(player)) {
+        for (PieceAtPosition pap : board.getPiecesForPlayer(state.currentPlayer())) {
             moves.addAll(generateMoves(state, pap));
         }
 
