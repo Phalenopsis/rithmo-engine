@@ -59,4 +59,8 @@ public class Pyramid extends Piece{
         newComponents.remove(capturedComponent);
         return new Pyramid(getPlayer(), newComponents, getState(), getId());
     }
+
+    public Pyramid removeComponent(Piece capturedComponent) {
+        return removeComponent((SimplePiece) capturedComponent);
+    }
 }
