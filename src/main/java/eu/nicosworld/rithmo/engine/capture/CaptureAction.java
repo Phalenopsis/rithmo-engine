@@ -3,6 +3,7 @@ package eu.nicosworld.rithmo.engine.capture;
 import eu.nicosworld.rithmo.engine.model.Piece;
 import eu.nicosworld.rithmo.engine.model.PlayerColor;
 import eu.nicosworld.rithmo.engine.model.Position;
+import eu.nicosworld.rithmo.engine.model.Pyramid;
 
 /**
  * Represents a legal capture opportunity identified by the capture engine.
@@ -66,5 +67,39 @@ public record CaptureAction(
 
     public boolean isPartialCapture() {
         return !isWholeCapture;
+    }
+
+    @Override
+    public String toString() {
+        return "Capture[" +
+                type +
+                " | " +
+                formatPiece(attacker) + "@" + attackerPosition +
+                " -> " +
+                formatCaptured() + "@" + targetPosition +
+                "]";
+    }
+
+    private String formatCaptured() {
+        if (isWholeCapture) {
+            return formatPiece(target);
+        }
+        return formatPiece(capturedPiece) + " (partial)";
+    }
+
+    private String formatPiece(Piece piece) {
+        String base = piece.getType().name();
+        int value = piece.getValue();
+
+        if (piece instanceof Pyramid pyramid) {
+            String components = pyramid.getComponents().stream()
+                    .map(p -> p.getType().name() + "(" + p.getValue() + ")")
+                    .reduce((a, b) -> a + "," + b)
+                    .orElse("");
+
+            return base + "(" + value + ")[" + components + "]";
+        }
+
+        return base + "(" + value + ")";
     }
 }
