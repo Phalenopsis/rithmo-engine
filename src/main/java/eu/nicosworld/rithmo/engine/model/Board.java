@@ -128,4 +128,49 @@ public class Board {
         Board newBoard = removePiece(position);
         return newBoard.addPiece(position, updatedPyramid);
     }
+
+    public String prettyPrint() {
+        StringBuilder sb = new StringBuilder();
+
+        int width = grid.length;
+        int height = grid[0].length;
+
+        // header X axis
+        sb.append("    ");
+        for (int x = 0; x < width; x++) {
+            sb.append(String.format("%-6d", x));
+        }
+        sb.append("\n");
+
+        for (int y = 0; y < height; y++) {
+            sb.append(String.format("%-3d", y));
+
+            for (int x = 0; x < width; x++) {
+                Position pos = new Position(x, y);
+                Piece piece = getPieceAt(pos);
+
+                if (piece == null) {
+                    sb.append(String.format("%-6s", "."));
+                } else {
+                    sb.append(String.format("%-6s", formatPiece(piece)));
+                }
+            }
+
+            sb.append("\n");
+        }
+
+        return sb.toString();
+    }
+
+    private String formatPiece(Piece piece) {
+        String color = piece.getPlayer().getColor().name().charAt(0) + "";
+        String type = switch (piece.getType()) {
+            case CIRCLE -> "C";
+            case TRIANGLE -> "T";
+            case SQUARE -> "S";
+            case PYRAMID -> "P";
+        };
+
+        return color + type + piece.getValue();
+    }
 }
