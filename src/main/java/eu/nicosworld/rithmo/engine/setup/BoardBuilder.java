@@ -22,8 +22,8 @@ public class BoardBuilder {
 
     private Board board = new Board();
 
-    private final Player white = new Player(PlayerColor.WHITE);
-    private final Player black = new Player(PlayerColor.BLACK);
+    private final Player white = Player.WHITE;
+    private final Player black = Player.WHITE;
 
     private Piece currentPiece;
     private List<SimplePiece> currentComponents = new ArrayList<>();

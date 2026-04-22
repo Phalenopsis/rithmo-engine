@@ -8,6 +8,9 @@ import java.util.Objects;
  * the pieces they control and their starting position on the board.</p>
  */
 public class Player {
+    public static final Player BLACK = new Player(PlayerColor.BLACK);
+    public static final Player WHITE = new Player(PlayerColor.WHITE);
+
     private final PlayerColor color;
 
     /**
@@ -15,7 +18,7 @@ public class Player {
      *
      * @param color the color identifying the player (e.g., BLACK or WHITE)
      */
-    public Player(PlayerColor color) {
+    private Player(PlayerColor color) {
         this.color = color;
     }
 
@@ -26,17 +29,14 @@ public class Player {
         return color;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Player player)) return false;
-        return color == player.color;
+    public Player opponent() {
+        return this == BLACK ? WHITE : BLACK;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(color);
+    public static Player of(PlayerColor color) {
+        return color == PlayerColor.BLACK ? BLACK : WHITE;
     }
+
 
     @Override
     public String toString() {

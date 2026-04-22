@@ -19,7 +19,7 @@ public class PyramidBuilder {
 
     public static PyramidBuilder fullBlack() {
 
-        return forPlayer(new Player(PlayerColor.BLACK))
+        return forPlayer(Player.BLACK)
                 .withSquare(36)
                 .withSquare(25)
                 .withTriangle(16)
@@ -30,15 +30,13 @@ public class PyramidBuilder {
 
     public static PyramidBuilder fullWhite() {
 
-        return forPlayer(new Player(PlayerColor.WHITE))
+        return forPlayer(Player.WHITE)
                 .withSquare(64)
                 .withSquare(49)
                 .withTriangle(36)
                 .withTriangle(25)
                 .withCircle(16);
     }
-
-
 
     public PyramidBuilder withSquare(int value) {
         return with(PieceType.SQUARE, value);
