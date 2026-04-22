@@ -47,8 +47,6 @@ abstract class MovementTestBase {
 
         Player player = piece.getPlayer();
 
-
-
         // Place tested piece
         builder.withPiece(piece)
                 .at(from.getX(), from.getY());
@@ -62,7 +60,7 @@ abstract class MovementTestBase {
 
         Board board = builder.build();
 
-        GameState state = new GameState(board, player);
+        GameState state = GameState.initial(board, player);
 
         List<Move> moves = engine.generateMoves(
                 state,

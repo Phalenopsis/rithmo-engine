@@ -4,6 +4,7 @@ import eu.nicosworld.rithmo.engine.model.*;
 import eu.nicosworld.rithmo.engine.move.IrregularMoveGenerator;
 import eu.nicosworld.rithmo.engine.move.Move;
 import eu.nicosworld.rithmo.engine.move.RegularMoveGenerator;
+import eu.nicosworld.rithmo.engine.setup.BoardBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -67,7 +68,7 @@ public class GlobalMoveTest extends MovementTestBase {
     @MethodSource("globalMovesDSL")
     void global_moves(SimpleMoveTestCase tc) {
 
-        Player player = new Player(PlayerColor.BLACK);
+        Player player = Player.BLACK;
 
         Piece piece = TestPieceFactory.create(tc.type(), player);
 
@@ -78,7 +79,7 @@ public class GlobalMoveTest extends MovementTestBase {
             board = board.addPiece(p, new SimplePiece(PieceType.CIRCLE, player, 1));
         }
 
-        GameState state = new GameState(board, player);
+        GameState state = GameState.initial(board, player);
 
         List<Move> moves = engine.generateMoves(
                 state,
@@ -96,8 +97,7 @@ public class GlobalMoveTest extends MovementTestBase {
     // =========================================================
     @Test
     void should_not_generate_duplicate_moves() {
-
-        Player player = new Player(PlayerColor.BLACK);
+        Player player = Player.BLACK;
         Piece triangle = new SimplePiece(PieceType.TRIANGLE, player, 3);
 
         Board board = new Board(8, 8);
@@ -105,7 +105,7 @@ public class GlobalMoveTest extends MovementTestBase {
 
         board = board.addPiece(from, triangle);
 
-        GameState state = new GameState(board, player);
+        GameState state = GameState.initial(board, player);
 
         List<Move> moves = engine.generateMoves(
                 state,
@@ -121,7 +121,7 @@ public class GlobalMoveTest extends MovementTestBase {
     @Test
     void global_moves_should_equal_union_of_generators() {
 
-        Player player = new Player(PlayerColor.BLACK);
+        Player player = Player.BLACK;
 
         Piece piece = new SimplePiece(PieceType.TRIANGLE, player, 3);
         Position from = new Position(4,4);
@@ -129,7 +129,7 @@ public class GlobalMoveTest extends MovementTestBase {
         Board board = new Board(8, 8);
         board = board.addPiece(from, piece);
 
-        GameState state = new GameState(board, player);
+        GameState state = GameState.initial(board, player);
 
         PieceAtPosition pap = new PieceAtPosition(piece, from);
 

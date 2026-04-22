@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PyramidMoveTest extends MovementTestBase {
 
     private Player player() {
-        return new Player(PlayerColor.BLACK);
+        return Player.BLACK;
     }
 
     // =========================================================
@@ -289,7 +289,7 @@ class PyramidMoveTest extends MovementTestBase {
 
         board = board.addPiece(from, pyramid);
 
-        GameState state = new GameState(board, player);
+        GameState state = GameState.initial(board, player);
         PieceAtPosition pap = new PieceAtPosition(pyramid, from);
 
         MovementEngine engine = new MovementEngine();

@@ -34,7 +34,7 @@ class PyramidTest {
     @Test
     void getValue_35PointsPyramid_shouldReturn35() {
         Pyramid pyramid = PyramidBuilder
-                .forPlayer(new Player(PlayerColor.WHITE))
+                .forPlayer(Player.WHITE)
                 .withSquare(20)
                 .withTriangle(10)
                 .withCircle(5)
@@ -48,7 +48,6 @@ class PyramidTest {
     @Test
     void hasSquare_hasSquareType_shouldReturnTrue() {
         Pyramid pyramid = PyramidBuilder
-                .forPlayer(new Player(PlayerColor.BLACK))
                 .fullBlack()
                 .build();
 
@@ -60,7 +59,7 @@ class PyramidTest {
     @Test
     void hasSquare_hasNotSquareType_shouldReturnFalse() {
         Pyramid pyramid = PyramidBuilder
-                .forPlayer(new Player(PlayerColor.WHITE))
+                .forPlayer(Player.WHITE)
                 .withTriangle(10)
                 .withCircle(5)
                 .build();
@@ -73,7 +72,7 @@ class PyramidTest {
     @Test
     void removeComponent() {
         Pyramid pyramid = PyramidBuilder
-                .forPlayer(new Player(PlayerColor.WHITE))
+                .forPlayer(Player.WHITE)
                 .withSquare(20)
                 .withTriangle(10)
                 .withCircle(5)

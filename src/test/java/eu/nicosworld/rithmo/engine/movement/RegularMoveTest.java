@@ -65,7 +65,7 @@ class RegularMoveTest extends MovementTestBase {
     @MethodSource("regularMovesDSL")
     void irregular_moves(SimpleMoveTestCase testCase) {
 
-        Player player = new Player(PlayerColor.BLACK);
+        Player player = Player.BLACK;
 
         Piece piece = TestPieceFactory.create(testCase.type(), player);
 
