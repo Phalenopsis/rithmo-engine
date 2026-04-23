@@ -6,6 +6,20 @@ The format is based on Keep a Changelog
 and this project adheres to Semantic Versioning.
 
 ---
+## [0.4.0] - 2026-04-23
+### Added
+- Pyramid : add a removeComponent method with Piece as parameter because CaptureAction contains a Piece as capturedPiece, even if Pyramid component is a SimplePiece
+- add toString in CaptureAction
+- debug : add a prettyPrint to Board
+- GameState now have player assets (capturedPieces and reserve)
+- doc add javadoc for Player and Gamestate
+- feat : rework Victory Engine and implement GoodsVictoryRule and BodyVictoryRule
+### Changed
+- MovementEngine : change getAllMoves signature, with only a GameState as parameter. Gamestate already posses active player. No needed as 2nd parameter
+- refactor : Player have now only 2 instances
+### Test
+- refactor: improve tests with GameState and Player changes
+
 
 ## [0.3.0] - 2026-04-19
 
