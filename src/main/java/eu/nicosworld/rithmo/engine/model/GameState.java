@@ -93,6 +93,15 @@ public record GameState(
         return assets.get(color);
     }
 
+    /**
+     * Returns the assets associated with the active player.
+     *
+     * @return the corresponding assets
+     */
+    public PlayerAssets assetsOfCurrentPlayer() {
+        return assetsOf(currentPlayer);
+    }
+
     // =========================
     // IMMUTABLE TRANSFORMATIONS
     // =========================

@@ -1,29 +1,18 @@
 package eu.nicosworld.rithmo.engine.victory;
 
-import eu.nicosworld.rithmo.engine.model.PlayerColor;
+import eu.nicosworld.rithmo.engine.model.GameState;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.List;
 
 public class VictoryEngine {
 
-    /**
-     * Checks if a player has reached the body victory condition.
-     *
-     * @return winning player if any, otherwise empty
-     */
-    public Optional<PlayerColor> checkWinner(
-            VictoryState state,
-            BodyVictoryCondition condition
-    ) {
+    private final List<VictoryRule> rules;
 
-        for (Map.Entry<PlayerColor, Integer> entry : state.captures().entrySet()) {
+    public VictoryEngine(List<VictoryRule> rules) {
+        this.rules = rules;
+    }
 
-            if (entry.getValue() >= condition.targetCaptures()) {
-                return Optional.of(entry.getKey());
-            }
-        }
-
-        return Optional.empty();
+    public boolean check(GameState state) {
+        return rules.stream().anyMatch(r -> r.isSatisfied(state));
     }
 }
