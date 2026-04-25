@@ -146,7 +146,9 @@ public class BoardBuilder {
      * @return this builder instance
      */
     public BoardBuilder at(int x, int y) {
-
+        if (currentPiece == null) {
+            throw new IllegalStateException("No piece defined! Call piece() or a convenience method before at().");
+        }
         // Finalize composite structure if needed
         if (currentPiece instanceof Pyramid) {
             currentPiece = new Pyramid(
@@ -156,7 +158,21 @@ public class BoardBuilder {
         }
 
         board = board.addPiece(currentPiece, new Position(x, y));
+
+        currentPiece = null;
         return this;
+    }
+
+    /**
+     * Places the currently built piece at a given position.
+     *
+     * <p>If the piece is a pyramid, its components are finalized before placement.</p>
+     *
+     * @param position position
+     * @return this builder instance
+     */
+    public BoardBuilder at(Position position) {
+        return at(position.getX(), position.getY());
     }
 
     // =========================
