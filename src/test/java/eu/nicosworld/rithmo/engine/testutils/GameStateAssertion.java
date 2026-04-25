@@ -67,4 +67,10 @@ public class GameStateAssertion {
                 .isNotEqualTo(piece);
         return this;
     }
+
+    public GameStateAssertion isEmpty(Position position) {
+        assertThat(gameState.board().getPieceAt(position))
+                .isNull();
+        return this;
+    }
 }
