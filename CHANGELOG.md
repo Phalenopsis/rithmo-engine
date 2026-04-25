@@ -6,6 +6,10 @@ The format is based on Keep a Changelog
 and this project adheres to Semantic Versioning.
 
 ---
+## [0.4.3] - 2026-04-25
+### Added
+- **Fluent Assertions**: add a isEmpty(Position) method in GameStateAssertion
+
 ## [0.4.2] - 2026-04-25
 ### Fixed
 - Made `RithmoDebug` methods static for easier access without instantiation.
