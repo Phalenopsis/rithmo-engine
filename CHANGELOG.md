@@ -6,6 +6,11 @@ The format is based on Keep a Changelog
 and this project adheres to Semantic Versioning.
 
 ---
+## [0.4.2] - 2026-04-25
+### Fixed
+- Made `RithmoDebug` methods static for easier access without instantiation.
+
+
 ## [0.4.1] - 2026-04-25
 ### Added
 - **Test Artifact**: Generation of rithmo-engine-tests.jar now included in the deploy process.
