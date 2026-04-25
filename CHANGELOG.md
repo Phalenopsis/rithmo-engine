@@ -6,6 +6,17 @@ The format is based on Keep a Changelog
 and this project adheres to Semantic Versioning.
 
 ---
+## [0.4.1] - 2026-04-25
+### Added
+- **Test Artifact**: Generation of rithmo-engine-tests.jar now included in the deploy process.
+- **Fluent Assertions**: Added GameStateAssertion for readable, domain-specific test verification.
+- **Test Utilities**: Package eu.nicosworld.rithmo.engine.testutils to share helpers across repositories.
+### Changed
+
+### Test
+
+
+
 ## [0.4.0] - 2026-04-23
 ### Added
 - Pyramid : add a removeComponent method with Piece as parameter because CaptureAction contains a Piece as capturedPiece, even if Pyramid component is a SimplePiece

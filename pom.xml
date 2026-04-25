@@ -8,7 +8,7 @@
 
     <groupId>eu.nicosworld</groupId>
     <artifactId>rithmo-engine</artifactId>
-    <version>0.4.0</version>
+    <version>0.4.1</version>
 
     <name>Rithmo Engine</name>
     <description>Core Java engine for Rithmomachia</description>
@@ -22,6 +22,7 @@
         <maven.compiler.target>21</maven.compiler.target>
 
         <junit.version>5.10.0</junit.version>
+        <assertj.version>3.27.7</assertj.version>
     </properties>
 
     <!-- ===================== -->
@@ -34,6 +35,13 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -82,6 +90,23 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>eu/nicosworld/rithmo/engine/testutils/**</include>
+                            </includes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
