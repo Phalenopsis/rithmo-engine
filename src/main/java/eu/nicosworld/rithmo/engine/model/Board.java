@@ -15,6 +15,14 @@ public class Board {
         this(16, 8);
     }
 
+    public int getWidth() {
+        return grid.length;
+    }
+
+    public int getHeight() {
+        return grid[0].length;
+    }
+
     public boolean isEmpty(Position p) {
         return Objects.isNull(grid[p.getX()][p.getY()]);
     }
