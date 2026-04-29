@@ -132,6 +132,28 @@ public class BoardBuilder {
         return piece(PieceType.SQUARE, value, PlayerColor.WHITE);
     }
 
+    public BoardBuilder fullWhitePyramidAt(Position position) {
+        currentPiece = PyramidBuilder.fullWhite().build();
+
+        board = board.addPiece(currentPiece, position);
+
+        currentPiece = null;
+        currentComponents = new ArrayList<>();
+
+        return this;
+    }
+
+    public BoardBuilder fullBlackPyramidAt(Position position) {
+        currentPiece = PyramidBuilder.fullBlack().build();
+
+        board = board.addPiece(currentPiece, position);
+
+        currentPiece = null;
+        currentComponents = new ArrayList<>();
+
+        return this;
+    }
+
     // =========================
     // PLACEMENT
     // =========================
