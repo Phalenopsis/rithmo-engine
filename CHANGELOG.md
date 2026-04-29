@@ -2,13 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on Keep a Changelog
-and this project adheres to Semantic Versioning.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+
+## [0.4.4] - 2026-04-29
+
+### Added
+- **Board**: Added `getWidth()` and `getHeight()` methods to facilitate board traversal and boundary checks.
+- **BoardBuilder**: Added `at(Position)` method for consistency with the domain model.
+- **BoardBuilder**: Added `fullWhitePyramidAt(Position)` and `fullBlackPyramidAt(Position)` to quickly setup historical Rithmomachia configurations.
+- **Documentation**: Added comprehensive Javadoc to `BoardBuilder`, specifically detailing the assembly of composite pieces (Pyramids).
+
+### Changed
+- **Board**: Improved spatial validation by centralizing boundary logic.
+
+### Fixed
+- **Pyramid Immutability**: The `BoardBuilder` now creates a defensive copy of the component list when finalizing a `Pyramid`. This ensures that modifying the builder's internal state after placement does not affect existing pieces on the board.
+
+### Test
+- **Board**: Added unit tests for `getWidth()`, `getHeight()`, and `isInside(Position)`.
+- **BoardBuilder**: Implemented a complete test suite (`BoardBuilderTest`) covering simple piece placement, custom pyramid assembly, and historical pyramid presets.
+- **Pyramid**: Added regression tests to verify component immutability after placement via the builder.
+
 ## [0.4.3] - 2026-04-25
 ### Added
 - **Fluent Assertions**: add a isEmpty(Position) method in GameStateAssertion
+
 
 ## [0.4.2] - 2026-04-25
 ### Fixed
