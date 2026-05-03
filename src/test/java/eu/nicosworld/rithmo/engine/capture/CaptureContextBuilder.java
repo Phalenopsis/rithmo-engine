@@ -1,5 +1,6 @@
 package eu.nicosworld.rithmo.engine.capture;
 
+import eu.nicosworld.rithmo.engine.capture.model.CaptureContext;
 import eu.nicosworld.rithmo.engine.model.*;
 import eu.nicosworld.rithmo.engine.setup.BoardBuilder;
 import eu.nicosworld.rithmo.engine.setup.GameStateFactory;

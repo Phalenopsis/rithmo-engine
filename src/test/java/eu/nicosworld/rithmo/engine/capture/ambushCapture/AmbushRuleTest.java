@@ -26,6 +26,22 @@ public class AmbushRuleTest extends AbstractCaptureTest {
         launchTestCase(testCase);
     }
 
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("oneTestCase")
+    void should_validate_ambush_logic_oneTestCaseForDebug(CaptureTestCase testCase) {
+        launchTestCase(testCase);
+    }
+
+    static Stream<Arguments> oneTestCase() {
+        return Stream.of(CaptureTestCase.blackCircleAt(5, 3, 3)
+                .againstWhite(PieceType.CIRCLE, 10, 4, 4)
+                .withBlackAlly(PieceType.CIRCLE, 5, 3, 5)
+                .withBlackAlly(PieceType.CIRCLE, 5, 5, 5)
+                .expectAmbush(PieceType.CIRCLE, 10)
+                .expectAmbush(PieceType.CIRCLE, 10)
+                .build());
+    }
+
     static Stream<Arguments> ambushTestData() {
         return Stream.of(
 
@@ -104,6 +120,7 @@ public class AmbushRuleTest extends AbstractCaptureTest {
                         .againstWhite(PieceType.CIRCLE, 10, 4, 4)
                         .withBlackAlly(PieceType.CIRCLE, 5, 3, 5)
                         .withBlackAlly(PieceType.CIRCLE, 5, 5, 5)
+                        .expectAmbush(PieceType.CIRCLE, 10)
                         .expectAmbush(PieceType.CIRCLE, 10)
                         .build(),
 

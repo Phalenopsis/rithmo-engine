@@ -143,6 +143,10 @@ public class BoardBuilder {
         return this;
     }
 
+    public BoardBuilder fullWhitePyramidAt(int x, int y) {
+        return fullWhitePyramidAt(new Position(x, y));
+    }
+
     public BoardBuilder fullBlackPyramidAt(Position position) {
         currentPiece = PyramidBuilder.fullBlack().build();
 
@@ -152,6 +156,10 @@ public class BoardBuilder {
         currentComponents = new ArrayList<>();
 
         return this;
+    }
+
+    public BoardBuilder fullBlackPyramidAt(int x, int y) {
+        return  fullBlackPyramidAt(new Position(x, y));
     }
 
     // =========================

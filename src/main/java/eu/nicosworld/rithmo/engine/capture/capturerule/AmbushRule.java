@@ -1,7 +1,7 @@
 package eu.nicosworld.rithmo.engine.capture.capturerule;
 
-import eu.nicosworld.rithmo.engine.capture.*;
-import eu.nicosworld.rithmo.engine.model.GameState;
+import eu.nicosworld.rithmo.engine.capture.AbstractCaptureRule;
+import eu.nicosworld.rithmo.engine.capture.model.*;
 import eu.nicosworld.rithmo.engine.model.Piece;
 import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
 import eu.nicosworld.rithmo.engine.model.Position;
@@ -11,7 +11,15 @@ import eu.nicosworld.rithmo.engine.move.RegularMoveGenerator;
 
 import java.util.*;
 
-
+/**
+ * Implements the Ambush (Embûche) capture rule.
+ * <p>
+ * An ambush occurs when an attacking piece and an allied piece coordinate
+ * to capture an enemy piece. The arithmetic combination (sum, difference,
+ * product, or division) of the attacker's value and the ally's value
+ * must equal the target's value.
+ * </p>
+ */
 public class AmbushRule extends AbstractCaptureRule {
 
     public AmbushRule(RegularMoveGenerator generator,
@@ -19,85 +27,110 @@ public class AmbushRule extends AbstractCaptureRule {
         super(generator, pathValidator);
     }
 
+    /**
+     * Scans the board for all possible ambush captures for the active piece.
+     *
+     * @param context The current game state and the actor piece.
+     * @return A list of {@link CaptureAction} detailing every valid ambush found.
+     */
     @Override
-    public List<CaptureAction> findCaptures(CaptureContext ctx) {
-
+    public List<CaptureAction> findCaptures(CaptureContext context) {
         Set<CaptureAction> captures = new HashSet<>();
 
-        PieceAtPosition actor = ctx.actor();
-        Piece attacker = actor.piece();
+        PieceAtPosition actor = context.actor();
+        Piece attackerPiece = actor.piece();
+        Position attackerPosition = actor.position();
 
-        // 1. All reachable positions (movement constraint anchor)
-        List<Move> moves = regularMoveGenerator.generate(ctx.state(), actor);
+        // 1. Generate all potential destination squares for the attacker
+        List<Move> potentialMoves = regularMoveGenerator.generate(context.state(), actor);
 
-        for (Move move : moves) {
+        for (Move move : potentialMoves) {
+            Position targetPosition = move.to();
+            Piece targetPiece = context.board().getPieceAt(targetPosition);
 
-            Position targetPos = move.to();
-            Piece target = ctx.board().getPieceAt(targetPos);
-
-            if (target == null || !isEnemy(attacker, target)) {
+            // 2. Filter: Target must be an enemy piece
+            if (targetPiece == null || !isEnemy(attackerPiece, targetPiece)) {
                 continue;
             }
 
-            // 2. Path constraint
-            if (pathValidator.isBlocked(ctx.state(), actor.position(), targetPos)) {
+            // 3. Filter: Movement path to the target must be clear
+            if (pathValidator.isBlocked(context.state(), attackerPosition, targetPosition)) {
                 continue;
             }
-            List<CaptureTarget> attackerOptions = extractTargets(attacker);
 
-            List<CaptureTarget> targetOptions = extractTargets(target);
+            // 4. Extract arithmetic options (handling pyramids components vs total value)
+            List<CaptureTarget> attackerOptions = extractTargets(attackerPiece);
+            List<CaptureTarget> targetOptions = extractTargets(targetPiece);
 
-            List<CaptureTarget> allyOptions = findAllyVs(ctx.state(), attacker, target, targetPos);
+            // 5. Look for allies around the target position to assist in the ambush
+            Map<Position, Piece> alliesAroundTarget = regularMoveGenerator.getAllPieceAround(
+                    context.state(),
+                    targetPosition,
+                    isEnemyOf(targetPiece).and(isNot(attackerPiece))
+            );
 
-            // 5. Try all target values
-            for(CaptureTarget attackerOption : attackerOptions) {
-                for (CaptureTarget t : targetOptions) {
-                    for(CaptureTarget a : allyOptions) {
+            for (Map.Entry<Position, Piece> entry : alliesAroundTarget.entrySet()) {
+                Position allyPosition = entry.getKey();
+                Piece allyPiece = entry.getValue();
 
-                        if(matches(attackerOption.value(), a.value(), t.value()))
-                            captures.add(new CaptureAction(
-                                    attacker,
-                                    actor.position(),
-                                    target,
-                                    targetPos,
-                                    t.piece(),
-                                    t.isWholePiece(),
-                                    CaptureType.AMBUSH
-                            ));
+                // Path between ally and target must also be clear
+                if (pathValidator.isBlocked(context.state(), allyPosition, targetPosition)) {
+                    continue;
+                }
+
+                List<CaptureTarget> allyOptions = extractTargets(allyPiece);
+
+                // 6. Evaluate all arithmetic combinations between Attacker, Ally, and Target
+                for (CaptureTarget attackerOption : attackerOptions) {
+                    for (CaptureTarget targetOption : targetOptions) {
+                        for (CaptureTarget allyOption : allyOptions) {
+
+                            if (matchesAmbush(attackerOption.value(), allyOption.value(), targetOption.value())) {
+
+                                // Build context for the actor, the target, and the specific supporter
+                                InvolvedPiece involvedActor = new InvolvedPiece(
+                                        attackerPiece,
+                                        attackerPosition,
+                                        attackerOption.piece()
+                                );
+
+                                InvolvedPiece involvedTarget = new InvolvedPiece(
+                                        targetPiece,
+                                        targetPosition,
+                                        targetOption.piece()
+                                );
+
+                                InvolvedPiece involvedAlly = new InvolvedPiece(
+                                        allyPiece,
+                                        allyPosition,
+                                        allyOption.piece()
+                                );
+
+                                // Use the factory method to encapsulate capture creation
+                                captures.add(CaptureAction.ambush(
+                                        involvedActor,
+                                        involvedTarget,
+                                        involvedAlly
+                                ));
+                            }
+                        }
                     }
                 }
             }
-
         }
 
         return new ArrayList<>(captures);
     }
 
-
-    private List<CaptureTarget> findAllyVs(GameState state, Piece attacker, Piece target, Position targetPos) {
-        Map<Position, Piece> allies = regularMoveGenerator.getAllPieceAround(state, targetPos, isEnemyOf(target).and(isNot(attacker)));
-
-        List<CaptureTarget> allyOptions = new ArrayList<>();
-        for (Map.Entry<Position, Piece> entry : allies.entrySet()) {
-            Position pos = entry.getKey();
-            Piece ally = entry.getValue();
-            if(!pathValidator.isBlocked(state, pos, targetPos)) {
-                allyOptions.addAll(extractTargets(ally));
-            }
-        }
-
-        return allyOptions;
-    }
-
     /**
-     * Arithmetic validation.
+     * Validates if the combination of two values matches a target value
+     * using basic Rithmomachie arithmetic operations.
      */
-    private boolean matches(int a, int b, int target) {
-
-        return a + b == target
-                || Math.abs(a - b) == target
-                || a * b == target
-                || (b != 0 && a % b == 0 && a / b == target)
-                || (a != 0 && b % a == 0 && b / a == target);
+    private boolean matchesAmbush(int attackerValue, int allyValue, int targetValue) {
+        return attackerValue + allyValue == targetValue
+                || Math.abs(attackerValue - allyValue) == targetValue
+                || attackerValue * allyValue == targetValue
+                || (allyValue != 0 && attackerValue % allyValue == 0 && attackerValue / allyValue == targetValue)
+                || (attackerValue != 0 && allyValue % attackerValue == 0 && allyValue / attackerValue == targetValue);
     }
 }

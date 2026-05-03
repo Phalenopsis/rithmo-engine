@@ -181,5 +181,6 @@ Quand un pion ne peut plus se déplacer par mouvement régulier, il peut être p
 * Il peut réintroduire une pièce capturée quand il le veut dans la colonne 1 pour les noirs et dans la colonne 16 pour les blancs.
 * Cette pose peut donner lieu à une prise (mais ce n'est pas obligatoire).
 * L'action d'introduire un pion compte pour un coup, qu'il y a prise ou non.
+* Les pyramides et leurs composants sont les seules pièces à ne pas être réversibles. Elles ne peuvent donc pas être remises en jeu.
 ---
 

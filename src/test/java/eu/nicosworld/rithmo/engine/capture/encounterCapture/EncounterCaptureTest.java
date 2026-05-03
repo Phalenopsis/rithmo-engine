@@ -27,6 +27,21 @@ public class EncounterCaptureTest extends AbstractCaptureTest {
         launchTestCase(testCase);
     }
 
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("oneTestCase")
+    void should_validate_encounter_logic_OneTestCaseForDebug(CaptureTestCase testCase) {
+        launchTestCase(testCase);
+    }
+
+    static Stream<Arguments> oneTestCase() {
+        return Stream.of(
+                CaptureTestCase.blackCircleAt(4, 1, 1)
+                        .againstWhite(PieceType.CIRCLE, 4, 2, 2)
+                        .expectEncounter(PieceType.CIRCLE, 4)
+                        .build()
+        );
+    }
+
     static Stream<Arguments> encounterTestData() {
         return Stream.of(
                 // =============================
@@ -152,16 +167,6 @@ public class EncounterCaptureTest extends AbstractCaptureTest {
                                 new CaptureTestCase.ComponentData(PieceType.CIRCLE, 4),
                                 new CaptureTestCase.ComponentData(PieceType.CIRCLE, 6))
                         .expectEncounter(PieceType.PYRAMID, 10)
-                        .build(),
-
-                // Multi-match within a Pyramid
-                CaptureTestCase.blackPyramidAt(2, 2)
-                        .withComponent(PieceType.CIRCLE, 5)
-                        .againstWhitePyramid(3, 3,
-                                new CaptureTestCase.ComponentData(PieceType.CIRCLE, 5),
-                                new CaptureTestCase.ComponentData(PieceType.TRIANGLE, 5))
-                        .expectPartialEncounter(PieceType.CIRCLE, 5)
-                        .expectPartialEncounter(PieceType.TRIANGLE, 5)
                         .build()
         );
     }

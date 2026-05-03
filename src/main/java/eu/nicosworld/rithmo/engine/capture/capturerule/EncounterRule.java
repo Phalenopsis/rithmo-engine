@@ -1,8 +1,7 @@
 package eu.nicosworld.rithmo.engine.capture.capturerule;
 
 import eu.nicosworld.rithmo.engine.capture.AbstractCaptureRule;
-import eu.nicosworld.rithmo.engine.capture.CaptureType;
-import eu.nicosworld.rithmo.engine.capture.*;
+import eu.nicosworld.rithmo.engine.capture.model.*;
 import eu.nicosworld.rithmo.engine.model.Piece;
 import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
 import eu.nicosworld.rithmo.engine.model.Position;
@@ -14,9 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Encounter rule:
- * capture occurs when attacker reaches enemy via regular move
- * AND a value match exists.
+ * Implements the Encounter (Rencontre) capture rule.
+ * <p>
+ * An encounter occurs when an attacking piece moves to a square occupied by an enemy
+ * piece (via its regular movement) and their values match.
+ * Unlike Assault, an encounter requires the attacker to physically reach the target's square.
+ * </p>
  */
 public class EncounterRule extends AbstractCaptureRule {
 
@@ -25,42 +27,64 @@ public class EncounterRule extends AbstractCaptureRule {
         super(generator, pathValidator);
     }
 
+    /**
+     * Finds all potential encounter captures by checking all reachable positions.
+     *
+     * @param context The current game state and the actor piece.
+     * @return A list of {@link CaptureAction} representing valid encounters.
+     */
     @Override
-    public List<CaptureAction> findCaptures(CaptureContext ctx) {
-
+    public List<CaptureAction> findCaptures(CaptureContext context) {
         List<CaptureAction> captures = new ArrayList<>();
 
-        PieceAtPosition actor = ctx.actor();
-        Piece attacker = actor.piece();
+        PieceAtPosition actor = context.actor();
+        Piece attackerPiece = actor.piece();
+        Position attackerPosition = actor.position();
 
-        List<Move> potentialReach =
-                regularMoveGenerator.generate(ctx.state(), actor);
+        // 1. Generate all squares reachable by the piece's move type (Circle, Triangle, Square)
+        List<Move> potentialMoves = regularMoveGenerator.generate(context.state(), actor);
 
-        for (Move move : potentialReach) {
+        for (Move move : potentialMoves) {
+            Position targetPosition = move.to();
+            Piece targetPiece = context.board().getPieceAt(targetPosition);
 
-            Position targetPos = move.to();
-            Piece target = ctx.board().getPieceAt(targetPos);
-
-            if (target == null || !isEnemy(attacker, target)) {
+            // 2. Filter: Target must be an enemy piece
+            if (targetPiece == null || !isEnemy(attackerPiece, targetPiece)) {
                 continue;
             }
 
-            if (pathValidator.isBlocked(ctx.state(), actor.position(), targetPos)) {
+            // 3. Filter: Movement path must be clear (no jumping over pieces except for irregular moves)
+            if (pathValidator.isBlocked(context.state(), attackerPosition, targetPosition)) {
                 continue;
             }
 
-            List<CaptureTarget> matches = findMatchingTargets(attacker, target);
+            // 4. Extraction: Find which components (or whole piece) match the equality condition.
+            // Note: findMatchingTargets uses isMatch (equality) internally.
+            List<CaptureTarget> attackerOptions = extractTargets(attackerPiece);
+            List<CaptureTarget> targetOptions = extractTargets(targetPiece);
 
-            for (CaptureTarget match : matches) {
-                captures.add(new CaptureAction(
-                        attacker,
-                        actor.position(),
-                        target,
-                        targetPos,
-                        match.piece(),
-                        match.isWholePiece(),
-                        CaptureType.ENCOUNTER
-                ));
+            for (CaptureTarget attackerOption : attackerOptions) {
+                for (CaptureTarget targetOption : targetOptions) {
+
+                    // Default encounter check is value equality
+                    if (attackerOption.value() == targetOption.value()) {
+
+                        InvolvedPiece involvedActor = new InvolvedPiece(
+                                attackerPiece,
+                                attackerPosition,
+                                attackerOption.piece()
+                        );
+
+                        InvolvedPiece involvedTarget = new InvolvedPiece(
+                                targetPiece,
+                                targetPosition,
+                                targetOption.piece()
+                        );
+
+                        // Using the new static factory for Encounter
+                        captures.add(CaptureAction.encounter(involvedActor, involvedTarget));
+                    }
+                }
             }
         }
 

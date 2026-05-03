@@ -27,6 +27,24 @@ public class AssaultCaptureTest extends AbstractCaptureTest {
         launchTestCase(testCase);
     }
 
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("oneTestCase")
+    void should_validate_assault_logic_OneTestCaseForDebug(CaptureTestCase testCase) {
+        launchTestCase(testCase);
+    }
+
+    static Stream<Arguments> oneTestCase() {
+        return Stream.of(
+            // A pyramid attacks using its internal component (5)
+            // 5 * 3 empty spaces = 15
+            CaptureTestCase.blackPyramidAt(1, 1)
+                    .withComponent(PieceType.CIRCLE, 5)
+                    .againstWhite(PieceType.TRIANGLE, 15, 5, 1)
+                    .expectAssault(PieceType.TRIANGLE, 15)
+                    .build()
+        );
+    }
+
     static Stream<Arguments> assaultTestData() {
         return Stream.of(
                 // =============================

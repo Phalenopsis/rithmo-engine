@@ -1,14 +1,12 @@
 package eu.nicosworld.rithmo.engine.capture;
 
+import eu.nicosworld.rithmo.engine.capture.model.CaptureTarget;
 import eu.nicosworld.rithmo.engine.model.Piece;
 import eu.nicosworld.rithmo.engine.model.Pyramid;
 import eu.nicosworld.rithmo.engine.move.FreePathMovementValidator;
 import eu.nicosworld.rithmo.engine.move.RegularMoveGenerator;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 public abstract class AbstractCaptureRule implements CaptureRule {
@@ -32,22 +30,25 @@ public abstract class AbstractCaptureRule implements CaptureRule {
      * - Pyramid → components + total value
      */
     protected List<CaptureTarget> extractTargets(Piece piece) {
-        List<CaptureTarget> targets = new ArrayList<>();
+        // On utilise un Map pour dédoublonner par valeur
+        // La clé est la valeur arithmétique (ex: 64)
+        Map<Integer, CaptureTarget> uniqueTargets = new LinkedHashMap<>();
 
+        // 1. On ajoute d'abord la pièce entière (prioritaire)
+        uniqueTargets.put(piece.getValue(), new CaptureTarget(piece, piece.getValue(), true));
+
+        // 2. Si c'est une pyramide, on ajoute ses composants
         if (piece instanceof Pyramid pyramid) {
-            int sum = 0;
-
-            for (Piece comp : pyramid.getComponents()) {
-                targets.add(new CaptureTarget(comp, comp.getValue(), false));
-                sum += comp.getValue();
+            for (Piece component : pyramid.getComponents()) {
+                // putIfAbsent est crucial : si le composant a la même valeur
+                // que la pyramide entière, on garde la "pièce entière" (déjà insérée)
+                // car capturer la pyramide entière est l'action racine.
+                uniqueTargets.putIfAbsent(component.getValue(),
+                        new CaptureTarget(component, component.getValue(), false));
             }
-
-            targets.add(new CaptureTarget(piece, sum, true));
-        } else {
-            targets.add(new CaptureTarget(piece, piece.getValue(), true));
         }
 
-        return targets;
+        return new ArrayList<>(uniqueTargets.values());
     }
 
     /**
