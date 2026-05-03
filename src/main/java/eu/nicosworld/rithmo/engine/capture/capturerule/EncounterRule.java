@@ -2,7 +2,9 @@ package eu.nicosworld.rithmo.engine.capture.capturerule;
 
 import eu.nicosworld.rithmo.engine.capture.AbstractCaptureRule;
 import eu.nicosworld.rithmo.engine.capture.CaptureType;
-import eu.nicosworld.rithmo.engine.capture.*;
+import eu.nicosworld.rithmo.engine.capture.model.CaptureAction;
+import eu.nicosworld.rithmo.engine.capture.model.CaptureContext;
+import eu.nicosworld.rithmo.engine.capture.model.CaptureTarget;
 import eu.nicosworld.rithmo.engine.model.Piece;
 import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
 import eu.nicosworld.rithmo.engine.model.Position;

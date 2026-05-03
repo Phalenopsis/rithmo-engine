@@ -1,5 +1,7 @@
 package eu.nicosworld.rithmo.engine.capture;
 
+import eu.nicosworld.rithmo.engine.capture.model.CaptureAction;
+import eu.nicosworld.rithmo.engine.capture.model.CaptureContext;
 import eu.nicosworld.rithmo.engine.model.PlayerColor;
 import eu.nicosworld.rithmo.engine.move.FreePathMovementValidator;
 import eu.nicosworld.rithmo.engine.move.RegularMoveGenerator;

@@ -1,5 +1,6 @@
 package eu.nicosworld.rithmo.engine.capture;
 
+import eu.nicosworld.rithmo.engine.capture.model.CaptureTarget;
 import eu.nicosworld.rithmo.engine.model.Piece;
 import eu.nicosworld.rithmo.engine.model.Pyramid;
 import eu.nicosworld.rithmo.engine.move.FreePathMovementValidator;

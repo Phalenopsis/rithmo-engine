@@ -1,5 +1,6 @@
-package eu.nicosworld.rithmo.engine.capture;
+package eu.nicosworld.rithmo.engine.capture.model;
 
+import eu.nicosworld.rithmo.engine.capture.CaptureType;
 import eu.nicosworld.rithmo.engine.model.Piece;
 import eu.nicosworld.rithmo.engine.model.PlayerColor;
 import eu.nicosworld.rithmo.engine.model.Position;
