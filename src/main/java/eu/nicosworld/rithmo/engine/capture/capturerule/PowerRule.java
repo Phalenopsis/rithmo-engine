@@ -1,10 +1,7 @@
 package eu.nicosworld.rithmo.engine.capture.capturerule;
 
 import eu.nicosworld.rithmo.engine.capture.AbstractCaptureRule;
-import eu.nicosworld.rithmo.engine.capture.CaptureType;
-import eu.nicosworld.rithmo.engine.capture.model.CaptureAction;
-import eu.nicosworld.rithmo.engine.capture.model.CaptureContext;
-import eu.nicosworld.rithmo.engine.capture.model.CaptureTarget;
+import eu.nicosworld.rithmo.engine.capture.model.*;
 import eu.nicosworld.rithmo.engine.model.Piece;
 import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
 import eu.nicosworld.rithmo.engine.model.Position;
@@ -12,50 +9,80 @@ import eu.nicosworld.rithmo.engine.move.FreePathMovementValidator;
 import eu.nicosworld.rithmo.engine.move.Move;
 import eu.nicosworld.rithmo.engine.move.RegularMoveGenerator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Implements the Power capture rule.
+ * <p>
+ * A power capture occurs when the value of the attacking piece (or one of its components)
+ * is the square or cube of the target's value, or vice versa.
+ * Like the Encounter rule, the attacker must physically reach the target's square.
+ * </p>
+ */
 public class PowerRule extends AbstractCaptureRule {
+
     public PowerRule(RegularMoveGenerator generator,
-                         FreePathMovementValidator pathValidator) {
+                     FreePathMovementValidator pathValidator) {
         super(generator, pathValidator);
     }
 
+    /**
+     * Finds all potential power captures by checking all reachable positions.
+     *
+     * @param context The current game state and the actor piece.
+     * @return A list of {@link CaptureAction} representing valid power captures.
+     */
     @Override
-    public List<CaptureAction> findCaptures(CaptureContext ctx) {
-
+    public List<CaptureAction> findCaptures(CaptureContext context) {
         List<CaptureAction> captures = new ArrayList<>();
 
-        PieceAtPosition actor = ctx.actor();
-        Piece attacker = actor.piece();
+        PieceAtPosition actor = context.actor();
+        Piece attackerPiece = actor.piece();
+        Position attackerPosition = actor.position();
 
-        List<Move> potentialReach =
-                regularMoveGenerator.generate(ctx.state(), actor);
+        // 1. Generate all reachable moves for the current piece
+        List<Move> potentialMoves = regularMoveGenerator.generate(context.state(), actor);
 
-        for (Move move : potentialReach) {
+        for (Move move : potentialMoves) {
+            Position targetPosition = move.to();
+            Piece targetPiece = context.board().getPieceAt(targetPosition);
 
-            Position targetPos = move.to();
-            Piece target = ctx.board().getPieceAt(targetPos);
-
-            if (target == null || !isEnemy(attacker, target)) {
+            // 2. Filter: Target must be an enemy
+            if (targetPiece == null || !isEnemy(attackerPiece, targetPiece)) {
                 continue;
             }
 
-            if (pathValidator.isBlocked(ctx.state(), actor.position(), targetPos)) {
+            // 3. Filter: Check for path obstructions
+            if (pathValidator.isBlocked(context.state(), attackerPosition, targetPosition)) {
                 continue;
             }
 
-            List<CaptureTarget> matches = findMatchingTargets(attacker, target);
+            // 4. Extraction and Comparison
+            List<CaptureTarget> attackerOptions = extractTargets(attackerPiece);
+            List<CaptureTarget> targetOptions = extractTargets(targetPiece);
 
-            for (CaptureTarget match : matches) {
-                captures.add(new CaptureAction(
-                        attacker,
-                        actor.position(),
-                        target,
-                        targetPos,
-                        match.piece(),
-                        match.isWholePiece(),
-                        CaptureType.POWER
-                ));
+            for (CaptureTarget attackerOption : attackerOptions) {
+                for (CaptureTarget targetOption : targetOptions) {
+
+                    if (isPowerMatch(attackerOption.value(), targetOption.value())) {
+
+                        InvolvedPiece involvedActor = new InvolvedPiece(
+                                attackerPiece,
+                                attackerPosition,
+                                attackerOption.piece()
+                        );
+
+                        InvolvedPiece involvedTarget = new InvolvedPiece(
+                                targetPiece,
+                                targetPosition,
+                                targetOption.piece()
+                        );
+
+                        // Using the static factory method for Power capture
+                        captures.add(CaptureAction.power(involvedActor, involvedTarget));
+                    }
+                }
             }
         }
 
@@ -63,36 +90,13 @@ public class PowerRule extends AbstractCaptureRule {
     }
 
     /**
-     * Generic matching engine between attacker and target possibilities.
+     * Arithmetic logic for Power capture:
+     * Checks if one value is the square or cube of the other.
      */
-    protected List<CaptureTarget> findMatchingTargets(
-            Piece attacker,
-            Piece target
-    ) {
-        List<CaptureTarget> attackerTargets = extractTargets(attacker);
-        List<CaptureTarget> targetTargets = extractTargets(target);
-
-        Set<CaptureTarget> matches = new HashSet<>();
-
-        for (CaptureTarget atk : attackerTargets) {
-            for (CaptureTarget tgt : targetTargets) {
-                if (isMatch(atk, tgt)) {
-                    matches.add(tgt);
-                }
-            }
-        }
-
-        return new ArrayList<>(matches);
-    }
-
-    /**
-     * Default matching rule = equality of values.
-     * Can be overridden by specific rules (Embûche, etc.).
-     */
-    protected boolean isMatch(CaptureTarget attacker, CaptureTarget target) {
-        return attacker.value() == target.value() * target.value()
-                || attacker.value() == target.value() * target.value() * target.value()
-                || attacker.value() * attacker.value() == target.value()
-                || attacker.value() * attacker.value() * attacker.value() == target.value();
+    private boolean isPowerMatch(int attackerValue, int targetValue) {
+        return attackerValue == targetValue * targetValue
+                || attackerValue == targetValue * targetValue * targetValue
+                || attackerValue * attackerValue == targetValue
+                || attackerValue * attackerValue * attackerValue == targetValue;
     }
 }
