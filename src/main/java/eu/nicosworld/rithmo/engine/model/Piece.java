@@ -61,6 +61,10 @@ public abstract class Piece {
 
     public String getId() { return id; }
 
+    public boolean isPyramid() {
+        return this instanceof Pyramid;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
