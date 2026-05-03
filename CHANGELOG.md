@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Capture Engine**: Refactored the `capture` package by moving Data Transfer Objects and Records into a dedicated `model` sub-package for better separation of concerns.
 - **Capture Model**: Enhanced `CaptureAction` by migrating it to a Record and introducing `InvolvedPiece`. This allows for precise tracking of which specific component of a Pyramid is involved in a capture, while maintaining a reference to the parent piece.
 - **Rules**: Clarified capture rules regarding Pyramids, specifically their non-reversibility (cannot be re-entered after capture).
+- **Player Assets**: Enforced business rule where Pyramids cannot be added to the reserve. Attempting to add a Pyramid to the reserve now triggers an exception to ensure consistency with historical Rithmomachia rules.
 
 ### Fixed
 - **Capture Engine**: Resolved a bug where a Pyramid with a single component (or multiple components of the same value) would generate duplicate `CaptureAction` objects for the same mathematical match by implementing value-based de-duplication in `AbstractCaptureRule`.

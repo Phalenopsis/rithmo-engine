@@ -74,6 +74,9 @@ public record PlayerAssets(
 
     public PlayerAssets addToReserve(Piece piece) {
         Objects.requireNonNull(piece);
+        if (piece instanceof Pyramid) {
+            throw new IllegalArgumentException("A Pyramid cannot be added to the reserve.");
+        }
 
         List<Piece> newReserve = new ArrayList<>(reserve);
         newReserve.add(piece);
