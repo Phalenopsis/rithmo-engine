@@ -6,9 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
-## [0.4.5-SNAPSHOT] - 2026-
+## [0.4.1-SNAPSHOT] - 2026-05-03
 ### Added
 - **BoardBuilder**: Added `fullWhitePyramidAt(int, int)` and `fullBlackPyramidAt(int, int)` to quickly setup historical Rithmomachia configurations.
+- **Tests**: Created `MultiRulesTest` suite to validate complex capture scenarios involving multiple simultaneous rules (Encounter, Power, Ambush) and path blocking (Obstacles).
+
+### Changed
+- **Capture Engine**: Refactored the `capture` package by moving Data Transfer Objects and Records into a dedicated `model` sub-package for better separation of concerns.
+- **Capture Model**: Enhanced `CaptureAction` by migrating it to a Record and introducing `InvolvedPiece`. This allows for precise tracking of which specific component of a Pyramid is involved in a capture, while maintaining a reference to the parent piece.
+- **Rules**: Clarified capture rules regarding Pyramids, specifically their non-reversibility (cannot be re-entered after capture).
+
+### Fixed
+- **Capture Engine**: Resolved a bug where a Pyramid with a single component (or multiple components of the same value) would generate duplicate `CaptureAction` objects for the same mathematical match by implementing value-based de-duplication in `AbstractCaptureRule`.
+- **Capture Logic**: Fixed a regression in multi-capture scenarios where only the first identified rule was being returned; the engine now correctly returns all valid capture opportunities for a given move.
 
 ## [0.4.4] - 2026-04-29
 
