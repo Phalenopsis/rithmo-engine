@@ -79,7 +79,7 @@ public record PlayerAssets(
         }
 
         List<Piece> newReserve = new ArrayList<>(reserve);
-        newReserve.add(piece);
+        newReserve.add(new SimplePiece(piece.getType(), piece.getPlayer().opponent(), piece.getValue()));
 
         return new PlayerAssets(captured, newReserve);
     }
