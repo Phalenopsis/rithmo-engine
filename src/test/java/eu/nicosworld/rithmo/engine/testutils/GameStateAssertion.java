@@ -23,10 +23,50 @@ public class GameStateAssertion {
         return this;
     }
 
-    public GameStateAssertion hasInReserve(Piece piece) {
-        assertThat(gameState.assetsOf(player).reserve())
-                .as("Réserve de %s", player)
-                .contains(piece);
+    public GameStateAssertion hasCapturedEquivalentInReserve(Piece capturedPiece) {
+        Player expectedOwner = capturedPiece.getPlayer().opponent();
+
+        boolean found = this.gameState.assetsOf(this.player)
+                .reserve()
+                .stream()
+                .anyMatch(piece ->
+                        piece.getType() == capturedPiece.getType()
+                                && piece.getValue() == capturedPiece.getValue()
+                                && piece.getPlayer() == expectedOwner
+                );
+
+        assertThat(found)
+                .as(
+                        "Reserve of %s should contain converted equivalent of %s",
+                        this.player,
+                        capturedPiece
+                )
+                .isTrue();
+
+        return this;
+    }
+
+    public GameStateAssertion doesNotHaveCapturedEquivalentInReserve(Piece capturedPiece) {
+
+        Player expectedOwner = capturedPiece.getPlayer().opponent();
+
+        boolean found = this.gameState.assetsOf(this.player)
+                .reserve()
+                .stream()
+                .anyMatch(piece ->
+                        piece.getType() == capturedPiece.getType()
+                                && piece.getValue() == capturedPiece.getValue()
+                                && piece.getPlayer() == expectedOwner
+                );
+
+        assertThat(found)
+                .as(
+                        "Reserve of %s should not contain converted equivalent of %s",
+                        this.player,
+                        capturedPiece
+                )
+                .isFalse();
+
         return this;
     }
 
