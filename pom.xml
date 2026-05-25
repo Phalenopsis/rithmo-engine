@@ -8,7 +8,7 @@
 
     <groupId>eu.nicosworld</groupId>
     <artifactId>rithmo-engine</artifactId>
-    <version>0.5.0-SNAPSHOT</version>
+    <version>0.5.1</version>
 
     <name>Rithmo Engine</name>
     <description>Core Java engine for Rithmomachia</description>
@@ -20,6 +20,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+
+        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
+        <maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
+        <maven.deploy.plugin.version>3.1.1</maven.deploy.plugin.version>
+        <maven.source.plugin.version>3.3.0</maven.source.plugin.version>
+        <maven.jar.plugin.version>3.4.1</maven.jar.plugin.version>
 
         <junit.version>5.10.0</junit.version>
         <assertj.version>3.27.7</assertj.version>
@@ -57,7 +63,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
@@ -69,21 +75,21 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>${maven.surefire.plugin.version}</version>
             </plugin>
 
             <!-- IMPORTANT: permet packaging propre pour lib -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>${maven.deploy.plugin.version}</version>
             </plugin>
 
             <!-- (optionnel mais recommandé) sources jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${maven.source.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -97,6 +103,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
