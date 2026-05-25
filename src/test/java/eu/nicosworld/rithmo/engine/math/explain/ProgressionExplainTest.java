@@ -81,8 +81,6 @@ class ProgressionExplainTest {
 
         String result = ProgressionExplain.explain(t);
 
-        System.out.println(result);
-
         assertTrue(result.contains("progression arithmétique"));
         assertTrue(result.contains("progression harmonique"));
     }

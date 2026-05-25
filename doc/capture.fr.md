@@ -2,7 +2,7 @@
 
 ## 1. Principes généraux
 
-* Les captures doivent être associée à un déplacement.
+* Les captures doivent être associées à un déplacement.
 * Une capture peut être effectuée avant et/ou après déplacement de la pièce active.
 * Quand la capture précède le déplacement, la pièce preneuse doit être mise à la place de la pièce prise.
 * En revanche, quand la capture est consécutive à un déplacement, la case de la pièce prise reste libre.
@@ -64,7 +64,7 @@ Si noir joue son pion 4 en (2,3), il peut prendre le triangle blanc 12 :
 
 ### 2.3 Assaut
 
-Une pièce peut capturer une pièce adverse plus grande si :
+Une pièce peut capturer une pièce adverse si :
 
 * on compte le nombre de cases vides entre les deux pièces (horizontalement, verticalement ou diagonalement)
 * seulement s'il n'y a pas de pièces entre l'attaquant et le défenseur

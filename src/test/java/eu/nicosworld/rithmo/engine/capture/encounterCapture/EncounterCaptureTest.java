@@ -13,6 +13,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static eu.nicosworld.rithmo.engine.testutils.CaptureJustifications.encounter;
+
 public class EncounterCaptureTest extends AbstractCaptureTest {
 
     @BeforeEach
@@ -28,16 +30,22 @@ public class EncounterCaptureTest extends AbstractCaptureTest {
     }
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("oneTestCase")
+    @MethodSource("singleDebugCase")
     void should_validate_encounter_logic_OneTestCaseForDebug(CaptureTestCase testCase) {
         launchTestCase(testCase);
     }
 
-    static Stream<Arguments> oneTestCase() {
+    static Stream<Arguments> singleDebugCase() {
         return Stream.of(
-                CaptureTestCase.blackCircleAt(4, 1, 1)
-                        .againstWhite(PieceType.CIRCLE, 4, 2, 2)
-                        .expectEncounter(PieceType.CIRCLE, 4)
+                CaptureTestCase.blackPyramidAt(2, 2)
+                        .withComponent(PieceType.CIRCLE, 6)
+                        .withComponent(PieceType.TRIANGLE, 4)
+                        .againstWhitePyramid(3, 3,
+                                new CaptureTestCase.ComponentData(PieceType.CIRCLE, 4),
+                                new CaptureTestCase.ComponentData(PieceType.SQUARE, 6))
+                        .expectEncounter(PieceType.PYRAMID, 10, encounter(10))
+                        .expectPartialEncounter(PieceType.SQUARE, 6, encounter(6))
+                        .expectPartialEncounter(PieceType.CIRCLE, 4, encounter(4))
                         .build()
         );
     }
@@ -49,17 +57,17 @@ public class EncounterCaptureTest extends AbstractCaptureTest {
                 // =============================
                 CaptureTestCase.blackCircleAt(4, 1, 1)
                         .againstWhite(PieceType.CIRCLE, 4, 2, 2)
-                        .expectEncounter(PieceType.CIRCLE, 4)
+                        .expectEncounter(PieceType.CIRCLE, 4, encounter(4))
                         .build(),
 
                 CaptureTestCase.blackTriangleAt(9, 2, 2)
                         .againstWhite(PieceType.SQUARE, 9, 2, 4)
-                        .expectEncounter(PieceType.SQUARE, 9)
+                        .expectEncounter(PieceType.SQUARE, 9, encounter(9))
                         .build(),
 
                 CaptureTestCase.blackSquareAt(16, 2, 2)
                         .againstWhite(PieceType.TRIANGLE, 16, 5, 2)
-                        .expectEncounter(PieceType.TRIANGLE, 16)
+                        .expectEncounter(PieceType.TRIANGLE, 16, encounter(16))
                         .build(),
 
                 // =============================
@@ -68,8 +76,8 @@ public class EncounterCaptureTest extends AbstractCaptureTest {
                 CaptureTestCase.blackCircleAt(25, 4, 4)
                         .againstWhite(PieceType.TRIANGLE, 25, 5, 5)
                         .againstWhite(PieceType.SQUARE, 25, 3, 3)
-                        .expectEncounter(PieceType.TRIANGLE, 25)
-                        .expectEncounter(PieceType.SQUARE, 25)
+                        .expectEncounter(PieceType.TRIANGLE, 25, encounter(25))
+                        .expectEncounter(PieceType.SQUARE, 25, encounter(25))
                         .build(),
 
                 // =============================
@@ -117,7 +125,7 @@ public class EncounterCaptureTest extends AbstractCaptureTest {
                         .withComponent(PieceType.CIRCLE, 4)
                         .withComponent(PieceType.SQUARE, 9)
                         .againstWhite(PieceType.TRIANGLE, 4, 3, 3) // Circle move
-                        .expectEncounter(PieceType.TRIANGLE, 4)
+                        .expectEncounter(PieceType.TRIANGLE, 4, encounter(4))
                         .build(),
 
                 // Pyramid total value
@@ -125,7 +133,7 @@ public class EncounterCaptureTest extends AbstractCaptureTest {
                         .withComponent(PieceType.CIRCLE, 4)
                         .withComponent(PieceType.SQUARE, 6)
                         .againstWhite(PieceType.CIRCLE, 10, 3, 3)
-                        .expectEncounter(PieceType.CIRCLE, 10)
+                        .expectEncounter(PieceType.CIRCLE, 10, encounter(10))
                         .build(),
 
                 // =============================
@@ -136,7 +144,7 @@ public class EncounterCaptureTest extends AbstractCaptureTest {
                         .againstWhitePyramid(3, 3,
                                 new CaptureTestCase.ComponentData(PieceType.CIRCLE, 2),
                                 new CaptureTestCase.ComponentData(PieceType.CIRCLE, 4))
-                        .expectEncounter(PieceType.PYRAMID, 6)
+                        .expectEncounter(PieceType.PYRAMID, 6, encounter(6))
                         .build(),
 
                 // Capture Partial (Component Match)
@@ -144,7 +152,7 @@ public class EncounterCaptureTest extends AbstractCaptureTest {
                         .againstWhitePyramid(3, 3,
                                 new CaptureTestCase.ComponentData(PieceType.CIRCLE, 4),
                                 new CaptureTestCase.ComponentData(PieceType.SQUARE, 5))
-                        .expectPartialEncounter(PieceType.CIRCLE, 4)
+                        .expectPartialEncounter(PieceType.CIRCLE, 4, encounter(4))
                         .build(),
 
                 // =============================
@@ -157,7 +165,7 @@ public class EncounterCaptureTest extends AbstractCaptureTest {
                         .againstWhitePyramid(3, 3,
                                 new CaptureTestCase.ComponentData(PieceType.TRIANGLE, 5),
                                 new CaptureTestCase.ComponentData(PieceType.CIRCLE, 12))
-                        .expectPartialEncounter(PieceType.TRIANGLE, 5)
+                        .expectPartialEncounter(PieceType.TRIANGLE, 5, encounter(5))
                         .build(),
 
                 // Component vs Total Value
@@ -166,7 +174,19 @@ public class EncounterCaptureTest extends AbstractCaptureTest {
                         .againstWhitePyramid(3, 3,
                                 new CaptureTestCase.ComponentData(PieceType.CIRCLE, 4),
                                 new CaptureTestCase.ComponentData(PieceType.CIRCLE, 6))
-                        .expectEncounter(PieceType.PYRAMID, 10)
+                        .expectEncounter(PieceType.PYRAMID, 10, encounter(10))
+                        .build(),
+
+                // Pyramid vs pyramid with same components
+                CaptureTestCase.blackPyramidAt(2, 2)
+                        .withComponent(PieceType.CIRCLE, 6)
+                        .withComponent(PieceType.TRIANGLE, 4)
+                        .againstWhitePyramid(3, 3,
+                                new CaptureTestCase.ComponentData(PieceType.CIRCLE, 4),
+                                new CaptureTestCase.ComponentData(PieceType.SQUARE, 6))
+                        .expectEncounter(PieceType.PYRAMID, 10, encounter(10))
+                        .expectPartialEncounter(PieceType.SQUARE, 6, encounter(6))
+                        .expectPartialEncounter(PieceType.CIRCLE, 4, encounter(4))
                         .build()
         );
     }

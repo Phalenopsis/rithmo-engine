@@ -1,6 +1,8 @@
 package eu.nicosworld.rithmo.engine.capture.capturerule;
 
 import eu.nicosworld.rithmo.engine.capture.AbstractCaptureRule;
+import eu.nicosworld.rithmo.engine.capture.justification.AmbushJustification;
+import eu.nicosworld.rithmo.engine.capture.justification.AmbushOperator;
 import eu.nicosworld.rithmo.engine.capture.model.*;
 import eu.nicosworld.rithmo.engine.model.Piece;
 import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
@@ -85,9 +87,11 @@ public class AmbushRule extends AbstractCaptureRule {
                     for (CaptureTarget targetOption : targetOptions) {
                         for (CaptureTarget allyOption : allyOptions) {
 
-                            if (matchesAmbush(attackerOption.value(), allyOption.value(), targetOption.value())) {
-
-                                // Build context for the actor, the target, and the specific supporter
+                            resolveAmbush(
+                                    attackerOption.value(),
+                                    allyOption.value(),
+                                    targetOption.value()
+                            ).ifPresent(justification -> {
                                 InvolvedPiece involvedActor = new InvolvedPiece(
                                         attackerPiece,
                                         attackerPosition,
@@ -106,13 +110,15 @@ public class AmbushRule extends AbstractCaptureRule {
                                         allyOption.piece()
                                 );
 
-                                // Use the factory method to encapsulate capture creation
-                                captures.add(CaptureAction.ambush(
-                                        involvedActor,
-                                        involvedTarget,
-                                        involvedAlly
-                                ));
-                            }
+                                captures.add(
+                                        CaptureAction.ambush(
+                                                involvedActor,
+                                                involvedTarget,
+                                                involvedAlly,
+                                                justification
+                                        )
+                                );
+                            });
                         }
                     }
                 }
@@ -132,5 +138,84 @@ public class AmbushRule extends AbstractCaptureRule {
                 || attackerValue * allyValue == targetValue
                 || (allyValue != 0 && attackerValue % allyValue == 0 && attackerValue / allyValue == targetValue)
                 || (attackerValue != 0 && allyValue % attackerValue == 0 && allyValue / attackerValue == targetValue);
+    }
+
+    private Optional<AmbushJustification> resolveAmbush(
+            int attackerValue,
+            int supporterValue,
+            int targetValue
+    ) {
+
+        if (attackerValue + supporterValue == targetValue) {
+            return Optional.of(
+                    new AmbushJustification(
+                            attackerValue,
+                            AmbushOperator.ADD,
+                            supporterValue,
+                            targetValue
+                    )
+            );
+        }
+
+        if (attackerValue - supporterValue == targetValue) {
+            return Optional.of(
+                    new AmbushJustification(
+                            attackerValue,
+                            AmbushOperator.SUBTRACT,
+                            supporterValue,
+                            targetValue
+                    )
+            );
+        }
+
+        if (supporterValue - attackerValue == targetValue) {
+            return Optional.of(
+                    new AmbushJustification(
+                            attackerValue,
+                            AmbushOperator.SUBTRACT_INV,
+                            supporterValue,
+                            targetValue
+                    )
+            );
+        }
+
+        if (attackerValue * supporterValue == targetValue) {
+            return Optional.of(
+                    new AmbushJustification(
+                            attackerValue,
+                            AmbushOperator.MULTIPLY,
+                            supporterValue,
+                            targetValue
+                    )
+            );
+        }
+
+        if (supporterValue != 0
+                && attackerValue % supporterValue == 0
+                && attackerValue / supporterValue == targetValue) {
+            return Optional.of(
+                    new AmbushJustification(
+                            attackerValue,
+                            AmbushOperator.DIVIDE,
+                            supporterValue,
+                            targetValue
+                    )
+            );
+        }
+
+        if (attackerValue != 0
+                && supporterValue % attackerValue == 0
+                && supporterValue / attackerValue == targetValue) {
+            return Optional.of(
+                    new AmbushJustification(
+                            attackerValue,
+                            AmbushOperator.DIVIDE_INV,
+                            supporterValue,
+                            targetValue
+                    )
+            );
+        }
+
+        return Optional.empty();
     }
 }

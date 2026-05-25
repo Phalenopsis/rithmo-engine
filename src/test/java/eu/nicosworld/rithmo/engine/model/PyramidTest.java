@@ -3,6 +3,7 @@ package eu.nicosworld.rithmo.engine.model;
 import eu.nicosworld.rithmo.engine.setup.PyramidBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -91,5 +92,28 @@ class PyramidTest {
         assertTrue(reducedPyramid.hasCircle());
         assertTrue(reducedPyramid.hasTriangle());
         assertFalse(reducedPyramid.hasSquare());
+    }
+
+    @Test
+    void shouldProtectInternalComponentsList() {
+        List<SimplePiece> components = new ArrayList<>();
+
+        Pyramid pyramid = new Pyramid(Player.WHITE, components);
+
+        components.add(new SimplePiece(PieceType.CIRCLE, Player.WHITE, 1));
+
+        assertTrue(pyramid.getComponents().isEmpty());
+    }
+
+    @Test
+    void shouldExposeImmutableComponentsList() {
+        List<SimplePiece> components = new ArrayList<>();
+
+        Pyramid pyramid = new Pyramid(Player.WHITE, components);
+
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> pyramid.getComponents().add(new SimplePiece(PieceType.CIRCLE, Player.WHITE, 1))
+    );
     }
 }

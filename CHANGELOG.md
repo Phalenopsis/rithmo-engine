@@ -6,7 +6,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
-## [0.5.0-SNAPSHOT] - 2026-05-15
+## [0.5.1] - 2026-05-25
+### Documentation
+- Fixed wording in assault capture rule description
+- Clarified that assault capture does not require the target to be larger
+
+### Added
+- **Capture Justification System**: Added explicit mathematical explanations for generated capture actions.
+- **Rule Semantics**: Introduced structured justification models for:
+  - Encounter
+  - Ambush
+  - Assault
+  - Power
+- **Debugging Support**: Capture results can now expose the exact mathematical reasoning used to validate a capture.
+
+### Test
+- **GameStateAssertion**: Replaced `hasInReserve(...)` with `hasCapturedEquivalentInReserve(...)` to support reserve-piece ownership normalization introduced by the Engine.
+- **GameStateAssertion**: Added `doesNotHaveCapturedEquivalentInReserve(...)` helper for validating absence of converted reserve pieces.
+- **Reserve Assertions**: Kept `hasNotInReserve(...)` to explicitly verify that reserve pieces are newly instantiated objects rather than preserved captured instances.
+- **Pyramid**: Added immutability regression tests to verify defensive copying and protection of internal component collections.
+- **Capture Utilities**: Added shared `CaptureJustifications` helpers to reusable test utilities.
+- **Capture Engine Tests**: Extended internal capture test infrastructure to support rule-specific justification assertions.
+- **Capture Rules**: Added exhaustive justification-based validation for Encounter, Ambush, Assault and Power capture rules.
+- **MultiRules**: Added integration coverage for simultaneous multi-rule captures and justification aggregation.
+- **Cleaning**: Removed temporary debug output from capture test suites.
+
+### Refactor
+- **Pyramid**:
+  - secured internal component collection using immutable list copies
+  - prevented external mutation of pyramid components through constructor arguments or getters
+  - aligned pyramid behavior with the engine's immutable piece model
+  - reinforced safety of move/action context propagation and state replay consistency
+
+- **Capture Model**:
+  - introduced explicit capture justification records for rule traceability
+  - added operator/relation enums for Ambush, Assault and Power semantic clarity
+  - enriched capture actions with mathematical justification metadata
+
+
+## [0.5.0] - 2026-05-15
 ### Added
 - **BoardBuilder**: Added `fullWhitePyramidAt(int, int)` and `fullBlackPyramidAt(int, int)` to quickly setup historical Rithmomachia configurations.
 - **Tests**: Created `MultiRulesTest` suite to validate complex capture scenarios involving multiple simultaneous rules (Encounter, Power, Ambush) and path blocking (Obstacles).
@@ -20,8 +58,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Capture Model**: Enhanced `CaptureAction` by migrating it to a Record and introducing `InvolvedPiece`. This allows for precise tracking of which specific component of a Pyramid is involved in a capture, while maintaining a reference to the parent piece.
 - **Rules**: Clarified capture rules regarding Pyramids, specifically their non-reversibility (cannot be re-entered after capture).
 - **Player Assets**: Enforced business rule where Pyramids cannot be added to the reserve. Attempting to add a Pyramid to the reserve now triggers an exception to ensure consistency with historical Rithmomachia rules.
-- **Player Assets**: When placing a captured piece into reserve, its color is now normalized to match the owning player, ensuring consistency in ownership semantics during reintroduction phases.
-
+- **Player Assets**: Introduced a dual-representation system for captured pieces:
+    - `captured` now preserves original pieces with their initial identity and color for historical tracking and victory condition evaluation.
+    - `reserve` contains newly instantiated pieces derived from captured ones, with their color normalized to the owning player and a new identity assigned.
+      This separation ensures that game-state integrity, scoring logic, and reintroduction mechanics remain decoupled.
 ### Fixed
 - **Capture Engine**: Resolved a bug where a Pyramid with a single component (or multiple components of the same value) would generate duplicate `CaptureAction` objects for the same mathematical match by implementing value-based de-duplication in `AbstractCaptureRule`.
 - **Capture Logic**: Fixed a regression in multi-capture scenarios where only the first identified rule was being returned; the engine now correctly returns all valid capture opportunities for a given move.

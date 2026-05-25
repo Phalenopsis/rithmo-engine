@@ -1,6 +1,7 @@
 package eu.nicosworld.rithmo.engine.capture.capturerule;
 
 import eu.nicosworld.rithmo.engine.capture.AbstractCaptureRule;
+import eu.nicosworld.rithmo.engine.capture.justification.EncounterJustification;
 import eu.nicosworld.rithmo.engine.capture.model.*;
 import eu.nicosworld.rithmo.engine.model.Piece;
 import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
@@ -11,6 +12,7 @@ import eu.nicosworld.rithmo.engine.move.RegularMoveGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Implements the Encounter (Rencontre) capture rule.
@@ -67,27 +69,42 @@ public class EncounterRule extends AbstractCaptureRule {
                 for (CaptureTarget targetOption : targetOptions) {
 
                     // Default encounter check is value equality
-                    if (attackerOption.value() == targetOption.value()) {
-
-                        InvolvedPiece involvedActor = new InvolvedPiece(
-                                attackerPiece,
-                                attackerPosition,
-                                attackerOption.piece()
-                        );
-
-                        InvolvedPiece involvedTarget = new InvolvedPiece(
-                                targetPiece,
-                                targetPosition,
-                                targetOption.piece()
-                        );
-
-                        // Using the new static factory for Encounter
-                        captures.add(CaptureAction.encounter(involvedActor, involvedTarget));
-                    }
+                    resolveEncounter(attackerOption.value(), targetOption.value())
+                            .ifPresent(justification ->
+                                    captures.add(
+                                            CaptureAction.encounter(
+                                                    new InvolvedPiece(
+                                                            actor.piece(),
+                                                            actor.position(),
+                                                            attackerOption.piece()
+                                                    ),
+                                                    new InvolvedPiece(
+                                                            targetPiece,
+                                                            targetPosition,
+                                                            targetOption.piece()
+                                                    ),
+                                                    justification
+                                            )
+                                    ));
                 }
             }
         }
 
         return captures;
+    }
+
+    private Optional<EncounterJustification> resolveEncounter(
+            int actorValue,
+            int targetValue
+    ) {
+        if (actorValue == targetValue) {
+            return Optional.of(
+                    new EncounterJustification(
+                            actorValue
+                    )
+            );
+        }
+
+        return Optional.empty();
     }
 }

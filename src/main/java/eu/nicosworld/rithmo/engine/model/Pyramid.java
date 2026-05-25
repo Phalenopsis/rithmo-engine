@@ -8,18 +8,16 @@ public class Pyramid extends Piece{
 
     public Pyramid(PieceType type, Player player, List<SimplePiece> components) {
         super(type, player);
-        this.components = components;
+        this.components = List.copyOf(components);
     }
 
-
     public Pyramid(Player player, List<SimplePiece> components) {
-        super(PieceType.PYRAMID, player);
-        this.components = components;
+        this(PieceType.PYRAMID, player, components);
     }
 
     public Pyramid(Player player, List<SimplePiece> components, PieceState state, String id) {
         super(PieceType.PYRAMID, player, state, id);
-        this.components = components;
+        this.components = List.copyOf(components);
     }
 
     public int getValue() {

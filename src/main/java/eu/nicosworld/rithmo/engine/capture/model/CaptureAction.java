@@ -1,5 +1,6 @@
 package eu.nicosworld.rithmo.engine.capture.model;
 
+import eu.nicosworld.rithmo.engine.capture.justification.*;
 import eu.nicosworld.rithmo.engine.model.Position;
 import eu.nicosworld.rithmo.engine.model.Piece;
 import eu.nicosworld.rithmo.engine.model.Pyramid;
@@ -10,35 +11,38 @@ public record CaptureAction(
         InvolvedPiece actor,
         InvolvedPiece target,
         List<InvolvedPiece> supporters,
-        CaptureType type
+        CaptureType type,
+        CaptureJustification justification
 ) {
     public CaptureAction {
-        // Sécurité immuabilité
         supporters = List.copyOf(supporters);
     }
 
     public static CaptureAction assault(InvolvedPiece actor,
-                                        InvolvedPiece target) {
-        return new CaptureAction(actor, target, List.of(), CaptureType.ASSAULT);
+                                        InvolvedPiece target,
+                                        AssaultJustification justification) {
+        return new CaptureAction(actor, target, List.of(), CaptureType.ASSAULT, justification);
     }
 
     public static CaptureAction ambush(InvolvedPiece actor,
                                        InvolvedPiece target,
-                                       InvolvedPiece supporter) {
-        return new CaptureAction(actor, target, List.of(supporter), CaptureType.AMBUSH);
+                                       InvolvedPiece supporter,
+                                       AmbushJustification justification) {
+        return new CaptureAction(actor, target, List.of(supporter), CaptureType.AMBUSH, justification);
     }
 
     public static CaptureAction encounter(InvolvedPiece actor,
-                                          InvolvedPiece target) {
-        return new CaptureAction(actor, target, List.of(), CaptureType.ENCOUNTER);
+                                          InvolvedPiece target,
+                                          EncounterJustification justification) {
+        return new CaptureAction(actor, target, List.of(), CaptureType.ENCOUNTER, justification);
     }
 
     public static CaptureAction power(InvolvedPiece actor,
-                                      InvolvedPiece target) {
-        return new CaptureAction(actor, target, List.of(), CaptureType.POWER);
+                                      InvolvedPiece target,
+                                      PowerJustification justification) {
+        return new CaptureAction(actor, target, List.of(), CaptureType.POWER, justification);
     }
 
-    // Utilitaires pour le moteur et l'UI
     public boolean isWholeCapture() {
         return target.parentPiece().equals(target.specificComponent());
     }
@@ -47,7 +51,6 @@ public record CaptureAction(
         return !(target.parentPiece() instanceof Pyramid);
     }
 
-    // Ces méthodes permettent de garder ton CaptureApplier tel quel
     public Piece targetPiece() { return target.parentPiece(); }
     public Position targetPosition() { return target.position(); }
     public Piece capturedPiece() { return target.specificComponent(); }

@@ -1,5 +1,6 @@
 package eu.nicosworld.rithmo.engine.capture;
 
+import eu.nicosworld.rithmo.engine.capture.justification.*;
 import eu.nicosworld.rithmo.engine.model.PieceType;
 import eu.nicosworld.rithmo.engine.model.PlayerColor;
 import eu.nicosworld.rithmo.engine.model.Position;
@@ -56,6 +57,11 @@ public class CaptureTestCase {
         return this;
     }
 
+    public CaptureTestCase withBlackPyramidAlly(int x, int y, ComponentData ...components ) {
+        this.otherPieces.add(new ExtraPiece(PieceType.PYRAMID, 0, PlayerColor.BLACK, new Position(x, y), List.of(components)));
+        return this;
+    }
+
     public CaptureTestCase withObstacleAt(int x, int y) {
         return withBlackAlly(PieceType.CIRCLE, 999, x, y);
     }
@@ -63,51 +69,64 @@ public class CaptureTestCase {
     // --- EXPECTATIONS (Typed) ---
 
     // 1. ENCOUNTER
-    public CaptureTestCase expectEncounter(PieceType type, int value) {
-        return addExpected(type, value, true, CaptureType.ENCOUNTER);
+    public CaptureTestCase expectEncounter(PieceType type, int value, EncounterJustification justification) {
+        return addExpected(type, value, true, CaptureType.ENCOUNTER, justification);
     }
 
-    public CaptureTestCase expectPartialEncounter(PieceType type, int value) {
-        return addExpected(type, value, false, CaptureType.ENCOUNTER);
+    public CaptureTestCase expectPartialEncounter(PieceType type, int value, EncounterJustification justification) {
+        return addExpected(type, value, false, CaptureType.ENCOUNTER, justification);
     }
 
     // 2. AMBUSH
-    public CaptureTestCase expectAmbush(PieceType type, int value) {
-        return addExpected(type, value, true, CaptureType.AMBUSH);
+    public CaptureTestCase expectAmbush(PieceType type, int value, AmbushJustification justification) {
+        return addExpected(type, value, true, CaptureType.AMBUSH, justification);
     }
 
-    public CaptureTestCase expectPartialAmbush(PieceType type, int value) {
-        return addExpected(type, value, false, CaptureType.AMBUSH);
+    public CaptureTestCase expectPartialAmbush(PieceType type, int value, AmbushJustification justification) {
+        return addExpected(type, value, false, CaptureType.AMBUSH, justification);
     }
 
     // 3. ASSAULT
-    public CaptureTestCase expectAssault(PieceType type, int value) {
-        return addExpected(type, value, true, CaptureType.ASSAULT);
+    public CaptureTestCase expectAssault(PieceType type, int value, AssaultJustification justification) {
+        return addExpected(type, value, true, CaptureType.ASSAULT, justification);
     }
 
-    public CaptureTestCase expectPartialAssault(PieceType type, int value) {
-        return addExpected(type, value, false, CaptureType.ASSAULT);
+    public CaptureTestCase expectPartialAssault(PieceType type, int value, AssaultJustification justification) {
+        return addExpected(type, value, false, CaptureType.ASSAULT, justification);
     }
 
     // 4. POWER
-    public CaptureTestCase expectPower(PieceType type, int value) {
-        return addExpected(type, value, true, CaptureType.POWER);
+    public CaptureTestCase expectPower(PieceType type, int value, PowerJustification justification) {
+        return addExpected(type, value, true, CaptureType.POWER, justification);
     }
 
-    public CaptureTestCase expectPartialPower(PieceType type, int value) {
-        return addExpected(type, value, false, CaptureType.POWER);
-    }
-
-    // Helper to avoid duplication
-    private CaptureTestCase addExpected(PieceType type, int value, boolean isWhole, CaptureType captureType) {
-        this.expectedCaptures.add(new ExpectedCapture(type, value, isWhole, captureType));
-        this.expectedCaptureCount++;
-        return this;
+    public CaptureTestCase expectPartialPower(PieceType type, int value, PowerJustification justification) {
+        return addExpected(type, value, false, CaptureType.POWER, justification);
     }
 
     public CaptureTestCase expectNoCapture() {
         this.expectedCaptureCount = 0;
         this.expectedCaptures.clear();
+        return this;
+    }
+
+    private CaptureTestCase addExpected(
+            PieceType type,
+            int value,
+            boolean isWhole,
+            CaptureType captureType,
+            CaptureJustification justification
+    ) {
+        expectedCaptures.add(
+                new ExpectedCapture(
+                        type,
+                        value,
+                        isWhole,
+                        captureType,
+                        justification
+                )
+        );
+        expectedCaptureCount++;
         return this;
     }
 

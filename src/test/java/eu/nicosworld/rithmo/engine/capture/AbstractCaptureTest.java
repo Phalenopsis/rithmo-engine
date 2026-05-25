@@ -8,6 +8,7 @@ import eu.nicosworld.rithmo.engine.move.RegularMoveGenerator;
 import eu.nicosworld.rithmo.engine.setup.BoardBuilder;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,15 +43,7 @@ public abstract class AbstractCaptureTest {
                 .at(testCase.getAttackerPos().getX(), testCase.getAttackerPos().getY())
                 .build();
 
-        System.out.println(ctx.state().board().prettyPrint());
-
         List<CaptureAction> captures = engine.findCaptures(ctx);
-
-        System.out.println("captures");
-        for(CaptureAction capture: captures) {
-            System.out.println(capture);
-        }
-
 
         // 1. Verify the number of captures found
         assertEquals(
@@ -61,17 +54,20 @@ public abstract class AbstractCaptureTest {
 
         // 2. Verify each expected capture detail (including the TYPE)
         for (ExpectedCapture expected : testCase.getExpectedCaptures()) {
-            boolean found = captures.stream().anyMatch(c ->
-                    c.capturedPiece().getType() == expected.type()
-                            && c.capturedPiece().getValue() == expected.value()
-                            && c.isWholeCapture() == expected.isWhole()
-                            && c.type() == expected.captureType() // Now validating the rule type!
-            );
+            boolean found = captures.stream().anyMatch(c -> matches(c, expected));
 
             assertTrue(found,
-                    String.format("Missing expected capture: %s (%s) in test case: %s",
-                            expected.type(), expected.captureType(), testCase));
+                    String.format("Missing expected capture: %s in test case: %s",
+                            expected, testCase));
         }
+    }
+
+    private boolean matches(CaptureAction actual, ExpectedCapture expected) {
+        return actual.capturedPiece().getType() == expected.type()
+                && actual.capturedPiece().getValue() == expected.value()
+                && actual.isWholeCapture() == expected.isWhole()
+                && actual.type() == expected.captureType()
+                && Objects.equals(actual.justification(), expected.justification());
     }
 
 }

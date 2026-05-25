@@ -4,6 +4,7 @@ import eu.nicosworld.rithmo.engine.capture.AbstractCaptureTest;
 import eu.nicosworld.rithmo.engine.capture.CaptureEngine;
 import eu.nicosworld.rithmo.engine.capture.CaptureTestCase;
 import eu.nicosworld.rithmo.engine.capture.capturerule.AssaultRule;
+import eu.nicosworld.rithmo.engine.capture.justification.AssaultOperator;
 import eu.nicosworld.rithmo.engine.model.PieceType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,6 +13,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
 import java.util.stream.Stream;
+
+import static eu.nicosworld.rithmo.engine.testutils.CaptureJustifications.assault;
 
 public class AssaultCaptureTest extends AbstractCaptureTest {
 
@@ -28,19 +31,19 @@ public class AssaultCaptureTest extends AbstractCaptureTest {
     }
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("oneTestCase")
+    @MethodSource("singleDebugCase")
     void should_validate_assault_logic_OneTestCaseForDebug(CaptureTestCase testCase) {
         launchTestCase(testCase);
     }
 
-    static Stream<Arguments> oneTestCase() {
+    static Stream<Arguments> singleDebugCase() {
         return Stream.of(
             // A pyramid attacks using its internal component (5)
             // 5 * 3 empty spaces = 15
             CaptureTestCase.blackPyramidAt(1, 1)
                     .withComponent(PieceType.CIRCLE, 5)
                     .againstWhite(PieceType.TRIANGLE, 15, 5, 1)
-                    .expectAssault(PieceType.TRIANGLE, 15)
+                    .expectAssault(PieceType.TRIANGLE, 15, assault(3, AssaultOperator.MULTIPLY, 5, 15))
                     .build()
         );
     }
@@ -60,7 +63,7 @@ public class AssaultCaptureTest extends AbstractCaptureTest {
                 // Success: 6 * 2 empty spaces = 12
                 CaptureTestCase.blackTriangleAt(6, 1, 1)
                         .againstWhite(PieceType.TRIANGLE, 12, 4, 1)
-                        .expectAssault(PieceType.TRIANGLE, 12)
+                        .expectAssault(PieceType.TRIANGLE, 12, assault(2, AssaultOperator.MULTIPLY, 6, 12))
                         .build(),
 
                 // =============================
@@ -70,7 +73,7 @@ public class AssaultCaptureTest extends AbstractCaptureTest {
                 // Success: 36 / 3 empty spaces = 12
                 CaptureTestCase.blackCircleAt(36, 1, 1)
                         .againstWhite(PieceType.TRIANGLE, 12, 5, 1)
-                        .expectAssault(PieceType.TRIANGLE, 12)
+                        .expectAssault(PieceType.TRIANGLE, 12, assault(3, AssaultOperator.DIVIDE, 36, 12))
                         .build(),
 
                 // Fail: 36 / 2 empty spaces = 18 (Target is 12)
@@ -95,7 +98,7 @@ public class AssaultCaptureTest extends AbstractCaptureTest {
                 // 5 * 2 = 10
                 CaptureTestCase.blackCircleAt(5, 1, 1)
                         .againstWhite(PieceType.SQUARE, 10, 4, 4)
-                        .expectAssault(PieceType.SQUARE, 10)
+                        .expectAssault(PieceType.SQUARE, 10, assault(2, AssaultOperator.MULTIPLY, 5, 10))
                         .build(),
 
                 // =============================
@@ -106,7 +109,7 @@ public class AssaultCaptureTest extends AbstractCaptureTest {
                 CaptureTestCase.blackPyramidAt(1, 1)
                         .withComponent(PieceType.CIRCLE, 5)
                         .againstWhite(PieceType.TRIANGLE, 15, 5, 1)
-                        .expectAssault(PieceType.TRIANGLE, 15)
+                        .expectAssault(PieceType.TRIANGLE, 15, assault(3, AssaultOperator.MULTIPLY, 5, 15))
                         .build(),
 
                 // =============================
@@ -118,7 +121,7 @@ public class AssaultCaptureTest extends AbstractCaptureTest {
                         .againstWhitePyramid(4, 1,
                                 new CaptureTestCase.ComponentData(PieceType.CIRCLE, 10),
                                 new CaptureTestCase.ComponentData(PieceType.CIRCLE, 6))
-                        .expectAssault(PieceType.PYRAMID, 16)
+                        .expectAssault(PieceType.PYRAMID, 16, assault(2, AssaultOperator.MULTIPLY, 8, 16))
                         .build(),
 
                 // Partial Capture: hitting a specific component of a pyramid via assault
@@ -127,7 +130,7 @@ public class AssaultCaptureTest extends AbstractCaptureTest {
                         .againstWhitePyramid(6, 1,
                                 new CaptureTestCase.ComponentData(PieceType.SQUARE, 20),
                                 new CaptureTestCase.ComponentData(PieceType.CIRCLE, 10))
-                        .expectPartialAssault(PieceType.SQUARE, 20)
+                        .expectPartialAssault(PieceType.SQUARE, 20, assault(4, AssaultOperator.MULTIPLY, 5, 20))
                         .build()
         );
     }
