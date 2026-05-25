@@ -1,6 +1,8 @@
 package eu.nicosworld.rithmo.engine.capture.capturerule;
 
 import eu.nicosworld.rithmo.engine.capture.AbstractCaptureRule;
+import eu.nicosworld.rithmo.engine.capture.justification.PowerJustification;
+import eu.nicosworld.rithmo.engine.capture.justification.PowerRelation;
 import eu.nicosworld.rithmo.engine.capture.model.*;
 import eu.nicosworld.rithmo.engine.model.Piece;
 import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
@@ -11,6 +13,9 @@ import eu.nicosworld.rithmo.engine.move.RegularMoveGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import static java.lang.Math.pow;
 
 /**
  * Implements the Power capture rule.
@@ -65,23 +70,26 @@ public class PowerRule extends AbstractCaptureRule {
             for (CaptureTarget attackerOption : attackerOptions) {
                 for (CaptureTarget targetOption : targetOptions) {
 
-                    if (isPowerMatch(attackerOption.value(), targetOption.value())) {
-
-                        InvolvedPiece involvedActor = new InvolvedPiece(
-                                attackerPiece,
-                                attackerPosition,
-                                attackerOption.piece()
-                        );
-
-                        InvolvedPiece involvedTarget = new InvolvedPiece(
-                                targetPiece,
-                                targetPosition,
-                                targetOption.piece()
-                        );
-
-                        // Using the static factory method for Power capture
-                        captures.add(CaptureAction.power(involvedActor, involvedTarget));
-                    }
+                    resolvePower(
+                            attackerOption.value(),
+                            targetOption.value()
+                    ).ifPresent(justification ->
+                            captures.add(
+                                    CaptureAction.power(
+                                            new InvolvedPiece(
+                                                    attackerPiece,
+                                                    attackerPosition,
+                                                    attackerOption.piece()
+                                            ),
+                                            new InvolvedPiece(
+                                                    targetPiece,
+                                                    targetPosition,
+                                                    targetOption.piece()
+                                            ),
+                                            justification
+                                    )
+                            )
+                    );
                 }
             }
         }
@@ -89,14 +97,35 @@ public class PowerRule extends AbstractCaptureRule {
         return captures;
     }
 
-    /**
-     * Arithmetic logic for Power capture:
-     * Checks if one value is the square or cube of the other.
-     */
-    private boolean isPowerMatch(int attackerValue, int targetValue) {
-        return attackerValue == targetValue * targetValue
-                || attackerValue == targetValue * targetValue * targetValue
-                || attackerValue * attackerValue == targetValue
-                || attackerValue * attackerValue * attackerValue == targetValue;
+    private Optional<PowerJustification> resolvePower(
+            int attackerValue,
+            int targetValue
+    ) {
+        for (int exponent = 2; exponent <= 9; exponent++) {
+
+            if (pow(attackerValue, exponent) == targetValue) {
+                return Optional.of(
+                        new PowerJustification(
+                                attackerValue,
+                                PowerRelation.POWER,
+                                exponent,
+                                targetValue
+                        )
+                );
+            }
+
+            if (pow(targetValue, exponent) == attackerValue) {
+                return Optional.of(
+                        new PowerJustification(
+                                attackerValue,
+                                PowerRelation.ROOT,
+                                exponent,
+                                targetValue
+                        )
+                );
+            }
+        }
+
+        return Optional.empty();
     }
 }

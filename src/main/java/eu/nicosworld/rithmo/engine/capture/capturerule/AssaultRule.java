@@ -1,6 +1,8 @@
 package eu.nicosworld.rithmo.engine.capture.capturerule;
 
 import eu.nicosworld.rithmo.engine.capture.AbstractCaptureRule;
+import eu.nicosworld.rithmo.engine.capture.justification.AssaultJustification;
+import eu.nicosworld.rithmo.engine.capture.justification.AssaultOperator;
 import eu.nicosworld.rithmo.engine.capture.model.*;
 import eu.nicosworld.rithmo.engine.model.Piece;
 import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
@@ -9,10 +11,7 @@ import eu.nicosworld.rithmo.engine.move.Delta;
 import eu.nicosworld.rithmo.engine.move.FreePathMovementValidator;
 import eu.nicosworld.rithmo.engine.move.RegularMoveGenerator;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implements the Assault (Assaut) capture rule.
@@ -108,31 +107,55 @@ public class AssaultRule extends AbstractCaptureRule {
         for (CaptureTarget attackerOption : attackerOptions) {
             for (CaptureTarget targetOption : targetOptions) {
 
-                if (isAssaultConditionMet(attackerOption.value(), targetOption.value(), emptySpaces)) {
-
-                    InvolvedPiece involvedActor = new InvolvedPiece(
-                            actor.piece(),
-                            actor.position(),
-                            attackerOption.piece()
-                    );
-
-                    InvolvedPiece involvedTarget = new InvolvedPiece(
-                            targetPiece,
-                            targetPosition,
-                            targetOption.piece()
-                    );
-
-                    // Using the new factory method for cleaner code
-                    results.add(CaptureAction.assault(involvedActor, involvedTarget));
-                }
+                resolveAssault(attackerOption.value(), targetOption.value(), emptySpaces)
+                        .ifPresent(justification ->
+                                results.add(
+                                        CaptureAction.assault(
+                                                new InvolvedPiece(
+                                                        actor.piece(),
+                                                        actor.position(),
+                                                        attackerOption.piece()
+                                                ),
+                                                new InvolvedPiece(
+                                                        targetPiece,
+                                                        targetPosition,
+                                                        targetOption.piece()
+                                                ),
+                                                justification
+                                        )
+                                ));
             }
         }
     }
 
-    private boolean isAssaultConditionMet(int attackerValue, int targetValue, int distance) {
-        boolean multiplicationMatch = (attackerValue * distance == targetValue);
-        boolean divisionMatch = (attackerValue % distance == 0 && attackerValue / distance == targetValue);
+    private Optional<AssaultJustification> resolveAssault(
+            int attackerValue,
+            int targetValue,
+            int distance
+    ) {
+        if (attackerValue * distance == targetValue) {
+            return Optional.of(
+                    new AssaultJustification(
+                            distance,
+                            AssaultOperator.MULTIPLY,
+                            attackerValue,
+                            targetValue
+                    )
+            );
+        }
 
-        return multiplicationMatch || divisionMatch;
+        if (attackerValue % distance == 0
+                && attackerValue / distance == targetValue) {
+            return Optional.of(
+                    new AssaultJustification(
+                            distance,
+                            AssaultOperator.DIVIDE,
+                            attackerValue,
+                            targetValue
+                    )
+            );
+        }
+
+        return Optional.empty();
     }
 }
