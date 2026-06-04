@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [0.5.2-SNAPSHOT] - In progress
+### Fixed
+- **Goods Victory**: Fixed victory evaluation to use the total value of captured pieces rather than the captured piece count, restoring correct "Victory of Goods" behavior.
+
+
 ## [0.5.1] - 2026-05-25
 ### Documentation
 - Fixed wording in assault capture rule description

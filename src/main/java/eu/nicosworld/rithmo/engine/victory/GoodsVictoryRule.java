@@ -14,6 +14,6 @@ public class GoodsVictoryRule implements VictoryRule {
     public boolean isSatisfied(GameState state) {
         PlayerAssets assets = state.assetsOfCurrentPlayer();
 
-        return assets.capturedCount() >= sumOfValueToWin;
+        return assets.capturedValue() >= sumOfValueToWin;
     }
 }

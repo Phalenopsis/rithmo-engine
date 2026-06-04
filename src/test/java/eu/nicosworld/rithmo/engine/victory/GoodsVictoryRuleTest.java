@@ -10,7 +10,8 @@ class GoodsVictoryRuleTest {
     void testIsSatisfied_notSatisfied_returnFalse() {
         Board board = new Board();
         GameState state = GameState.initial(board, Player.BLACK);
-        GoodsVictoryRule rule = new GoodsVictoryRule(5);
+        int targetValue = 5;
+        GoodsVictoryRule rule = new GoodsVictoryRule(targetValue);
 
         boolean result = rule.isSatisfied(state);
 
@@ -21,28 +22,57 @@ class GoodsVictoryRuleTest {
     void testIsSatisfied_equalToSumNeeded_returnTrue() {
         Board board = new Board();
         GameState state = GameState.initial(board, Player.BLACK);
-        GoodsVictoryRule rule = new GoodsVictoryRule(25);
+        int targetValue = 25;
+        GoodsVictoryRule rule = new GoodsVictoryRule(targetValue);
         state = state.withAssets(PlayerColor.BLACK,
                 state.assetsOfCurrentPlayer()
-                        .addToReserve(new SimplePiece(PieceType.SQUARE, Player.WHITE, 15))
-                        .addToReserve(new SimplePiece(PieceType.TRIANGLE, Player.WHITE, 10))
+                        .addCaptured(new SimplePiece(PieceType.SQUARE, Player.WHITE, 15))
+                        .addCaptured(new SimplePiece(PieceType.TRIANGLE, Player.WHITE, 10))
         );
 
         boolean result = rule.isSatisfied(state);
 
-        assertFalse(result);
+        assertTrue(result);
     }
 
     @Test
     void testIsSatisfied_higherThanSumNeeded_returnTrue() {
         Board board = new Board();
         GameState state = GameState.initial(board, Player.BLACK);
-        GoodsVictoryRule rule = new GoodsVictoryRule(25);
+        int targetValue = 25;
+        GoodsVictoryRule rule = new GoodsVictoryRule(targetValue);
         state = state.withAssets(PlayerColor.BLACK,
                     state.assetsOfCurrentPlayer()
-                    .addToReserve(new SimplePiece(PieceType.SQUARE, Player.WHITE, 15))
-                    .addToReserve(new SimplePiece(PieceType.TRIANGLE, Player.WHITE, 10))
-                    .addToReserve(new SimplePiece(PieceType.CIRCLE, Player.WHITE, 4))
+                    .addCaptured(new SimplePiece(PieceType.SQUARE, Player.WHITE, 15))
+                    .addCaptured(new SimplePiece(PieceType.TRIANGLE, Player.WHITE, 10))
+                    .addCaptured(new SimplePiece(PieceType.CIRCLE, Player.WHITE, 4))
+        );
+
+        boolean result = rule.isSatisfied(state);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void testIsSatisfied_capturedCountHigherButValueLower_returnFalse() {
+        Board board = new Board();
+        GameState state = GameState.initial(board, Player.BLACK);
+        int targetValue = 30;
+        GoodsVictoryRule rule = new GoodsVictoryRule(targetValue);
+        state = state.withAssets(PlayerColor.BLACK,
+            state.assetsOfCurrentPlayer()
+                .addCaptured(new SimplePiece(PieceType.SQUARE, Player.WHITE, 1))
+                .addCaptured(new SimplePiece(PieceType.TRIANGLE, Player.WHITE, 1))
+                .addCaptured(new SimplePiece(PieceType.CIRCLE, Player.WHITE, 1))
+                .addCaptured(new SimplePiece(PieceType.SQUARE, Player.WHITE, 1))
+                .addCaptured(new SimplePiece(PieceType.TRIANGLE, Player.WHITE, 1))
+                .addCaptured(new SimplePiece(PieceType.CIRCLE, Player.WHITE, 1))
+                .addCaptured(new SimplePiece(PieceType.SQUARE, Player.WHITE, 1))
+                .addCaptured(new SimplePiece(PieceType.TRIANGLE, Player.WHITE, 1))
+                .addCaptured(new SimplePiece(PieceType.CIRCLE, Player.WHITE, 1))
+                .addCaptured(new SimplePiece(PieceType.SQUARE, Player.WHITE, 1))
+                .addCaptured(new SimplePiece(PieceType.TRIANGLE, Player.WHITE, 1))
+                .addCaptured(new SimplePiece(PieceType.CIRCLE, Player.WHITE, 1))
         );
 
         boolean result = rule.isSatisfied(state);
