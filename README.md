@@ -86,6 +86,79 @@ Planned improvements:
 * Additional victory conditions (progressions, combinations)
 * Extended rule coverage
 * API stabilization
+---
+
+# 🛠️ Development Environment
+
+## Git Hooks
+
+This project uses a local `pre-commit` hook to enforce code hygiene before every commit.
+
+The hook automatically:
+
+* Runs the Spotless formatter
+* Rejects commits containing accidental `TestDebugger` usage
+* Ensures formatting consistency across the codebase
+
+Enable hooks after cloning:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+---
+
+## Code Formatting
+
+This project uses Spotless with Google Java Format.
+
+Formatting is enforced automatically through the pre-commit hook.
+
+### Manual formatting
+
+Format the whole project:
+
+```bash
+mvn spotless:apply
+```
+
+Validate formatting without modifying files:
+
+```bash
+mvn spotless:check
+```
+
+---
+
+### Formatter Rules
+
+The formatter automatically handles:
+
+* Import ordering
+* Removal of unused imports
+* Indentation normalization
+* Empty-line cleanup
+* Standardized Java formatting
+
+---
+
+### Preserving intentional formatting
+
+Some test assertions use visual indentation to express decision trees.
+
+For these rare cases, formatting can be locally disabled:
+
+```java
+// spotless:off
+StatusDTOAssertion.from(nextStatus)
+        .status()
+            .isInPostCapturePhase()
+        .decisions()
+            .canCaptureInOneDecision("WT12(2,1)")
+            .hasCaptureCiblesFor("BC4(1,2)", "WT12(2,1)")
+            .cannotCaptureWith("BC8(1,0)", "WT12(2,1)");
+// spotless:on
+```
 
 ---
 
