@@ -1,66 +1,85 @@
 package eu.nicosworld.rithmo.engine.victory;
 
 import eu.nicosworld.rithmo.engine.model.*;
+import eu.nicosworld.rithmo.engine.model.victory.Victory;
+import eu.nicosworld.rithmo.engine.testutils.victory.VictoryAssertion;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class GoodsVictoryRuleTest {
-    @Test
-    void testIsSatisfied_notSatisfied_returnFalse() {
-        Board board = new Board();
-        GameState state = GameState.initial(board, Player.BLACK);
-        int targetValue = 5;
-        GoodsVictoryRule rule = new GoodsVictoryRule(targetValue);
-
-        boolean result = rule.isSatisfied(state);
-
-        assertFalse(result);
+    @ParameterizedTest
+    @ValueSource(ints = {0, -1, -10})
+    void testConstructor_nonPositiveRequiredCount_throwException(int value) {
+        assertThatThrownBy(() -> new GoodsVictoryRule(value))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Required captured value must be greater than 0.");
     }
 
     @Test
-    void testIsSatisfied_equalToSumNeeded_returnTrue() {
-        Board board = new Board();
-        GameState state = GameState.initial(board, Player.BLACK);
+    void testEvaluate_returnEmpty() {
+        GameState state = GameState.initial(Player.BLACK);
+        int targetValue = 5;
+        GoodsVictoryRule rule = new GoodsVictoryRule(targetValue);
+
+        Optional<Victory> result = rule.evaluate(state);
+
+        VictoryAssertion.from(result)
+            .isNotVictory();
+    }
+
+    @Test
+    void testEvaluate_equalToSumNeeded_returnTrue() {
         int targetValue = 25;
         GoodsVictoryRule rule = new GoodsVictoryRule(targetValue);
-        state = state.withAssets(PlayerColor.BLACK,
-                state.assetsOfCurrentPlayer()
+
+        GameState state = GameState.initial(Player.BLACK).withAssets(PlayerColor.BLACK,
+            PlayerAssets.empty()
                         .addCaptured(new SimplePiece(PieceType.SQUARE, Player.WHITE, 15))
                         .addCaptured(new SimplePiece(PieceType.TRIANGLE, Player.WHITE, 10))
         );
 
-        boolean result = rule.isSatisfied(state);
+        Optional<Victory> result = rule.evaluate(state);
 
-        assertTrue(result);
+        VictoryAssertion.from(result)
+            .isVictory()
+            .isByGoods()
+            .hasVictorious(Player.BLACK)
+            .hasCapturedValue(25)
+            .hasRequiredValue(25);
     }
 
     @Test
-    void testIsSatisfied_higherThanSumNeeded_returnTrue() {
-        Board board = new Board();
-        GameState state = GameState.initial(board, Player.BLACK);
+    void testEvaluate_higherThanSumNeeded_returnTrue() {
         int targetValue = 25;
         GoodsVictoryRule rule = new GoodsVictoryRule(targetValue);
-        state = state.withAssets(PlayerColor.BLACK,
-                    state.assetsOfCurrentPlayer()
+        GameState state = GameState.initial(Player.BLACK).withAssets(PlayerColor.BLACK,
+            PlayerAssets.empty()
                     .addCaptured(new SimplePiece(PieceType.SQUARE, Player.WHITE, 15))
                     .addCaptured(new SimplePiece(PieceType.TRIANGLE, Player.WHITE, 10))
                     .addCaptured(new SimplePiece(PieceType.CIRCLE, Player.WHITE, 4))
         );
 
-        boolean result = rule.isSatisfied(state);
+        Optional<Victory> result = rule.evaluate(state);
 
-        assertTrue(result);
+        VictoryAssertion.from(result)
+            .isVictory()
+            .isByGoods()
+            .hasVictorious(Player.BLACK)
+            .hasCapturedValue(29)
+            .hasRequiredValue(25);
     }
 
     @Test
-    void testIsSatisfied_capturedCountHigherButValueLower_returnFalse() {
-        Board board = new Board();
-        GameState state = GameState.initial(board, Player.BLACK);
+    void testEvaluate_manyCapturedPiecesButInsufficientValue_returnFalse() {
         int targetValue = 30;
         GoodsVictoryRule rule = new GoodsVictoryRule(targetValue);
-        state = state.withAssets(PlayerColor.BLACK,
-            state.assetsOfCurrentPlayer()
+        GameState state = GameState.initial(Player.BLACK).withAssets(PlayerColor.BLACK,
+            PlayerAssets.empty()
                 .addCaptured(new SimplePiece(PieceType.SQUARE, Player.WHITE, 1))
                 .addCaptured(new SimplePiece(PieceType.TRIANGLE, Player.WHITE, 1))
                 .addCaptured(new SimplePiece(PieceType.CIRCLE, Player.WHITE, 1))
@@ -75,8 +94,30 @@ class GoodsVictoryRuleTest {
                 .addCaptured(new SimplePiece(PieceType.CIRCLE, Player.WHITE, 1))
         );
 
-        boolean result = rule.isSatisfied(state);
+        Optional<Victory> result = rule.evaluate(state);
 
-        assertFalse(result);
+        VictoryAssertion.from(result)
+            .isNotVictory();
+    }
+
+    @Test
+    void testEvaluate_captureAndStoreCountsCapturedValue() {
+        int targetValue = 25;
+
+        GoodsVictoryRule rule = new GoodsVictoryRule(targetValue);
+
+        GameState state = GameState.initial(Player.BLACK)
+            .withAssets(PlayerColor.BLACK,
+                PlayerAssets.empty()
+                    .captureAndStore(new SimplePiece(PieceType.SQUARE, Player.WHITE, 15))
+                    .captureAndStore(new SimplePiece(PieceType.TRIANGLE, Player.WHITE, 10))
+            );
+
+        Optional<Victory> result = rule.evaluate(state);
+
+        VictoryAssertion.from(result)
+            .isVictory()
+            .isByGoods()
+            .hasCapturedValue(25);
     }
 }
