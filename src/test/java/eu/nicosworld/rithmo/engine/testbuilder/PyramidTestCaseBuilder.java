@@ -1,107 +1,105 @@
 package eu.nicosworld.rithmo.engine.testbuilder;
 
 import eu.nicosworld.rithmo.engine.model.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Builder dedicated to constructing Pyramid test fixtures.
- * <p>
- * Avoids duplication of Pyramid composition in test classes.
- * </p>
+ *
+ * <p>Avoids duplication of Pyramid composition in test classes.
  */
 public class PyramidTestCaseBuilder {
 
-    private final Player player;
-    private final List<SimplePiece> components = new ArrayList<>();
+  private final Player player;
+  private final List<SimplePiece> components = new ArrayList<>();
 
-    private Position position = new Position(4, 4);
+  private Position position = new Position(4, 4);
 
-    private PyramidTestCaseBuilder(Player player) {
-        this.player = player;
-    }
+  private PyramidTestCaseBuilder(Player player) {
+    this.player = player;
+  }
 
-    // =========================================================
-    // ENTRY
-    // =========================================================
+  // =========================================================
+  // ENTRY
+  // =========================================================
 
-    public static PyramidTestCaseBuilder forPlayer(Player player) {
-        return new PyramidTestCaseBuilder(player);
-    }
+  public static PyramidTestCaseBuilder forPlayer(Player player) {
+    return new PyramidTestCaseBuilder(player);
+  }
 
-    // =========================================================
-    // POSITION
-    // =========================================================
+  // =========================================================
+  // POSITION
+  // =========================================================
 
-    public PyramidTestCaseBuilder at(int x, int y) {
-        this.position = new Position(x, y);
-        return this;
-    }
+  public PyramidTestCaseBuilder at(int x, int y) {
+    this.position = new Position(x, y);
+    return this;
+  }
 
-    // =========================================================
-    // COMPONENTS
-    // =========================================================
+  // =========================================================
+  // COMPONENTS
+  // =========================================================
 
-    public PyramidTestCaseBuilder full() {
-        components.clear();
+  public PyramidTestCaseBuilder full() {
+    components.clear();
 
-        components.add(new SimplePiece(PieceType.SQUARE, player, 36));
-        components.add(new SimplePiece(PieceType.SQUARE, player, 25));
+    components.add(new SimplePiece(PieceType.SQUARE, player, 36));
+    components.add(new SimplePiece(PieceType.SQUARE, player, 25));
 
-        components.add(new SimplePiece(PieceType.TRIANGLE, player, 16));
-        components.add(new SimplePiece(PieceType.TRIANGLE, player, 9));
+    components.add(new SimplePiece(PieceType.TRIANGLE, player, 16));
+    components.add(new SimplePiece(PieceType.TRIANGLE, player, 9));
 
-        components.add(new SimplePiece(PieceType.CIRCLE, player, 4));
-        components.add(new SimplePiece(PieceType.CIRCLE, player, 1));
+    components.add(new SimplePiece(PieceType.CIRCLE, player, 4));
+    components.add(new SimplePiece(PieceType.CIRCLE, player, 1));
 
-        return this;
-    }
+    return this;
+  }
 
-    public PyramidTestCaseBuilder withoutTriangle() {
-        components.removeIf(p -> p.getType() == PieceType.TRIANGLE);
-        return this;
-    }
+  public PyramidTestCaseBuilder withoutTriangle() {
+    components.removeIf(p -> p.getType() == PieceType.TRIANGLE);
+    return this;
+  }
 
-    public PyramidTestCaseBuilder minimalCirclesOnly() {
-        components.clear();
+  public PyramidTestCaseBuilder minimalCirclesOnly() {
+    components.clear();
 
-        components.add(new SimplePiece(PieceType.CIRCLE, player, 4));
-        components.add(new SimplePiece(PieceType.CIRCLE, player, 1));
+    components.add(new SimplePiece(PieceType.CIRCLE, player, 4));
+    components.add(new SimplePiece(PieceType.CIRCLE, player, 1));
 
-        return this;
-    }
+    return this;
+  }
 
-    public PyramidTestCaseBuilder withSquare(int value) {
-        return with(PieceType.SQUARE, value);
-    }
+  public PyramidTestCaseBuilder withSquare(int value) {
+    return with(PieceType.SQUARE, value);
+  }
 
-    public PyramidTestCaseBuilder withTriangle(int value) {
-        return with(PieceType.TRIANGLE, value);
-    }
+  public PyramidTestCaseBuilder withTriangle(int value) {
+    return with(PieceType.TRIANGLE, value);
+  }
 
-    public PyramidTestCaseBuilder withCircle(int value) {
-        return with(PieceType.CIRCLE, value);
-    }
+  public PyramidTestCaseBuilder withCircle(int value) {
+    return with(PieceType.CIRCLE, value);
+  }
 
-    public PyramidTestCaseBuilder with(PieceType type, int value) {
-        components.add(new SimplePiece(type, player, value));
-        return this;
-    }
+  public PyramidTestCaseBuilder with(PieceType type, int value) {
+    components.add(new SimplePiece(type, player, value));
+    return this;
+  }
 
-    // =========================================================
-    // BUILD
-    // =========================================================
+  // =========================================================
+  // BUILD
+  // =========================================================
 
-    public Pyramid build() {
-        return new Pyramid(player, List.copyOf(components));
-    }
+  public Pyramid build() {
+    return new Pyramid(player, List.copyOf(components));
+  }
 
-    PieceAtPosition buildAt() {
-        return new PieceAtPosition(build(), position);
-    }
+  PieceAtPosition buildAt() {
+    return new PieceAtPosition(build(), position);
+  }
 
-    Position position() {
-        return position;
-    }
+  Position position() {
+    return position;
+  }
 }
