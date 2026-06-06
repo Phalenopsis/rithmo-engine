@@ -69,6 +69,27 @@ public record GameState(
         return new GameState(board, currentPlayer, assets);
     }
 
+    /**
+     *  Creates an initial game state with empty assets for all players and an empty board.
+     *
+     *  <p>Each player starts with no captured pieces and no reserve.</p>
+     *
+     * @param currentPlayer the starting player
+     * @return a fully initialized {@code GameState}
+     */
+    public static GameState initial(Player currentPlayer) {
+        Board board = new Board();
+
+        Map<PlayerColor, PlayerAssets> assets =
+            new EnumMap<>(PlayerColor.class);
+
+        for (PlayerColor color : PlayerColor.values()) {
+            assets.put(color, PlayerAssets.empty());
+        }
+
+        return new GameState(board, currentPlayer, assets);
+    }
+
     // =========================
     // ACCESS HELPERS
     // =========================
