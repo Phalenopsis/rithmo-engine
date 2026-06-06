@@ -68,6 +68,12 @@ public record PlayerAssets(
                 .sum();
     }
 
+    public int capturedDigitCount() {
+        return captured.stream()
+            .mapToInt(piece -> String.valueOf(piece.getValue()).length())
+            .sum();
+    }
+
     // =========================
     // RESERVE LOGIC
     // =========================

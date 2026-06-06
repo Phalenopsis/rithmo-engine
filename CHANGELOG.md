@@ -10,6 +10,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Goods Victory**: Fixed victory evaluation to use the total value of captured pieces rather than the captured piece count, restoring correct "Victory of Goods" behavior.
 
+### Added
+- **GameState**: Added `GameState.initial(Player)` factory method to create a fully initialized game state with an empty board and empty assets for all players.
+- **PlayerAssets**: Added `capturedDigitCount()` to compute the total number of digits represented by captured piece values, supporting lawsuit victory evaluation.
+- **Victory Model**: Added `BodyVictory`, `GoodsVictory`, and `LawsuitVictory` result objects exposing winner information and rule-specific victory metrics.
+- **Victory Rules**: Added lawsuit victory evaluation based on the total number of digits represented by captured piece values.
+- **Victory Engine**: Added validation preventing registration of multiple rules of the same victory type.
+
+### Changed
+- **Victory Engine**: Victory evaluation now returns typed `Victory` results carrying rule-specific details instead of simple boolean outcomes.
+- **Victory Rules**: Introduced a common threshold-based implementation for body, goods and lawsuit victory conditions.
+
+### Test
+- **Victory Assertions**: Introduced dedicated assertion helpers for `BodyVictory`, `GoodsVictory`, and `LawsuitVictory`, improving readability of victory-rule test suites.
+- **Victory Rules**: Added coverage for lawsuit victories and enriched body/goods victory validation scenarios.
+- **Victory Engine**: Added integration tests covering multiple simultaneous victories, active-player evaluation, and duplicate-rule validation.
+
 
 ## [0.5.1] - 2026-05-25
 ### Documentation
