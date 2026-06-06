@@ -1,18 +1,18 @@
 package eu.nicosworld.rithmo.engine.victory;
 
 public abstract class AbstractThresholdVictoryRule {
-    protected int required;
+  protected int required;
 
-    AbstractThresholdVictoryRule(int required) {
-        this.required = required;
-        validate();
+  AbstractThresholdVictoryRule(int required) {
+    this.required = required;
+    validate();
+  }
+
+  private void validate() {
+    if (required <= 0) {
+      throw new IllegalArgumentException(getValidityErrorMessage());
     }
+  }
 
-    private void validate() {
-        if(required <= 0) {
-            throw new IllegalArgumentException(getValidityErrorMessage());
-        }
-    }
-
-    abstract protected String getValidityErrorMessage();
+  protected abstract String getValidityErrorMessage();
 }

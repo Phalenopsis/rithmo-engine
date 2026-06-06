@@ -1,52 +1,52 @@
 package eu.nicosworld.rithmo.engine.model;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 class BoardTest {
 
-    @Test
-    void getWidth() {
-        int width = 8;
-        int height = 16;
-        Board board = new Board(width, height);
+  @Test
+  void getWidth() {
+    int width = 8;
+    int height = 16;
+    Board board = new Board(width, height);
 
-        int result = board.getWidth();
+    int result = board.getWidth();
 
-        assertEquals(result, width);
-    }
+    assertEquals(result, width);
+  }
 
-    @Test
-    void getHeight() {
-        int width = 8;
-        int height = 16;
-        Board board = new Board(width, height);
+  @Test
+  void getHeight() {
+    int width = 8;
+    int height = 16;
+    Board board = new Board(width, height);
 
-        int result = board.getHeight();
+    int result = board.getHeight();
 
-        assertEquals(result, height);
-    }
+    assertEquals(result, height);
+  }
 
-    @Test
-    void isInside_positionIsInside_returnTrue() {
-        int width = 8;
-        int height = 16;
-        Board board = new Board(width, height);
+  @Test
+  void isInside_positionIsInside_returnTrue() {
+    int width = 8;
+    int height = 16;
+    Board board = new Board(width, height);
 
-        Position position = new Position(5, 13);
+    Position position = new Position(5, 13);
 
-        assertTrue(board.isInside(position));
-    }
+    assertTrue(board.isInside(position));
+  }
 
-    @Test
-    void isInside_positionIsOutside_returnFalse() {
-        int width = 8;
-        int height = 16;
-        Board board = new Board(width, height);
+  @Test
+  void isInside_positionIsOutside_returnFalse() {
+    int width = 8;
+    int height = 16;
+    Board board = new Board(width, height);
 
-        Position position = new Position(5, 16);
+    Position position = new Position(5, 16);
 
-        assertFalse(board.isInside(position));
-    }
+    assertFalse(board.isInside(position));
+  }
 }

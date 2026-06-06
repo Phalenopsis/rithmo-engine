@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **Victory Engine**: Victory evaluation now returns typed `Victory` results carrying rule-specific details instead of simple boolean outcomes.
 - **Victory Rules**: Introduced a common threshold-based implementation for body, goods and lawsuit victory conditions.
+- **Build Tooling**: standardized project-wide formatting enforcement through Spotless and pre-commit integration
 
 ### Test
 - **Victory Assertions**: Introduced dedicated assertion helpers for `BodyVictory`, `GoodsVictory`, and `LawsuitVictory`, improving readability of victory-rule test suites.

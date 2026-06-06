@@ -7,13 +7,13 @@ import eu.nicosworld.rithmo.engine.model.PlayerColor;
 
 public class GameStateFactory {
 
-    public static GameState from(Board board, PlayerColor current) {
-        Player player = Player.of(current);
+  public static GameState from(Board board, PlayerColor current) {
+    Player player = Player.of(current);
 
-        return from(board, player);
-    }
+    return from(board, player);
+  }
 
-    public static GameState from(Board board, Player current) {
-        return GameState.initial(board, current);
-    }
+  public static GameState from(Board board, Player current) {
+    return GameState.initial(board, current);
+  }
 }

@@ -7,12 +7,12 @@ import eu.nicosworld.rithmo.engine.model.SimplePiece;
 
 class TestPieceFactory {
 
-    static Piece create(PieceType type, Player player) {
-        return switch (type) {
-            case TRIANGLE -> new SimplePiece(type, player, 1);
-            case SQUARE -> new SimplePiece(type, player, 1);
-            case CIRCLE -> new SimplePiece(type, player, 1);
-            default -> throw new IllegalArgumentException();
-        };
-    }
+  static Piece create(PieceType type, Player player) {
+    return switch (type) {
+      case TRIANGLE -> new SimplePiece(type, player, 1);
+      case SQUARE -> new SimplePiece(type, player, 1);
+      case CIRCLE -> new SimplePiece(type, player, 1);
+      default -> throw new IllegalArgumentException();
+    };
+  }
 }

@@ -1,148 +1,126 @@
 package eu.nicosworld.rithmo.engine.movement;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import eu.nicosworld.rithmo.engine.model.*;
 import eu.nicosworld.rithmo.engine.move.IrregularMoveGenerator;
 import eu.nicosworld.rithmo.engine.move.Move;
 import eu.nicosworld.rithmo.engine.move.RegularMoveGenerator;
-import eu.nicosworld.rithmo.engine.setup.BoardBuilder;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class GlobalMoveTest extends MovementTestBase {
 
-    // =========================================================
-    // DSL
-    // =========================================================
-    static Stream<SimpleMoveTestCase> globalMovesDSL() {
-        return Stream.of(
+  // =========================================================
+  // DSL
+  // =========================================================
+  static Stream<SimpleMoveTestCase> globalMovesDSL() {
+    return Stream.of(
 
-                // TRIANGLE
-                SimpleMoveTestCase.triangleAt(4,4).canReach(4,6),
-                SimpleMoveTestCase.triangleAt(4,4).canReach(6,4),
+        // TRIANGLE
+        SimpleMoveTestCase.triangleAt(4, 4).canReach(4, 6),
+        SimpleMoveTestCase.triangleAt(4, 4).canReach(6, 4),
+        SimpleMoveTestCase.triangleAt(4, 4).canReach(5, 6),
+        SimpleMoveTestCase.triangleAt(4, 4).canReach(6, 5),
+        SimpleMoveTestCase.triangleAt(4, 4).cannotReach(5, 5),
 
-                SimpleMoveTestCase.triangleAt(4,4).canReach(5,6),
-                SimpleMoveTestCase.triangleAt(4,4).canReach(6,5),
+        // SQUARE
+        SimpleMoveTestCase.squareAt(4, 4).canReach(4, 7),
+        SimpleMoveTestCase.squareAt(4, 4).canReach(7, 4),
+        SimpleMoveTestCase.squareAt(4, 4).canReach(5, 7),
+        SimpleMoveTestCase.squareAt(4, 4).canReach(7, 5),
+        SimpleMoveTestCase.squareAt(4, 4).cannotReach(6, 6),
 
-                SimpleMoveTestCase.triangleAt(4,4).cannotReach(5,5),
+        // BLOCKING (regular only blocked)
+        SimpleMoveTestCase.triangleAt(4, 4).cannotReach(4, 6).becausePathBlockedAt(4, 5),
+        SimpleMoveTestCase.triangleAt(4, 4).canReach(5, 6),
 
-                // SQUARE
-                SimpleMoveTestCase.squareAt(4,4).canReach(4,7),
-                SimpleMoveTestCase.squareAt(4,4).canReach(7,4),
+        // OCCUPIED (blocks everything)
+        SimpleMoveTestCase.triangleAt(4, 4).cannotReach(5, 6).becauseOccupied(),
+        SimpleMoveTestCase.triangleAt(4, 4).cannotReach(4, 6).becauseOccupied());
+  }
 
-                SimpleMoveTestCase.squareAt(4,4).canReach(5,7),
-                SimpleMoveTestCase.squareAt(4,4).canReach(7,5),
+  // =========================================================
+  // TEST ENGINE OUTPUT
+  // =========================================================
+  @ParameterizedTest
+  @MethodSource("globalMovesDSL")
+  void global_moves(SimpleMoveTestCase tc) {
 
-                SimpleMoveTestCase.squareAt(4,4).cannotReach(6,6),
+    Player player = Player.BLACK;
 
-                // BLOCKING (regular only blocked)
-                SimpleMoveTestCase.triangleAt(4,4)
-                        .cannotReach(4,6)
-                        .becausePathBlockedAt(4,5),
+    Piece piece = TestPieceFactory.create(tc.type(), player);
 
-                SimpleMoveTestCase.triangleAt(4,4)
-                        .canReach(5,6),
+    Board board = new Board(8, 8);
+    board = board.addPiece(tc.from(), piece);
 
-                // OCCUPIED (blocks everything)
-                SimpleMoveTestCase.triangleAt(4,4)
-                        .cannotReach(5,6)
-                        .becauseOccupied(),
-
-                SimpleMoveTestCase.triangleAt(4,4)
-                        .cannotReach(4,6)
-                        .becauseOccupied()
-        );
+    for (Position p : tc.obstacles()) {
+      board = board.addPiece(p, new SimplePiece(PieceType.CIRCLE, player, 1));
     }
 
-    // =========================================================
-    // TEST ENGINE OUTPUT
-    // =========================================================
-    @ParameterizedTest
-    @MethodSource("globalMovesDSL")
-    void global_moves(SimpleMoveTestCase tc) {
+    GameState state = GameState.initial(board, player);
 
-        Player player = Player.BLACK;
+    List<Move> moves = engine.generateMoves(state, new PieceAtPosition(piece, tc.from()));
 
-        Piece piece = TestPieceFactory.create(tc.type(), player);
+    boolean contains =
+        moves.stream().anyMatch(m -> m.from().equals(tc.from()) && m.to().equals(tc.to()));
 
-        Board board = new Board(8, 8);
-        board = board.addPiece(tc.from(), piece);
+    assertEquals(tc.expected(), contains);
+  }
 
-        for (Position p : tc.obstacles()) {
-            board = board.addPiece(p, new SimplePiece(PieceType.CIRCLE, player, 1));
-        }
+  // =========================================================
+  // NO DUPLICATES
+  // =========================================================
+  @Test
+  void should_not_generate_duplicate_moves() {
+    Player player = Player.BLACK;
+    Piece triangle = new SimplePiece(PieceType.TRIANGLE, player, 3);
 
-        GameState state = GameState.initial(board, player);
+    Board board = new Board(8, 8);
+    Position from = new Position(4, 4);
 
-        List<Move> moves = engine.generateMoves(
-                state,
-                new PieceAtPosition(piece, tc.from())
-        );
+    board = board.addPiece(from, triangle);
 
-        boolean contains = moves.stream()
-                .anyMatch(m -> m.from().equals(tc.from()) && m.to().equals(tc.to()));
+    GameState state = GameState.initial(board, player);
 
-        assertEquals(tc.expected(), contains);
-    }
+    List<Move> moves = engine.generateMoves(state, new PieceAtPosition(triangle, from));
 
-    // =========================================================
-    // NO DUPLICATES
-    // =========================================================
-    @Test
-    void should_not_generate_duplicate_moves() {
-        Player player = Player.BLACK;
-        Piece triangle = new SimplePiece(PieceType.TRIANGLE, player, 3);
+    assertEquals(moves.size(), moves.stream().distinct().count());
+  }
 
-        Board board = new Board(8, 8);
-        Position from = new Position(4,4);
+  // =========================================================
+  // ORACLE TEST (engine correctness)
+  // =========================================================
+  @Test
+  void global_moves_should_equal_union_of_generators() {
 
-        board = board.addPiece(from, triangle);
+    Player player = Player.BLACK;
 
-        GameState state = GameState.initial(board, player);
+    Piece piece = new SimplePiece(PieceType.TRIANGLE, player, 3);
+    Position from = new Position(4, 4);
 
-        List<Move> moves = engine.generateMoves(
-                state,
-                new PieceAtPosition(triangle, from)
-        );
+    Board board = new Board(8, 8);
+    board = board.addPiece(from, piece);
 
-        assertEquals(moves.size(), moves.stream().distinct().count());
-    }
+    GameState state = GameState.initial(board, player);
 
-    // =========================================================
-    // ORACLE TEST (engine correctness)
-    // =========================================================
-    @Test
-    void global_moves_should_equal_union_of_generators() {
+    PieceAtPosition pap = new PieceAtPosition(piece, from);
 
-        Player player = Player.BLACK;
+    List<Move> engineMoves = engine.generateMoves(state, pap);
 
-        Piece piece = new SimplePiece(PieceType.TRIANGLE, player, 3);
-        Position from = new Position(4,4);
+    List<Move> expected = new java.util.ArrayList<>();
+    expected.addAll(new RegularMoveGenerator().generate(state, pap));
+    expected.addAll(new IrregularMoveGenerator().generate(state, pap));
 
-        Board board = new Board(8, 8);
-        board = board.addPiece(from, piece);
+    assertEquals(Set.copyOf(expected), Set.copyOf(engineMoves));
 
-        GameState state = GameState.initial(board, player);
-
-        PieceAtPosition pap = new PieceAtPosition(piece, from);
-
-        List<Move> engineMoves = engine.generateMoves(state, pap);
-
-        List<Move> expected = new java.util.ArrayList<>();
-        expected.addAll(new RegularMoveGenerator().generate(state, pap));
-        expected.addAll(new IrregularMoveGenerator().generate(state, pap));
-
-        assertEquals(Set.copyOf(expected), Set.copyOf(engineMoves));
-
-        assertEquals(expected.size(), engineMoves.size());
-        assertTrue(engineMoves.containsAll(expected));
-        assertTrue(expected.containsAll(engineMoves));
-    }
+    assertEquals(expected.size(), engineMoves.size());
+    assertTrue(engineMoves.containsAll(expected));
+    assertTrue(expected.containsAll(engineMoves));
+  }
 }
