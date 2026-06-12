@@ -1,6 +1,5 @@
 package eu.nicosworld.rithmo.engine.capture.capturerule;
 
-import eu.nicosworld.rithmo.engine.capture.CaptureRule;
 import eu.nicosworld.rithmo.engine.capture.justification.AmbushJustification;
 import eu.nicosworld.rithmo.engine.capture.justification.AmbushOperator;
 import eu.nicosworld.rithmo.engine.capture.model.*;
@@ -14,7 +13,7 @@ import java.util.*;
  * piece. The arithmetic combination (sum, difference, product, or division) of the attacker's value
  * and the ally's value must equal the target's value.
  */
-public class AmbushRule implements CaptureRule {
+public final class AmbushRule implements CaptureRule {
 
   /**
    * Scans the board for all possible ambush captures for the active piece.

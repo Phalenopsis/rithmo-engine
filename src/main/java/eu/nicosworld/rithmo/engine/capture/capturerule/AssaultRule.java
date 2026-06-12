@@ -1,6 +1,5 @@
 package eu.nicosworld.rithmo.engine.capture.capturerule;
 
-import eu.nicosworld.rithmo.engine.capture.CaptureRule;
 import eu.nicosworld.rithmo.engine.capture.justification.AssaultJustification;
 import eu.nicosworld.rithmo.engine.capture.justification.AssaultOperator;
 import eu.nicosworld.rithmo.engine.capture.model.*;
@@ -18,7 +17,7 @@ import java.util.*;
  * is satisfied if the attacker's value multiplied or divided by the number of empty squares equals
  * the target's value.
  */
-public class AssaultRule implements CaptureRule {
+public final class AssaultRule implements CaptureRule {
 
   /**
    * Scans all 8 directions from the actor's position to find potential assault captures.

@@ -1,6 +1,5 @@
 package eu.nicosworld.rithmo.engine.capture.capturerule;
 
-import eu.nicosworld.rithmo.engine.capture.CaptureRule;
 import eu.nicosworld.rithmo.engine.capture.justification.EncounterJustification;
 import eu.nicosworld.rithmo.engine.capture.model.*;
 import eu.nicosworld.rithmo.engine.threat.model.SoloThreat;
@@ -15,7 +14,7 @@ import java.util.Optional;
  * its regular movement) and their values match. Unlike Assault, an encounter requires the attacker
  * to physically reach the target's square.
  */
-public class EncounterRule implements CaptureRule {
+public final class EncounterRule implements CaptureRule {
 
   /**
    * Finds all potential encounter captures by checking all reachable positions.

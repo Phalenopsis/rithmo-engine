@@ -1,5 +1,6 @@
 package eu.nicosworld.rithmo.engine.capture;
 
+import eu.nicosworld.rithmo.engine.capture.capturerule.CaptureRule;
 import eu.nicosworld.rithmo.engine.capture.model.CaptureAction;
 import eu.nicosworld.rithmo.engine.capture.model.CaptureContext;
 import java.util.ArrayList;

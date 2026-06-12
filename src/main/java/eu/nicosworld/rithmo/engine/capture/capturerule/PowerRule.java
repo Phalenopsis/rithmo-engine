@@ -2,7 +2,6 @@ package eu.nicosworld.rithmo.engine.capture.capturerule;
 
 import static java.lang.Math.pow;
 
-import eu.nicosworld.rithmo.engine.capture.CaptureRule;
 import eu.nicosworld.rithmo.engine.capture.justification.PowerJustification;
 import eu.nicosworld.rithmo.engine.capture.justification.PowerRelation;
 import eu.nicosworld.rithmo.engine.capture.model.*;
@@ -18,7 +17,7 @@ import java.util.Optional;
  * square or cube of the target's value, or vice versa. Like the Encounter rule, the attacker must
  * physically reach the target's square.
  */
-public class PowerRule implements CaptureRule {
+public final class PowerRule implements CaptureRule {
 
   /**
    * Finds all potential power captures by checking all reachable positions.

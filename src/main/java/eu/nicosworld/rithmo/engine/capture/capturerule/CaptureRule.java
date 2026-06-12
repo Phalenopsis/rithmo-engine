@@ -1,10 +1,10 @@
-package eu.nicosworld.rithmo.engine.capture;
+package eu.nicosworld.rithmo.engine.capture.capturerule;
 
 import eu.nicosworld.rithmo.engine.capture.model.CaptureAction;
 import eu.nicosworld.rithmo.engine.capture.model.CaptureContext;
 import java.util.List;
 
-public interface CaptureRule {
+public sealed interface CaptureRule permits AmbushRule, AssaultRule, EncounterRule, PowerRule {
 
   List<CaptureAction> findCaptures(CaptureContext context);
 }
