@@ -28,7 +28,7 @@ public final class PowerRule implements CaptureRule {
   @Override
   public List<CaptureAction> findCaptures(CaptureContext context) {
     List<CaptureAction> captures = new ArrayList<>();
-    for (SoloThreat soloThreat : context.regularPairs()) {
+    for (SoloThreat soloThreat : context.regularSoloThreat()) {
       resolvePower(soloThreat.getActorValue(), soloThreat.getTargetValue())
           .ifPresent(
               justification ->

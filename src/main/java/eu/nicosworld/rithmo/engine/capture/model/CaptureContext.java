@@ -17,11 +17,11 @@ public record CaptureContext(GameState state, PieceAtPosition actor, RegularThre
     return state.board();
   }
 
-  public List<AssistedThreat> regularTriplets() {
+  public List<AssistedThreat> regularAssistedThreat() {
     return regular.assistedThreats();
   }
 
-  public List<SoloThreat> regularPairs() {
+  public List<SoloThreat> regularSoloThreat() {
     return regular.soloThreats();
   }
 }

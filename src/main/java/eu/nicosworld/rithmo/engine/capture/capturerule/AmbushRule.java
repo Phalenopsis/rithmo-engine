@@ -24,7 +24,7 @@ public final class AmbushRule implements CaptureRule {
   @Override
   public List<CaptureAction> findCaptures(CaptureContext context) {
     Set<CaptureAction> captures = new HashSet<>();
-    for (AssistedThreat assistedThreat : context.regularTriplets()) {
+    for (AssistedThreat assistedThreat : context.regularAssistedThreat()) {
       resolveAmbush(
               assistedThreat.getActorValue(),
               assistedThreat.getAllyValue(),

@@ -25,7 +25,7 @@ public final class EncounterRule implements CaptureRule {
   @Override
   public List<CaptureAction> findCaptures(CaptureContext context) {
     List<CaptureAction> captures = new ArrayList<>();
-    for (SoloThreat soloThreat : context.regularPairs()) {
+    for (SoloThreat soloThreat : context.regularSoloThreat()) {
       resolveEncounter(
               soloThreat.actor().specificComponent().getValue(),
               soloThreat.target().specificComponent().getValue())
