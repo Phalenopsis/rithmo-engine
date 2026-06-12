@@ -1,6 +1,7 @@
 package eu.nicosworld.rithmo.engine.capture.model;
 
 import eu.nicosworld.rithmo.engine.model.Piece;
+import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
 import eu.nicosworld.rithmo.engine.model.Position;
 import eu.nicosworld.rithmo.engine.model.Pyramid;
 
@@ -15,6 +16,11 @@ public record InvolvedPiece(
    */
   public static InvolvedPiece whole(Piece piece, Position position) {
     return new InvolvedPiece(piece, position, piece);
+  }
+
+  public static InvolvedPiece whole(PieceAtPosition pieceAtPosition) {
+    return new InvolvedPiece(
+        pieceAtPosition.piece(), pieceAtPosition.position(), pieceAtPosition.piece());
   }
 
   /** Crée une InvolvedPiece représentant un composant spécifique à l'intérieur d'une pyramide. */
