@@ -49,6 +49,10 @@ public class FreePathMovementValidator {
     return false;
   }
 
+  public boolean isFreePath(GameState state, Position from, Position to) {
+    return !isBlocked(state, from, to);
+  }
+
   /**
    * Checks if the movement vector corresponds to a valid straight path.
    *
