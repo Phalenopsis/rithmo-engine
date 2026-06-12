@@ -35,6 +35,10 @@ public class Board {
     return grid[x][y];
   }
 
+  public PieceAtPosition getPieceAtPosition(Position p) {
+    return new PieceAtPosition(getPieceAt(p), p);
+  }
+
   private void set(Position pos, Piece piece) {
     grid[pos.getX()][pos.getY()] = piece;
   }
