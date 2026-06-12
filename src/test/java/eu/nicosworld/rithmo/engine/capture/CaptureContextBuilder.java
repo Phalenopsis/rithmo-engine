@@ -2,8 +2,12 @@ package eu.nicosworld.rithmo.engine.capture;
 
 import eu.nicosworld.rithmo.engine.capture.model.CaptureContext;
 import eu.nicosworld.rithmo.engine.model.*;
+import eu.nicosworld.rithmo.engine.move.FreePathMovementValidator;
+import eu.nicosworld.rithmo.engine.move.RegularMoveGenerator;
 import eu.nicosworld.rithmo.engine.setup.BoardBuilder;
 import eu.nicosworld.rithmo.engine.setup.GameStateFactory;
+import eu.nicosworld.rithmo.engine.threat.RegularThreatEngine;
+import eu.nicosworld.rithmo.engine.threat.model.RegularThreats;
 
 public class CaptureContextBuilder {
 
@@ -29,6 +33,11 @@ public class CaptureContextBuilder {
     }
 
     GameState state = GameStateFactory.from(board, piece.getPlayer());
-    return new CaptureContext(state, new PieceAtPosition(piece, actorPosition));
+    RegularThreatEngine regularThreatEngine =
+        new RegularThreatEngine(new RegularMoveGenerator(), new FreePathMovementValidator());
+    PieceAtPosition actor = new PieceAtPosition(piece, actorPosition);
+    RegularThreats candidates = regularThreatEngine.findRegularThreats(state, actor);
+
+    return new CaptureContext(state, actor, candidates);
   }
 }

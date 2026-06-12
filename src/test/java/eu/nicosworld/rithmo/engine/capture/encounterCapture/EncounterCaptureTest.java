@@ -19,7 +19,7 @@ public class EncounterCaptureTest extends AbstractCaptureTest {
   @BeforeEach
   void setup() {
     // Isolation of the Encounter rule
-    this.engine = new CaptureEngine(List.of(new EncounterRule(regularGenerator, pathValidator)));
+    this.engine = new CaptureEngine(List.of(new EncounterRule()));
   }
 
   @ParameterizedTest(name = "{0}")

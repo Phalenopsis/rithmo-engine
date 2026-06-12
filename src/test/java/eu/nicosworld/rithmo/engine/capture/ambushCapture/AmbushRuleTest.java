@@ -19,7 +19,7 @@ public class AmbushRuleTest extends AbstractCaptureTest {
 
   @BeforeEach
   void setup() {
-    this.engine = new CaptureEngine(List.of(new AmbushRule(regularGenerator, pathValidator)));
+    this.engine = new CaptureEngine(List.of(new AmbushRule()));
   }
 
   @ParameterizedTest(name = "{0}")
@@ -36,10 +36,12 @@ public class AmbushRuleTest extends AbstractCaptureTest {
 
   static Stream<Arguments> singleDebugCase() {
     return Stream.of(
-        CaptureTestCase.blackSquareAt(10, 2, 2)
-            .againstWhite(PieceType.CIRCLE, 3, 5, 2)
-            .withBlackAlly(PieceType.TRIANGLE, 3, 5, 4)
-            .expectNoCapture()
+        CaptureTestCase.blackCircleAt(5, 3, 3)
+            .againstWhite(PieceType.CIRCLE, 10, 4, 4)
+            .withBlackAlly(PieceType.CIRCLE, 5, 3, 5)
+            .withBlackAlly(PieceType.CIRCLE, 5, 5, 5)
+            .expectAmbush(PieceType.CIRCLE, 10, ambush(5, AmbushOperator.ADD, 5, 10))
+            .expectAmbush(PieceType.CIRCLE, 10, ambush(5, AmbushOperator.ADD, 5, 10))
             .build());
   }
 

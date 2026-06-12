@@ -26,11 +26,7 @@ public class MultiRulesTest extends AbstractCaptureTest {
   void setup() {
     this.engine =
         new CaptureEngine(
-            List.of(
-                new AmbushRule(regularGenerator, pathValidator),
-                new EncounterRule(regularGenerator, pathValidator),
-                new PowerRule(regularGenerator, pathValidator),
-                new AssaultRule(regularGenerator, pathValidator)));
+            List.of(new AmbushRule(), new EncounterRule(), new PowerRule(), new AssaultRule()));
   }
 
   @ParameterizedTest(name = "{0}")

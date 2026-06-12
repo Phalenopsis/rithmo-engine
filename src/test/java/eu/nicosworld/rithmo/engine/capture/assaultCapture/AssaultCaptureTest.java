@@ -20,7 +20,7 @@ public class AssaultCaptureTest extends AbstractCaptureTest {
   @BeforeEach
   void setup() {
     // We inject only the AssaultRule to isolate the behavior
-    this.engine = new CaptureEngine(List.of(new AssaultRule(regularGenerator, pathValidator)));
+    this.engine = new CaptureEngine(List.of(new AssaultRule()));
   }
 
   @ParameterizedTest(name = "{0}")

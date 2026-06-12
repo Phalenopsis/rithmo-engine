@@ -21,7 +21,7 @@ public class PowerRuleTest extends AbstractCaptureTest {
   @BeforeEach
   void setup() {
     // We isolate the PowerRule for these tests
-    this.engine = new CaptureEngine(List.of(new PowerRule(regularGenerator, pathValidator)));
+    this.engine = new CaptureEngine(List.of(new PowerRule()));
   }
 
   @ParameterizedTest(name = "{0}")
