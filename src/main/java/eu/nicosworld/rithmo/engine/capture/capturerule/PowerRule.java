@@ -2,16 +2,11 @@ package eu.nicosworld.rithmo.engine.capture.capturerule;
 
 import static java.lang.Math.pow;
 
-import eu.nicosworld.rithmo.engine.capture.AbstractCaptureRule;
+import eu.nicosworld.rithmo.engine.capture.CaptureRule;
 import eu.nicosworld.rithmo.engine.capture.justification.PowerJustification;
 import eu.nicosworld.rithmo.engine.capture.justification.PowerRelation;
 import eu.nicosworld.rithmo.engine.capture.model.*;
-import eu.nicosworld.rithmo.engine.model.Piece;
-import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
-import eu.nicosworld.rithmo.engine.model.Position;
-import eu.nicosworld.rithmo.engine.move.FreePathMovementValidator;
-import eu.nicosworld.rithmo.engine.move.Move;
-import eu.nicosworld.rithmo.engine.move.RegularMoveGenerator;
+import eu.nicosworld.rithmo.engine.threat.model.SoloThreat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,11 +18,7 @@ import java.util.Optional;
  * square or cube of the target's value, or vice versa. Like the Encounter rule, the attacker must
  * physically reach the target's square.
  */
-public class PowerRule extends AbstractCaptureRule {
-
-  public PowerRule(RegularMoveGenerator generator, FreePathMovementValidator pathValidator) {
-    super(generator, pathValidator);
-  }
+public class PowerRule implements CaptureRule {
 
   /**
    * Finds all potential power captures by checking all reachable positions.
@@ -38,48 +29,13 @@ public class PowerRule extends AbstractCaptureRule {
   @Override
   public List<CaptureAction> findCaptures(CaptureContext context) {
     List<CaptureAction> captures = new ArrayList<>();
-
-    PieceAtPosition actor = context.actor();
-    Piece attackerPiece = actor.piece();
-    Position attackerPosition = actor.position();
-
-    // 1. Generate all reachable moves for the current piece
-    List<Move> potentialMoves = regularMoveGenerator.generate(context.state(), actor);
-
-    for (Move move : potentialMoves) {
-      Position targetPosition = move.to();
-      Piece targetPiece = context.board().getPieceAt(targetPosition);
-
-      // 2. Filter: Target must be an enemy
-      if (targetPiece == null || !isEnemy(attackerPiece, targetPiece)) {
-        continue;
-      }
-
-      // 3. Filter: Check for path obstructions
-      if (pathValidator.isBlocked(context.state(), attackerPosition, targetPosition)) {
-        continue;
-      }
-
-      // 4. Extraction and Comparison
-      List<CaptureTarget> attackerOptions = extractTargets(attackerPiece);
-      List<CaptureTarget> targetOptions = extractTargets(targetPiece);
-
-      for (CaptureTarget attackerOption : attackerOptions) {
-        for (CaptureTarget targetOption : targetOptions) {
-
-          resolvePower(attackerOption.value(), targetOption.value())
-              .ifPresent(
-                  justification ->
-                      captures.add(
-                          CaptureAction.power(
-                              new InvolvedPiece(
-                                  attackerPiece, attackerPosition, attackerOption.piece()),
-                              new InvolvedPiece(targetPiece, targetPosition, targetOption.piece()),
-                              justification)));
-        }
-      }
+    for (SoloThreat soloThreat : context.regularPairs()) {
+      resolvePower(soloThreat.getActorValue(), soloThreat.getTargetValue())
+          .ifPresent(
+              justification ->
+                  captures.add(
+                      CaptureAction.power(soloThreat.actor(), soloThreat.target(), justification)));
     }
-
     return captures;
   }
 

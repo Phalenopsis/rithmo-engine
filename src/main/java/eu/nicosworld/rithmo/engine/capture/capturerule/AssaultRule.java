@@ -1,15 +1,13 @@
 package eu.nicosworld.rithmo.engine.capture.capturerule;
 
-import eu.nicosworld.rithmo.engine.capture.AbstractCaptureRule;
+import eu.nicosworld.rithmo.engine.capture.CaptureRule;
 import eu.nicosworld.rithmo.engine.capture.justification.AssaultJustification;
 import eu.nicosworld.rithmo.engine.capture.justification.AssaultOperator;
 import eu.nicosworld.rithmo.engine.capture.model.*;
-import eu.nicosworld.rithmo.engine.model.Piece;
 import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
 import eu.nicosworld.rithmo.engine.model.Position;
 import eu.nicosworld.rithmo.engine.move.Delta;
-import eu.nicosworld.rithmo.engine.move.FreePathMovementValidator;
-import eu.nicosworld.rithmo.engine.move.RegularMoveGenerator;
+import eu.nicosworld.rithmo.engine.threat.AttackSupport;
 import java.util.*;
 
 /**
@@ -20,11 +18,7 @@ import java.util.*;
  * is satisfied if the attacker's value multiplied or divided by the number of empty squares equals
  * the target's value.
  */
-public class AssaultRule extends AbstractCaptureRule {
-
-  public AssaultRule(RegularMoveGenerator generator, FreePathMovementValidator pathValidator) {
-    super(generator, pathValidator);
-  }
+public class AssaultRule implements CaptureRule {
 
   /**
    * Scans all 8 directions from the actor's position to find potential assault captures.
@@ -72,17 +66,16 @@ public class AssaultRule extends AbstractCaptureRule {
         break;
       }
 
-      Piece potentialTarget = context.board().getPieceAt(currentPosition);
+      PieceAtPosition potentialTarget = context.board().getPieceAtPosition(currentPosition);
 
-      if (potentialTarget == null) {
+      if (potentialTarget.piece() == null) {
         emptySpacesCount++;
         continue;
       }
 
-      if (isEnemy(actor.piece(), potentialTarget)) {
+      if (AttackSupport.areEnemies(actor.piece(), potentialTarget.piece())) {
         if (emptySpacesCount > 0) {
-          validateAssaultArithmetic(
-              actor, potentialTarget, currentPosition, emptySpacesCount, results);
+          validateAssaultArithmetic(actor, potentialTarget, emptySpacesCount, results);
         }
       }
 
@@ -98,27 +91,22 @@ public class AssaultRule extends AbstractCaptureRule {
    * factory method to create valid CaptureActions.
    */
   private void validateAssaultArithmetic(
-      PieceAtPosition actor,
-      Piece targetPiece,
-      Position targetPosition,
-      int emptySpaces,
-      Set<CaptureAction> results) {
+      PieceAtPosition actor, PieceAtPosition target, int emptySpaces, Set<CaptureAction> results) {
 
-    List<CaptureTarget> attackerOptions = extractTargets(actor.piece());
-    List<CaptureTarget> targetOptions = extractTargets(targetPiece);
+    List<InvolvedPiece> attackerOptions = AttackSupport.getPieceVariants(actor);
+    List<InvolvedPiece> targetOptions = AttackSupport.getPieceVariants(target);
 
-    for (CaptureTarget attackerOption : attackerOptions) {
-      for (CaptureTarget targetOption : targetOptions) {
+    for (InvolvedPiece attackerOption : attackerOptions) {
+      for (InvolvedPiece targetOption : targetOptions) {
 
-        resolveAssault(attackerOption.value(), targetOption.value(), emptySpaces)
+        resolveAssault(
+                attackerOption.specificComponent().getValue(),
+                targetOption.specificComponent().getValue(),
+                emptySpaces)
             .ifPresent(
                 justification ->
                     results.add(
-                        CaptureAction.assault(
-                            new InvolvedPiece(
-                                actor.piece(), actor.position(), attackerOption.piece()),
-                            new InvolvedPiece(targetPiece, targetPosition, targetOption.piece()),
-                            justification)));
+                        CaptureAction.assault(attackerOption, targetOption, justification)));
       }
     }
   }
