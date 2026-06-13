@@ -35,6 +35,15 @@ public record CaptureAction(
     return new CaptureAction(actor, target, List.of(), CaptureType.ENCOUNTER, justification);
   }
 
+  public static CaptureAction progression(
+      InvolvedPiece actor,
+      InvolvedPiece target,
+      InvolvedPiece supporter,
+      ProgressionJustification justification) {
+    return new CaptureAction(
+        actor, target, List.of(supporter), CaptureType.PROGRESSION, justification);
+  }
+
   public static CaptureAction power(
       InvolvedPiece actor, InvolvedPiece target, PowerJustification justification) {
     return new CaptureAction(actor, target, List.of(), CaptureType.POWER, justification);
