@@ -57,6 +57,10 @@ public final class ProgressionEngine {
         ProgressionMask.ARITHMETIC | ProgressionMask.GEOMETRIC | ProgressionMask.HARMONIC);
   }
 
+  public static ProgressionEngine empty() {
+    return new ProgressionEngine(0);
+  }
+
   /**
    * Enables arithmetic progression detection.
    *
