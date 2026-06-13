@@ -4,7 +4,8 @@ import eu.nicosworld.rithmo.engine.capture.model.CaptureAction;
 import eu.nicosworld.rithmo.engine.capture.model.CaptureContext;
 import java.util.List;
 
-public sealed interface CaptureRule permits AmbushRule, AssaultRule, EncounterRule, PowerRule {
+public sealed interface CaptureRule
+    permits AmbushRule, AssaultRule, EncounterRule, PowerRule, ProgressionRule {
 
   List<CaptureAction> findCaptures(CaptureContext context);
 }
