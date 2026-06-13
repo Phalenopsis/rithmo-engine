@@ -1,6 +1,8 @@
 package eu.nicosworld.rithmo.engine.testutils;
 
+import eu.nicosworld.rithmo.engine.capture.model.CaptureAction;
 import eu.nicosworld.rithmo.engine.model.Board;
+import java.util.List;
 
 public class RithmoDebug {
   private RithmoDebug() {}
@@ -13,5 +15,11 @@ public class RithmoDebug {
   public static void printBoardAfterAct(Board board) {
     System.out.println("*** AFTER ACT BOARD ***");
     System.out.println(board.prettyPrint());
+  }
+
+  public static void print(List<CaptureAction> captures) {
+    for (CaptureAction captureAction : captures) {
+      System.out.println(captureAction);
+    }
   }
 }
