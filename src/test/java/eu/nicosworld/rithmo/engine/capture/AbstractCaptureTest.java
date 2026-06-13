@@ -62,8 +62,8 @@ public abstract class AbstractCaptureTest {
   }
 
   private boolean matches(CaptureAction actual, ExpectedCapture expected) {
-    return actual.capturedPiece().getType() == expected.type()
-        && actual.capturedPiece().getValue() == expected.value()
+    return actual.capturedPiece().getType() == expected.capturedPieceType()
+        && actual.capturedPiece().getValue() == expected.capturedValue()
         && actual.isWholeCapture() == expected.isWhole()
         && actual.type() == expected.captureType()
         && Objects.equals(actual.justification(), expected.justification());
