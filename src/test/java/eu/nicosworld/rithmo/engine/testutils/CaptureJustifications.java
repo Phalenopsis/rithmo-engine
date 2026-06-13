@@ -1,6 +1,7 @@
 package eu.nicosworld.rithmo.engine.testutils;
 
 import eu.nicosworld.rithmo.engine.capture.justification.*;
+import java.util.Set;
 
 public final class CaptureJustifications {
 
@@ -23,5 +24,10 @@ public final class CaptureJustifications {
   public static PowerJustification power(
       int actorValue, PowerRelation relation, int degree, int targetValue) {
     return new PowerJustification(actorValue, relation, degree, targetValue);
+  }
+
+  public static ProgressionJustification progression(
+      int min, int mid, int max, ProgressionEvidence... evidences) {
+    return new ProgressionJustification(min, mid, max, Set.of(evidences));
   }
 }

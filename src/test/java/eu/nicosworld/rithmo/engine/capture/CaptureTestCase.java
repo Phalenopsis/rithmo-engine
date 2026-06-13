@@ -132,6 +132,16 @@ public class CaptureTestCase {
     return addExpected(type, value, false, CaptureType.POWER, justification);
   }
 
+  public CaptureTestCase expectProgression(
+      PieceType type, int value, ProgressionJustification justification) {
+    return addExpected(type, value, true, CaptureType.PROGRESSION, justification);
+  }
+
+  public CaptureTestCase expectPartialProgression(
+      PieceType type, int value, ProgressionJustification justification) {
+    return addExpected(type, value, false, CaptureType.PROGRESSION, justification);
+  }
+
   public CaptureTestCase expectNoCapture() {
     this.expectedCaptureCount = 0;
     this.expectedCaptures.clear();
@@ -201,7 +211,12 @@ public class CaptureTestCase {
           .append(p.pos())
           .append("; ");
     }
-    sb.append(" => Expected: ").append(expectedCaptures);
+    sb.append(" => Expected:");
+    sb.append("\n");
+    for (ExpectedCapture expectedCapture : expectedCaptures) {
+      sb.append("\n").append(expectedCapture);
+    }
+
     return sb.toString();
   }
 }
