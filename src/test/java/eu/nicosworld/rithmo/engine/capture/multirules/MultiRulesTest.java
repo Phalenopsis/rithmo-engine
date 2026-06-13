@@ -5,17 +5,13 @@ import static eu.nicosworld.rithmo.engine.testutils.CaptureJustifications.*;
 import eu.nicosworld.rithmo.engine.capture.AbstractCaptureTest;
 import eu.nicosworld.rithmo.engine.capture.CaptureEngine;
 import eu.nicosworld.rithmo.engine.capture.CaptureTestCase;
-import eu.nicosworld.rithmo.engine.capture.capturerule.AmbushRule;
-import eu.nicosworld.rithmo.engine.capture.capturerule.AssaultRule;
-import eu.nicosworld.rithmo.engine.capture.capturerule.EncounterRule;
-import eu.nicosworld.rithmo.engine.capture.capturerule.PowerRule;
-import eu.nicosworld.rithmo.engine.capture.justification.AmbushOperator;
-import eu.nicosworld.rithmo.engine.capture.justification.AssaultOperator;
-import eu.nicosworld.rithmo.engine.capture.justification.PowerRelation;
+import eu.nicosworld.rithmo.engine.capture.capturerule.*;
+import eu.nicosworld.rithmo.engine.capture.justification.*;
 import eu.nicosworld.rithmo.engine.model.PieceType;
 import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -37,12 +33,11 @@ public class MultiRulesTest extends AbstractCaptureTest {
 
   static Stream<Arguments> singleDebugCase() {
     return Stream.of(
-        CaptureTestCase.blackTriangleAt(8, 0, 0)
-            .againstWhite(PieceType.CIRCLE, 8, 0, 2)
-            .withBlackAlly(PieceType.CIRCLE, 1, 1, 3)
-            .expectAmbush(PieceType.CIRCLE, 8, ambush(8, AmbushOperator.MULTIPLY, 1, 8))
-            .expectEncounter(PieceType.CIRCLE, 8, encounter(8))
-            .expectAssault(PieceType.CIRCLE, 8, assault(1, AssaultOperator.MULTIPLY, 8, 8))
+        CaptureTestCase.blackCircleAt(10, 5, 5)
+            .againstWhite(PieceType.TRIANGLE, 10, 4, 6)
+            .againstWhite(PieceType.CIRCLE, 10, 6, 4)
+            .expectEncounter(PieceType.TRIANGLE, 10, encounter(10))
+            .expectEncounter(PieceType.CIRCLE, 10, encounter(10))
             .build());
   }
 
@@ -107,5 +102,84 @@ public class MultiRulesTest extends AbstractCaptureTest {
             .expectEncounter(PieceType.CIRCLE, 8, encounter(8))
             .expectAssault(PieceType.CIRCLE, 8, assault(1, AssaultOperator.MULTIPLY, 8, 8))
             .build());
+  }
+
+  @Nested
+  public class MultiRulesWithProgressionTest {
+    @BeforeEach
+    void setup() {
+      engine =
+          new CaptureEngine(
+              List.of(
+                  new AmbushRule(),
+                  new EncounterRule(),
+                  new PowerRule(),
+                  new AssaultRule(),
+                  new ProgressionRule()));
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("singleDebugCase")
+    void should_validate_combined_capture_rules_oneTestCaseForDebug(CaptureTestCase testCase) {
+      launchTestCase(testCase);
+    }
+
+    static Stream<Arguments> singleDebugCase() {
+      return Stream.of(
+          CaptureTestCase.blackPyramidAt(1, 1)
+              .withComponent(PieceType.SQUARE, 3)
+              .withComponent(PieceType.TRIANGLE, 5)
+              .againstWhitePyramid(
+                  1,
+                  4,
+                  new CaptureTestCase.ComponentData(PieceType.CIRCLE, 6),
+                  new CaptureTestCase.ComponentData(PieceType.SQUARE, 10))
+              .withBlackAlly(PieceType.CIRCLE, 12, 2, 3)
+              .expectPartialAssault(PieceType.CIRCLE, 6, assault(2, AssaultOperator.MULTIPLY, 3, 6))
+              .expectPartialAssault(
+                  PieceType.SQUARE, 10, assault(2, AssaultOperator.MULTIPLY, 5, 10))
+              .expectAssault(PieceType.PYRAMID, 16, assault(2, AssaultOperator.MULTIPLY, 8, 16))
+              .expectPartialProgression(
+                  PieceType.CIRCLE, 6, progression(3, 6, 12, new GeometricJustification(2)))
+              .expectProgression(
+                  PieceType.PYRAMID, 16, progression(8, 12, 16, new ArithmeticJustification(4)))
+              .expectPartialProgression(
+                  PieceType.CIRCLE, 6, progression(6, 8, 12, new HarmonicJustification()))
+              .expectPartialProgression(
+                  PieceType.SQUARE, 10, progression(8, 10, 12, new ArithmeticJustification(2)))
+              .build());
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("multiRulesTestData")
+    void should_validate_combined_capture_rules(CaptureTestCase testCase) {
+      launchTestCase(testCase);
+    }
+
+    static Stream<Arguments> multiRulesTestData() {
+      return Stream.of(
+          CaptureTestCase.blackPyramidAt(1, 1)
+              .withComponent(PieceType.SQUARE, 3)
+              .withComponent(PieceType.TRIANGLE, 5)
+              .againstWhitePyramid(
+                  1,
+                  4,
+                  new CaptureTestCase.ComponentData(PieceType.CIRCLE, 6),
+                  new CaptureTestCase.ComponentData(PieceType.SQUARE, 10))
+              .withBlackAlly(PieceType.CIRCLE, 12, 2, 3)
+              .expectPartialAssault(PieceType.CIRCLE, 6, assault(2, AssaultOperator.MULTIPLY, 3, 6))
+              .expectPartialAssault(
+                  PieceType.SQUARE, 10, assault(2, AssaultOperator.MULTIPLY, 5, 10))
+              .expectAssault(PieceType.PYRAMID, 16, assault(2, AssaultOperator.MULTIPLY, 8, 16))
+              .expectPartialProgression(
+                  PieceType.CIRCLE, 6, progression(3, 6, 12, new GeometricJustification(2)))
+              .expectProgression(
+                  PieceType.PYRAMID, 16, progression(8, 12, 16, new ArithmeticJustification(4)))
+              .expectPartialProgression(
+                  PieceType.CIRCLE, 6, progression(6, 8, 12, new HarmonicJustification()))
+              .expectPartialProgression(
+                  PieceType.SQUARE, 10, progression(8, 10, 12, new ArithmeticJustification(2)))
+              .build());
+    }
   }
 }
