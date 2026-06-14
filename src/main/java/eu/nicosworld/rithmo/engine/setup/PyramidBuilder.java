@@ -27,7 +27,28 @@ public class PyramidBuilder {
         .withCircle(1);
   }
 
+  public static PyramidBuilder fullBoissiereBlack() {
+
+    return forPlayer(Player.BLACK)
+        .withSquare(36)
+        .withSquare(25)
+        .withTriangle(16)
+        .withTriangle(9)
+        .withCircle(4)
+        .withCircle(1);
+  }
+
   public static PyramidBuilder fullWhite() {
+
+    return forPlayer(Player.WHITE)
+        .withSquare(64)
+        .withSquare(49)
+        .withTriangle(36)
+        .withTriangle(25)
+        .withCircle(16);
+  }
+
+  public static PyramidBuilder fullBoissiereWhite() {
 
     return forPlayer(Player.WHITE)
         .withSquare(64)

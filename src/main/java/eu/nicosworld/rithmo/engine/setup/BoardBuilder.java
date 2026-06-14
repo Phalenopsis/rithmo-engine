@@ -130,8 +130,8 @@ public class BoardBuilder {
     return piece(PieceType.SQUARE, value, PlayerColor.WHITE);
   }
 
-  public BoardBuilder fullWhitePyramidAt(Position position) {
-    currentPiece = PyramidBuilder.fullWhite().build();
+  private BoardBuilder pyramid(Pyramid pyramid, Position position) {
+    currentPiece = pyramid;
 
     board = board.addPiece(currentPiece, position);
 
@@ -139,21 +139,26 @@ public class BoardBuilder {
     currentComponents = new ArrayList<>();
 
     return this;
+  }
+
+  public BoardBuilder fullWhitePyramidAt(Position position) {
+    return pyramid(PyramidBuilder.fullWhite().build(), position);
   }
 
   public BoardBuilder fullWhitePyramidAt(int x, int y) {
     return fullWhitePyramidAt(new Position(x, y));
   }
 
+  public BoardBuilder fullBoissiereWhitePyramidAt(int x, int y) {
+    return pyramid(PyramidBuilder.fullBoissiereWhite().build(), new Position(x, y));
+  }
+
+  public BoardBuilder fullBoissiereBlackPyramidAt(int x, int y) {
+    return pyramid(PyramidBuilder.fullBoissiereBlack().build(), new Position(x, y));
+  }
+
   public BoardBuilder fullBlackPyramidAt(Position position) {
-    currentPiece = PyramidBuilder.fullBlack().build();
-
-    board = board.addPiece(currentPiece, position);
-
-    currentPiece = null;
-    currentComponents = new ArrayList<>();
-
-    return this;
+    return pyramid(PyramidBuilder.fullBlack().build(), position);
   }
 
   public BoardBuilder fullBlackPyramidAt(int x, int y) {
