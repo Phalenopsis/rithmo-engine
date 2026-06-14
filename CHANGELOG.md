@@ -5,28 +5,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
----
-## [0.5.2-SNAPSHOT] - In progress
+## [0.5.2] - In progress
 ### Fixed
-- **Goods Victory**: Fixed victory evaluation to use the total value of captured pieces rather than the captured piece count, restoring correct "Victory of Goods" behavior.
+
+* **Goods Victory**: Fixed victory evaluation to use the total value of captured pieces rather than the captured piece count, restoring correct "Victory of Goods" behavior.
 
 ### Added
-- **GameState**: Added `GameState.initial(Player)` factory method to create a fully initialized game state with an empty board and empty assets for all players.
-- **PlayerAssets**: Added `capturedDigitCount()` to compute the total number of digits represented by captured piece values, supporting lawsuit victory evaluation.
-- **Victory Model**: Added `BodyVictory`, `GoodsVictory`, and `LawsuitVictory` result objects exposing winner information and rule-specific victory metrics.
-- **Victory Rules**: Added lawsuit victory evaluation based on the total number of digits represented by captured piece values.
-- **Victory Engine**: Added validation preventing registration of multiple rules of the same victory type.
+
+* **Capture Architecture**: Added `ProgressionJustification` alongside dedicated arithmetic, geometric, and harmonic evidence models.
+* **GameState**: Added `GameState.initial(Player)` factory method to create a fully initialized game state with an empty board and empty assets for all players.
+* **PlayerAssets**: Added `capturedDigitCount()` to compute the total number of digits represented by captured piece values, supporting lawsuit victory evaluation.
+* **Progression Engine**: Added `ProgressionEngine.empty()` factory method to allow empty engine initialization.
+* **Progression Rule**: Implemented full progression capture logic (arithmetic, geometric, and harmonic conditions) leveraging the core math engine.
+* **Test Suite**: Introduced comprehensive progression, multi-rule integration tests, and technical coverage for the math package utilities.
+* **Victory Engine**: Added validation preventing registration of multiple rules of the same victory type.
+* **Victory Model**: Added `BodyVictory`, `GoodsVictory`, and `LawsuitVictory` result objects exposing winner information and rule-specific victory metrics.
+* **Victory Rules**: Added lawsuit victory evaluation based on the total number of digits represented by captured piece values.
+* **Initial Setup**: Integrated two major historical board configurations (`Boissière 1556` and `L'Escale à jeux`) into `InitialSetup`.
+* **Board Tooling**: Enhanced `BoardBuilder` and `PyramidBuilder` to support Boissière's specific asymmetric pyramid structures and inverted parities/colors.
+* **Board Architecture**: Added fast memoized lookup methods (`getBlackPyramid()` and `getWhitePyramid()`) returning `Optional<PieceAtPosition>` to avoid full grid traversal during victory checks.
+* **Exceptions**: Introduced `NotEmptyPositionException` thrown by the domain model to prevent silent piece overwrites.
+
 
 ### Changed
-- **Victory Engine**: Victory evaluation now returns typed `Victory` results carrying rule-specific details instead of simple boolean outcomes.
-- **Victory Rules**: Introduced a common threshold-based implementation for body, goods and lawsuit victory conditions.
-- **Build Tooling**: standardized project-wide formatting enforcement through Spotless and pre-commit integration
+
+* **Build Tooling**: Standardized project-wide formatting enforcement through Spotless and pre-commit integration.
+* **Capture TestCase**: Enhanced test infrastructure to support progression expectations and improved `toString()` readability for expected captures.
+* **Progression Model**: Removed the unused `NONE` value from `ProgressionType` enum to clean up the domain model.
+* **Victory Engine**: Victory evaluation now returns typed `Victory` results carrying rule-specific details instead of simple boolean outcomes.
+* **Victory Rules**: Introduced a common threshold-based implementation for body, goods and lawsuit victory conditions.
+* **Board Architecture**: Hardened `addPiece()` to enforce cell vacancy before placement, securing internal pyramid caches and stabilizing the immutable fluent API.
+* **Model Immutability**: Fixed reference leakage in `move()`, `addPiece()`, and `removePiece()` by properly chaining operations on immutable board clones.
+
+
+### Refactored
+
+* **Capture Context**: Capture contexts now carry precomputed regular threats, reducing duplicated board traversal across capture rules.
+* **Capture Rules**: Ambush, Encounter, Power and Assault rules were migrated away from the shared abstract base implementation and now rely on dedicated support services.
+* **Capture Rules**: Moved `CaptureRule` into the `capture.capturerule` package alongside its implementations and converted the interface to a sealed hierarchy, making the set of supported capture rules explicit and controlled at compile time.
+* **Capture Rules**: Integrated `ProgressionRule` into the sealed `CaptureRule` interface hierarchy to officially support it across the engine.
+* **Debugging Tools**: Added a dedicated utility printer in `RithmoDebug` to log structured lists of capture actions.
+* **Engine Architecture**: Extracted reusable attack-support utilities and regular-threat discovery logic to improve separation of concerns and prepare future capture-rule extensions.
+* **Engine Architecture**: Removed the obsolete `Main` entry point class, shifting the repository focus to a pure library dependency.
+* **ExpectedCapture**: Renamed piece fields in the test record to clarify their intent and improve readability.
+* **Threat Discovery**: Introduced a dedicated threat-discovery model separating target identification from capture rule evaluation.
 
 ### Test
-- **Victory Assertions**: Introduced dedicated assertion helpers for `BodyVictory`, `GoodsVictory`, and `LawsuitVictory`, improving readability of victory-rule test suites.
-- **Victory Rules**: Added coverage for lawsuit victories and enriched body/goods victory validation scenarios.
-- **Victory Engine**: Added integration tests covering multiple simultaneous victories, active-player evaluation, and duplicate-rule validation.
 
+* **Capture Rules**: Updated capture-rule test infrastructure to use the new threat-based context model.
+* **Victory Assertions**: Introduced dedicated assertion helpers for `BodyVictory`, `GoodsVictory`, and `LawsuitVictory`, improving readability of victory-rule test suites.
+* **Victory Engine**: Added integration tests covering multiple simultaneous victories, active-player evaluation, and duplicate-rule validation.
+* **Victory Rules**: Added coverage for lawsuit victories and enriched body/goods victory validation scenarios.
+* **Board Suite**: Added comprehensive test coverage in `BoardTest` for coordinates boundaries (`isInside` negatives), cache synchronization during mutations (`move`, `replacePiece`), player piece filtering, and `NotEmptyPositionException` triggering.
+
+
+---
 
 ## [0.5.1] - 2026-05-25
 ### Documentation
