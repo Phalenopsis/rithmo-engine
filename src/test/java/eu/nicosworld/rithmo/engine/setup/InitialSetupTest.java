@@ -16,12 +16,12 @@ class InitialSetupTest {
 
     assertTrue(board.getBlackPyramid().isPresent());
     PieceAtPosition blackPyramid = board.getBlackPyramid().get();
-    assertThat(blackPyramid.piece().getValue()).isEqualTo(91);
+    assertThat(blackPyramid.piece().getValue()).isEqualTo(190);
     assertThat(blackPyramid.position()).isEqualTo(new Position(1, 0));
 
     assertTrue(board.getWhitePyramid().isPresent());
     PieceAtPosition whitePyramid = board.getWhitePyramid().get();
-    assertThat(whitePyramid.piece().getValue()).isEqualTo(190);
+    assertThat(whitePyramid.piece().getValue()).isEqualTo(91);
     assertThat(whitePyramid.position()).isEqualTo(new Position(14, 6));
   }
 }

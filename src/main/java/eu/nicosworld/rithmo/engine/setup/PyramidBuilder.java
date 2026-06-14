@@ -27,9 +27,9 @@ public class PyramidBuilder {
         .withCircle(1);
   }
 
-  public static PyramidBuilder fullBoissiereBlack() {
+  public static PyramidBuilder fullBoissiereWhite() {
 
-    return forPlayer(Player.BLACK)
+    return forPlayer(Player.WHITE)
         .withSquare(36)
         .withSquare(25)
         .withTriangle(16)
@@ -48,9 +48,9 @@ public class PyramidBuilder {
         .withCircle(16);
   }
 
-  public static PyramidBuilder fullBoissiereWhite() {
+  public static PyramidBuilder fullBoissiereBlack() {
 
-    return forPlayer(Player.WHITE)
+    return forPlayer(Player.BLACK)
         .withSquare(64)
         .withSquare(49)
         .withTriangle(36)
