@@ -1,11 +1,15 @@
 package eu.nicosworld.rithmo.engine.model;
 
+import eu.nicosworld.rithmo.engine.exception.NotEmptyPositionException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Board {
   private final Piece[][] grid;
+  private PieceAtPosition blackPyramid;
+  private PieceAtPosition whitePyramid;
 
   public Board(int columns, int lines) {
     grid = new Piece[columns][lines];
@@ -21,6 +25,18 @@ public class Board {
 
   public int getHeight() {
     return grid[0].length;
+  }
+
+  public Optional<PieceAtPosition> getBlackPyramid() {
+    return getPyramid(blackPyramid);
+  }
+
+  public Optional<PieceAtPosition> getWhitePyramid() {
+    return getPyramid(whitePyramid);
+  }
+
+  private Optional<PieceAtPosition> getPyramid(PieceAtPosition expected) {
+    return Optional.ofNullable(expected);
   }
 
   public boolean isEmpty(Position p) {
@@ -39,8 +55,23 @@ public class Board {
     return new PieceAtPosition(getPieceAt(p), p);
   }
 
+  /**
+   * this method should be only called by :
+   *
+   * <ul>
+   *   <li>addPiece(Piece piece, Position position)
+   *   <li>set(Position position)
+   * </ul>
+   *
+   * @param pos position to set piece
+   * @param piece piece to set
+   */
   private void set(Position pos, Piece piece) {
     grid[pos.getX()][pos.getY()] = piece;
+  }
+
+  private void set(Position pos) {
+    set(pos, null);
   }
 
   public List<PieceAtPosition> getPiecesWithPositions() {
@@ -105,32 +136,58 @@ public class Board {
         newBoard.grid[x][y] = grid[x][y];
       }
     }
-
+    newBoard.blackPyramid = this.blackPyramid;
+    newBoard.whitePyramid = this.whitePyramid;
     return newBoard;
   }
 
   public Board move(Position from, Position to) {
-    Board board = this.copy();
-    Piece piece = board.getPieceAt(from);
-    board.set(from, null);
-    board.set(to, piece);
-    return board;
-  }
-
-  public Board addPiece(Piece piece, Position position) {
-    Board board = this.copy();
-    board.set(position, piece);
-    return board;
+    Piece piece = this.getPieceAt(from);
+    return this.removePiece(from).addPiece(to, piece);
   }
 
   public Board addPiece(Position position, Piece piece) {
     return this.addPiece(piece, position);
   }
 
-  public Board removePiece(Position position) {
+  public Board addPiece(Piece piece, Position position) {
+    if (!isEmpty(position)) {
+      throw new NotEmptyPositionException(getPieceAtPosition(position));
+    }
     Board board = this.copy();
-    board.set(position, null);
+    board.set(position, piece);
+    if (piece instanceof Pyramid pyramid) {
+      board.updatePyramid(pyramid, position);
+    }
+
     return board;
+  }
+
+  public Board removePiece(Position position) {
+    Piece removed = getPieceAt(position);
+    Board board = this.copy();
+    board.set(position);
+    if (removed instanceof Pyramid) {
+      board.deletePyramid(removed.getPlayer());
+    }
+    return board;
+  }
+
+  private void updatePyramid(Pyramid pyramid, Position position) {
+    PieceAtPosition pap = new PieceAtPosition(pyramid, position);
+    if (pyramid.getPlayer().equals(Player.BLACK)) {
+      blackPyramid = pap;
+    } else {
+      whitePyramid = pap;
+    }
+  }
+
+  private void deletePyramid(Player player) {
+    if (player.equals(Player.BLACK)) {
+      blackPyramid = null;
+    } else {
+      whitePyramid = null;
+    }
   }
 
   public Board replacePiece(Position position, Pyramid updatedPyramid) {
