@@ -4,5 +4,6 @@ public sealed interface CaptureJustification
     permits AmbushJustification,
         AssaultJustification,
         EncounterJustification,
+        ImprisonmentJustification,
         PowerJustification,
         ProgressionJustification {}

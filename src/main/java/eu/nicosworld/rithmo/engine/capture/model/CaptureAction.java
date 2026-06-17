@@ -49,6 +49,28 @@ public record CaptureAction(
     return new CaptureAction(actor, target, List.of(), CaptureType.POWER, justification);
   }
 
+  public static CaptureAction imprisonment(
+      InvolvedPiece actor,
+      InvolvedPiece target,
+      List<InvolvedPiece> blockers,
+      List<Position> blockedAt,
+      List<Position> regularMovesTo) {
+    return new CaptureAction(
+        actor,
+        target,
+        blockers,
+        CaptureType.IMPRISONMENT,
+        new ImprisonmentJustification(regularMovesTo, blockedAt));
+  }
+
+  public static CaptureAction imprisonment(
+      InvolvedPiece actor,
+      InvolvedPiece target,
+      List<InvolvedPiece> blockers,
+      ImprisonmentJustification justification) {
+    return new CaptureAction(actor, target, blockers, CaptureType.IMPRISONMENT, justification);
+  }
+
   public boolean isWholeCapture() {
     return target.parentPiece().equals(target.specificComponent());
   }
