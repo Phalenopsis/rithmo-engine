@@ -9,8 +9,7 @@
 * Dans certaines conditions, une pièce peut faire plusieurs captures dans un même tour.
 * Si les prises multiples ont lieu avant le déplacement, le preneur choisit la place de l'un des pions pris.
 * Les captures **ne sont pas obligatoires**.
-* Un déplacement irrégulier ne peut pas amener à une capture suite à ce mouvement.
-
+* Un déplacement irrégulier ne peut pas provoquer de capture arithmétique (Rencontre, Embûche, Assaut, Puissance ou Progression). L'Emprisonnement constitue une exception : il dépend uniquement de l'état global du plateau et peut donc résulter de n'importe quel déplacement légal.
 ---
 
 ## 2. Types de capture
@@ -138,13 +137,85 @@ Si noir joue son pion 20 en (1,3), il peut prendre le rond blanc 25 :
 * le carré noir est déjà à un pas de déplacement du rond blanc
 * 15, 20, 25 forment une progression arithmétique
 
----
-
 ### 2.6 Emprisonnement
 
-L'emprisonnement est le seul mode de capture qui ne tient pas compte de l'arithmétique.
+L'emprisonnement (*Obsidio*) est le seul mode de capture qui ne repose sur aucune relation arithmétique entre les pièces.
 
-Quand un pion ne peut plus se déplacer par mouvement régulier, il peut être pris.
+Une pièce peut être capturée lorsqu'elle ne dispose plus d'aucun mouvement régulier légal.
+
+#### Conditions de capture
+
+Pour qu'une pièce soit considérée comme emprisonnée :
+
+* tous ses mouvements réguliers théoriques doivent être impossibles ;
+* chaque axe de déplacement doit être bloqué soit par le bord du plateau, soit par une autre pièce ;
+* au moins un de ces blocages doit être assuré directement par une pièce ennemie.
+
+Une pièce entièrement entourée par ses propres alliés n'est donc pas capturable : elle est immobilisée mais non assiégée.
+
+#### Notion de bouclier allié
+
+Lorsqu'un axe de déplacement est bloqué par plusieurs pièces, seul le premier obstacle rencontré est pris en compte.
+
+* Si le premier obstacle est un allié, cet axe est considéré comme protégé.
+* Si le premier obstacle est un ennemi, cet axe est considéré comme assiégé.
+
+Une pièce ennemie située derrière un allié n'intervient pas dans l'évaluation de l'emprisonnement.
+
+#### Blocus mixte
+
+Une pièce peut être capturée même si certains de ses axes sont bloqués par des alliés.
+
+Il suffit :
+
+* qu'aucun mouvement régulier légal ne reste disponible ;
+* et qu'au moins un axe soit directement bloqué par un ennemi.
+
+Un emprisonnement peut donc résulter d'un blocus combinant alliés et ennemis.
+
+#### Indépendance du mouvement ayant provoqué le blocus
+
+Contrairement aux captures arithmétiques, l'emprisonnement découle uniquement de l'état global du plateau.
+
+La pièce ayant fermé le blocus peut avoir utilisé :
+
+* un mouvement régulier ;
+* un mouvement irrégulier (saut) ;
+* une capture préalable ayant modifié la configuration du plateau.
+
+Ces éléments n'ont aucune influence sur la validité de l'emprisonnement.
+
+#### Attribution des acteurs
+
+Chaque bloqueur ennemi direct participant au siège est considéré comme un acteur potentiel de la capture.
+
+Lorsqu'une pièce est emprisonnée :
+
+* chaque bloqueur ennemi direct génère une opportunité de capture distincte ;
+* les autres bloqueurs ennemis sont considérés comme ses soutiens.
+
+Ainsi, une même cible peut donner lieu à plusieurs options de capture selon l'acteur choisi.
+
+#### Capture avant déplacement
+
+Lorsqu'un emprisonnement est résolu avant le déplacement de la pièce active :
+
+* la pièce emprisonnée est retirée du plateau ;
+* l'acteur choisi est immédiatement placé sur la case libérée ;
+* le joueur doit ensuite effectuer son déplacement normal depuis cette nouvelle position.
+
+Il est donc possible qu'un joueur choisisse une capture qui conduise ensuite à une absence de mouvement légal.
+
+#### Capture après déplacement
+
+Un déplacement ou une capture arithmétique peut modifier la configuration du plateau et provoquer un nouvel emprisonnement.
+
+Dans ce cas :
+
+* la capture est proposée au joueur après son déplacement ;
+* elle reste facultative ;
+* la pièce emprisonnée est simplement retirée du plateau ;
+* aucune pièce ne vient occuper sa case.
 
 #### Exemple :
 * rn2 : rond noir de valeur 2
