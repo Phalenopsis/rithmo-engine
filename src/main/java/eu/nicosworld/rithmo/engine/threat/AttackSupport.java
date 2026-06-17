@@ -48,6 +48,10 @@ public class AttackSupport {
     return first.getPlayer() != second.getPlayer();
   }
 
+  public static boolean areEnemies(PieceAtPosition first, PieceAtPosition second) {
+    return areEnemies(first.piece(), second.piece());
+  }
+
   public static boolean canAttack(PieceAtPosition attacker, Piece targetPiece) {
     return targetPiece != null && areEnemies(attacker.piece(), targetPiece);
   }
