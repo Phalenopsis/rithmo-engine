@@ -3,20 +3,29 @@ package eu.nicosworld.rithmo.engine.capture;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import eu.nicosworld.rithmo.engine.capture.justification.CaptureJustification;
+import eu.nicosworld.rithmo.engine.capture.justification.ImprisonmentJustification;
 import eu.nicosworld.rithmo.engine.capture.model.CaptureAction;
 import eu.nicosworld.rithmo.engine.capture.model.CaptureContext;
+import eu.nicosworld.rithmo.engine.capture.model.InvolvedPiece;
+import eu.nicosworld.rithmo.engine.model.Piece;
 import eu.nicosworld.rithmo.engine.model.PlayerColor;
+import eu.nicosworld.rithmo.engine.model.Position;
 import eu.nicosworld.rithmo.engine.move.FreePathMovementValidator;
 import eu.nicosworld.rithmo.engine.move.RegularMoveGenerator;
 import eu.nicosworld.rithmo.engine.setup.BoardBuilder;
+import eu.nicosworld.rithmo.engine.threat.AttackSupport;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public abstract class AbstractCaptureTest {
   protected final RegularMoveGenerator regularGenerator = new RegularMoveGenerator();
   protected final FreePathMovementValidator pathValidator = new FreePathMovementValidator();
 
   public CaptureEngine engine;
+  private CaptureContext ctx;
 
   protected void launchTestCase(CaptureTestCase testCase) {
     BoardBuilder bb = new BoardBuilder();
@@ -37,7 +46,7 @@ public abstract class AbstractCaptureTest {
       bb.at(p.pos().getX(), p.pos().getY());
     }
 
-    CaptureContext ctx =
+    ctx =
         new CaptureContextBuilder()
             .from(bb)
             .at(testCase.getAttackerPos().getX(), testCase.getAttackerPos().getY())
@@ -66,6 +75,37 @@ public abstract class AbstractCaptureTest {
         && actual.capturedPiece().getValue() == expected.capturedValue()
         && actual.isWholeCapture() == expected.isWhole()
         && actual.type() == expected.captureType()
-        && Objects.equals(actual.justification(), expected.justification());
+        && compareJustifications(actual.justification(), expected.justification())
+        && lookAtBlockers(actual, expected);
+  }
+
+  private boolean compareJustifications(
+      CaptureJustification actualJustification, CaptureJustification expectedJustification) {
+    if (actualJustification instanceof ImprisonmentJustification actual
+        && expectedJustification instanceof ImprisonmentJustification expected) {
+      boolean areDestinationsEquals =
+          Set.copyOf(actual.regularMovesTo()).equals(Set.copyOf(expected.regularMovesTo()));
+      boolean areBlockedAtEquals =
+          Set.copyOf(actual.blockedAt()).equals(Set.copyOf(expected.blockedAt()));
+      return areBlockedAtEquals && areDestinationsEquals;
+    }
+    return Objects.equals(actualJustification, expectedJustification);
+  }
+
+  private boolean lookAtBlockers(CaptureAction actual, ExpectedCapture expected) {
+    if (!expected.captureType().equals(CaptureType.IMPRISONMENT)) return true;
+    Piece target = ctx.board().getPieceAt(expected.targetPosition());
+
+    List<InvolvedPiece> blockers = new ArrayList<>();
+    for (Position position : expected.blockersPosition()) {
+      if (position.equals(expected.attackerPos())) continue;
+      Piece piece = ctx.board().getPieceAt(position);
+      if (AttackSupport.areEnemies(piece, target)) {
+        InvolvedPiece involvedPiece = new InvolvedPiece(piece, position, piece);
+        blockers.add(involvedPiece);
+      }
+    }
+
+    return Set.copyOf(actual.supporters()).equals(Set.copyOf(blockers));
   }
 }

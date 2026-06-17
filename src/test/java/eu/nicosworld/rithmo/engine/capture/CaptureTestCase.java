@@ -20,6 +20,8 @@ public class CaptureTestCase {
 
   private final List<ExpectedCapture> expectedCaptures = new ArrayList<>();
 
+  private ExpectedCapture currentExpectedCapture;
+
   private CaptureTestCase(PieceType type, int value, int x, int y) {
     this.attackerType = type;
     this.attackerValue = value;
@@ -142,6 +144,38 @@ public class CaptureTestCase {
     return addExpected(type, value, false, CaptureType.PROGRESSION, justification);
   }
 
+  /**
+   * Simulate a CaptureAction by imprisonment
+   *
+   * @param type Captured PieceType
+   * @param value Captured Piece value
+   * @param targetPos Captured Piece position
+   * @param attackerPos Attacker's position
+   * @param regularMovesTo all regular moves for captured piece
+   * @param blockersAt All positions where regular movement is blocked, whether by enemies or
+   *     allies.
+   * @return a CaptureTestCAse
+   */
+  public CaptureTestCase expectImprisonment(
+      PieceType type,
+      int value,
+      Position targetPos,
+      Position attackerPos,
+      List<Position> regularMovesTo,
+      List<Position> blockersAt) {
+    List<Position> blockersWithAttacker = new ArrayList<>(List.copyOf(blockersAt));
+    blockersWithAttacker.add(attackerPos);
+    return addExpected(
+        type,
+        value,
+        true,
+        CaptureType.IMPRISONMENT,
+        new ImprisonmentJustification(regularMovesTo, blockersWithAttacker),
+        blockersAt,
+        attackerPos,
+        targetPos);
+  }
+
   public CaptureTestCase expectNoCapture() {
     this.expectedCaptureCount = 0;
     this.expectedCaptures.clear();
@@ -154,7 +188,23 @@ public class CaptureTestCase {
       boolean isWhole,
       CaptureType captureType,
       CaptureJustification justification) {
-    expectedCaptures.add(new ExpectedCapture(type, value, isWhole, captureType, justification));
+    return addExpected(type, value, isWhole, captureType, justification, List.of(), null, null);
+  }
+
+  private CaptureTestCase addExpected(
+      PieceType type,
+      int value,
+      boolean isWhole,
+      CaptureType captureType,
+      CaptureJustification justification,
+      List<Position> blocked,
+      Position attackerPos, // for imprisonment
+      Position targetPos // for imprisonment
+      ) {
+    ExpectedCapture expectedCapture =
+        new ExpectedCapture(
+            type, value, isWhole, captureType, justification, blocked, attackerPos, targetPos);
+    expectedCaptures.add(expectedCapture);
     expectedCaptureCount++;
     return this;
   }
