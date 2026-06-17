@@ -2,6 +2,7 @@ package eu.nicosworld.rithmo.engine.move;
 
 import eu.nicosworld.rithmo.engine.model.GameState;
 import eu.nicosworld.rithmo.engine.model.Position;
+import java.util.Optional;
 
 /**
  * Validator responsible for checking if a movement path is clear of obstacles. *
@@ -25,28 +26,40 @@ public class FreePathMovementValidator {
    *     if the path is clear or if positions are adjacent.
    */
   public boolean isBlocked(GameState state, Position from, Position to) {
+    return isBlockedAt(state, from, to, false).isPresent();
+  }
+
+  public boolean isBlocked(
+      GameState state, Position from, Position to, boolean includeDestination) {
+    return isBlockedAt(state, from, to, includeDestination).isPresent();
+  }
+
+  public Optional<Position> isBlockedAt(
+      GameState state, Position from, Position to, boolean includeDestination) {
     int diffX = to.getX() - from.getX();
     int diffY = to.getY() - from.getY();
 
     // Ensure the path is either a straight line or a perfect 45-degree diagonal
-    if (!isPathLinear(diffX, diffY)) return false;
+    if (!isPathLinear(diffX, diffY)) return Optional.empty();
 
     int dist = getDistance(diffX, diffY);
 
     // Safety check to prevent division by zero if from == to
-    if (dist == 0) return false;
+    if (dist == 0) return Optional.empty();
 
     int dx = diffX / dist;
     int dy = diffY / dist;
 
-    for (int step = 1; step < dist; step++) {
+    int maxStep = includeDestination ? dist + 1 : dist;
+
+    for (int step = 1; step < maxStep; step++) {
       Position p = add(from, dx * step, dy * step);
       if (!state.board().isEmpty(p)) {
-        return true;
+        return Optional.of(p);
       }
     }
 
-    return false;
+    return Optional.empty();
   }
 
   public boolean isFreePath(GameState state, Position from, Position to) {
