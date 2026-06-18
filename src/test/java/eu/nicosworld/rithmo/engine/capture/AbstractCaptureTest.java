@@ -52,7 +52,8 @@ public abstract class AbstractCaptureTest {
             .at(testCase.getAttackerPos().getX(), testCase.getAttackerPos().getY())
             .build();
 
-    List<CaptureAction> captures = engine.findCaptures(ctx);
+    List<CaptureAction> captures = engine.findActiveCaptures(ctx);
+    captures.addAll(engine.findGlobalCaptures(ctx));
 
     // 1. Verify the number of captures found
     assertEquals(

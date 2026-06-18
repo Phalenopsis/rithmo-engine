@@ -9,7 +9,7 @@ import eu.nicosworld.rithmo.engine.threat.model.AssistedThreat;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class ProgressionRule implements CaptureRule {
+public final class ProgressionRule implements ActiveCaptureRule {
   private ProgressionEngine engine;
 
   public ProgressionRule() {

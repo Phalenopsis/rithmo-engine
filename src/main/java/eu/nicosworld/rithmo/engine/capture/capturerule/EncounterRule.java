@@ -14,7 +14,7 @@ import java.util.Optional;
  * its regular movement) and their values match. Unlike Assault, an encounter requires the attacker
  * to physically reach the target's square.
  */
-public final class EncounterRule implements CaptureRule {
+public final class EncounterRule implements ActiveCaptureRule {
 
   /**
    * Finds all potential encounter captures by checking all reachable positions.

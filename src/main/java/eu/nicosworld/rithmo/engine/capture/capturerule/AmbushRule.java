@@ -13,7 +13,7 @@ import java.util.*;
  * piece. The arithmetic combination (sum, difference, product, or division) of the attacker's value
  * and the ally's value must equal the target's value.
  */
-public final class AmbushRule implements CaptureRule {
+public final class AmbushRule implements ActiveCaptureRule {
 
   /**
    * Scans the board for all possible ambush captures for the active piece.

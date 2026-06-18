@@ -16,7 +16,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class ImprisonmentCaptureTest extends AbstractCaptureTest {
   @BeforeEach
   void setup() {
-    this.engine = new CaptureEngine(List.of(new ImprisonmentRule()));
+    this.engine = new CaptureEngine(List.of(new ImprisonmentRule(pathValidator, regularGenerator)));
   }
 
   @ParameterizedTest(name = "{0}")

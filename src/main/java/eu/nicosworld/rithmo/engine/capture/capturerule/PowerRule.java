@@ -17,7 +17,7 @@ import java.util.Optional;
  * square or cube of the target's value, or vice versa. Like the Encounter rule, the attacker must
  * physically reach the target's square.
  */
-public final class PowerRule implements CaptureRule {
+public final class PowerRule implements ActiveCaptureRule {
 
   /**
    * Finds all potential power captures by checking all reachable positions.

@@ -14,10 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public final class ImprisonmentRule implements CaptureRule {
-  // TODO : add dependency injection
-  FreePathMovementValidator validator = new FreePathMovementValidator();
-  RegularMoveGenerator moveGenerator = new RegularMoveGenerator();
+public final class ImprisonmentRule implements GlobalCaptureRule {
+
+  private final FreePathMovementValidator validator;
+  private final RegularMoveGenerator moveGenerator;
+
+  public ImprisonmentRule(FreePathMovementValidator validator, RegularMoveGenerator moveGenerator) {
+    this.validator = validator;
+    this.moveGenerator = moveGenerator;
+  }
 
   @Override
   public List<CaptureAction> findCaptures(CaptureContext context) {
