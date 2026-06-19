@@ -49,6 +49,14 @@ public class CaptureEngine {
     return result;
   }
 
+  /**
+   * Global imprisonment evaluation remains intentionally implemented as a full-board scan.
+   * Performance measurements on dense artificial boards showed sub-millisecond execution times,
+   * making additional complexity unnecessary.
+   *
+   * @param context CaptureContext
+   * @return all imprisonment captures
+   */
   public List<CaptureAction> findGlobalCaptures(CaptureContext context) {
     List<CaptureAction> result = new ArrayList<>();
 
