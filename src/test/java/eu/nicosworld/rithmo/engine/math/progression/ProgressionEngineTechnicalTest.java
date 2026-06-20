@@ -1,10 +1,7 @@
-package eu.nicosworld.rithmo.engine.math;
+package eu.nicosworld.rithmo.engine.math.progression;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import eu.nicosworld.rithmo.engine.math.progression.ProgressionEngine;
-import eu.nicosworld.rithmo.engine.math.progression.ProgressionMask;
-import eu.nicosworld.rithmo.engine.math.progression.ProgressionType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import org.junit.jupiter.api.Test;

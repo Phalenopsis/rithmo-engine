@@ -1,6 +1,6 @@
-package eu.nicosworld.rithmo.engine.math;
+package eu.nicosworld.rithmo.engine.math.progression;
 
-import static eu.nicosworld.rithmo.engine.math.ProgressionAssert.assertThatProgression;
+import static eu.nicosworld.rithmo.engine.math.progression.ProgressionAssert.assertThatProgression;
 
 import org.junit.jupiter.api.Test;
 
