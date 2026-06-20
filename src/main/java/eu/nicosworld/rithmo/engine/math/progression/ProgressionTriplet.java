@@ -1,4 +1,4 @@
-package eu.nicosworld.rithmo.engine.math;
+package eu.nicosworld.rithmo.engine.math.progression;
 
 /**
  * Represents a triplet of values that forms one or more mathematical progressions in the context of

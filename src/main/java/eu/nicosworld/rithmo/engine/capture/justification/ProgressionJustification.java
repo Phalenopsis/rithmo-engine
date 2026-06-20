@@ -1,7 +1,7 @@
 package eu.nicosworld.rithmo.engine.capture.justification;
 
-import eu.nicosworld.rithmo.engine.math.ProgressionResult;
-import eu.nicosworld.rithmo.engine.math.ProgressionTriplet;
+import eu.nicosworld.rithmo.engine.math.progression.ProgressionResult;
+import eu.nicosworld.rithmo.engine.math.progression.ProgressionTriplet;
 import java.util.HashSet;
 import java.util.Set;
 

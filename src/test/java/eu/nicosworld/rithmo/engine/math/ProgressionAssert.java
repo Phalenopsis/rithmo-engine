@@ -2,6 +2,9 @@ package eu.nicosworld.rithmo.engine.math;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import eu.nicosworld.rithmo.engine.math.progression.ProgressionEngine;
+import eu.nicosworld.rithmo.engine.math.progression.ProgressionMask;
+import eu.nicosworld.rithmo.engine.math.progression.ProgressionResult;
 import java.util.Arrays;
 
 public class ProgressionAssert {

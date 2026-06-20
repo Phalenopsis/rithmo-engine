@@ -1,6 +1,6 @@
-package eu.nicosworld.rithmo.engine.math.explain;
+package eu.nicosworld.rithmo.engine.math.progression.explain;
 
-import eu.nicosworld.rithmo.engine.math.ProgressionTriplet;
+import eu.nicosworld.rithmo.engine.math.progression.ProgressionTriplet;
 
 /**
  * Utility class that converts a {@link ProgressionTriplet} into a human-readable explanation.

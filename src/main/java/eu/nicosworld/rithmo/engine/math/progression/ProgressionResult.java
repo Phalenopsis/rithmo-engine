@@ -1,4 +1,4 @@
-package eu.nicosworld.rithmo.engine.math;
+package eu.nicosworld.rithmo.engine.math.progression;
 
 import java.util.Collections;
 import java.util.List;
