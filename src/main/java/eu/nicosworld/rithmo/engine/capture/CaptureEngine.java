@@ -57,11 +57,31 @@ public class CaptureEngine {
    * @param context CaptureContext
    * @return all imprisonment captures
    */
-  public List<CaptureAction> findGlobalCaptures(CaptureContext context) {
+  public List<CaptureAction> findPreMoveCaptures(CaptureContext context) {
     List<CaptureAction> result = new ArrayList<>();
 
     for (GlobalCaptureRule rule : globalRules) {
-      result.addAll(rule.findCaptures(context));
+      result.addAll(rule.findPreMoveCaptures(context));
+    }
+
+    return result;
+  }
+
+  public List<CaptureAction> findPostMoveCaptures(CaptureContext context) {
+    List<CaptureAction> result = new ArrayList<>();
+
+    for (GlobalCaptureRule rule : globalRules) {
+      result.addAll(rule.findPostMoveCaptures(context));
+    }
+
+    return result;
+  }
+
+  public List<CaptureAction> findEndTurnCaptures(CaptureContext context) {
+    List<CaptureAction> result = new ArrayList<>();
+
+    for (GlobalCaptureRule rule : globalRules) {
+      result.addAll(rule.findEndTurnCaptures(context));
     }
 
     return result;
