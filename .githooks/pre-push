@@ -1,0 +1,26 @@
+#!/bin/bash
+
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+echo "🧪 Running test suite..."
+
+mvn -q test
+TEST_RESULT=$?
+
+if [ $TEST_RESULT -eq 0 ]; then
+    echo "✅ Tests passed."
+    exit 0
+fi
+
+echo ""
+echo "❌ Tests failed."
+
+if [ "$CURRENT_BRANCH" = "main" ]; then
+    echo "Push to main is blocked."
+    exit 1
+fi
+
+echo "⚠️  Branch push allowed despite failing tests."
+echo "⚠️  CI will likely fail."
+
+exit 0
