@@ -13,7 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class ImprisonmentCaptureTest extends AbstractCaptureTest {
+public class GlobalImprisonmentCaptureTest extends AbstractCaptureTest {
   @BeforeEach
   void setup() {
     this.engine = new CaptureEngine(List.of(new ImprisonmentRule(pathValidator, regularGenerator)));
@@ -37,34 +37,26 @@ public class ImprisonmentCaptureTest extends AbstractCaptureTest {
             .againstWhite(PieceType.CIRCLE, 72, 4, 4)
             .withBlackAlly(PieceType.CIRCLE, 3, 3, 5)
             .withBlackAlly(PieceType.TRIANGLE, 35, 5, 5)
+            .withBlackAlly(PieceType.CIRCLE, 15, 1, 1)
             .againstWhite(PieceType.SQUARE, 7, 5, 3)
+            .againstWhite(PieceType.CIRCLE, 3, 0, 0)
+            .expectImprisonment(
+                PieceType.CIRCLE,
+                3,
+                new Position(0, 0),
+                null,
+                List.of(new Position(1, 1)),
+                List.of(new Position(1, 1)))
             .expectImprisonment(
                 PieceType.CIRCLE,
                 72,
                 new Position(4, 4),
-                new Position(3, 3),
+                null,
                 List.of(
                     new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)),
                 List.of(
                     new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)))
-            .expectImprisonment(
-                PieceType.CIRCLE,
-                72,
-                new Position(4, 4),
-                new Position(3, 5),
-                List.of(
-                    new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)),
-                List.of(
-                    new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)))
-            .expectImprisonment(
-                PieceType.CIRCLE,
-                72,
-                new Position(4, 4),
-                new Position(5, 5),
-                List.of(
-                    new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)),
-                List.of(
-                    new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)))
+            .global()
             .build());
   }
 
@@ -90,32 +82,21 @@ public class ImprisonmentCaptureTest extends AbstractCaptureTest {
                 new Position(0, 3),
                 List.of(new Position(0, 3), new Position(3, 0)), // regularMovesTo
                 List.of(new Position(3, 0))) // blockersAt
-            .expectImprisonment(
-                PieceType.SQUARE,
-                1,
-                new Position(0, 0),
-                new Position(3, 0),
-                List.of(new Position(0, 3), new Position(3, 0)), // regularMovesTo
-                List.of(new Position(0, 3))) // blockersAt
+            .forActor()
             .build(),
         CaptureTestCase.blackTriangleAt(225, 8, 7)
             .againstWhite(PieceType.SQUARE, 1, 0, 0)
             .againstWhite(PieceType.CIRCLE, 1, 1, 0)
             .againstWhite(PieceType.TRIANGLE, 1, 0, 1)
             .expectNoCapture()
+            .forActor()
             .build(),
         CaptureTestCase.blackTriangleAt(225, 8, 7)
             .againstWhite(PieceType.SQUARE, 10, 0, 0)
             .withBlackAlly(PieceType.CIRCLE, 1, 3, 0)
             .againstWhite(PieceType.TRIANGLE, 1, 0, 1)
-            .expectImprisonment(
-                PieceType.SQUARE,
-                10,
-                new Position(0, 0),
-                new Position(3, 0),
-                List.of(new Position(0, 3), new Position(3, 0)), // regularMovesTo
-                List.of(new Position(3, 0), new Position(0, 1)) // // blockersAt
-                )
+            .expectNoCapture()
+            .forActor()
             .build(),
         CaptureTestCase.blackTriangleAt(225, 0, 3)
             .againstWhite(PieceType.SQUARE, 1, 0, 0)
@@ -123,6 +104,7 @@ public class ImprisonmentCaptureTest extends AbstractCaptureTest {
             .againstWhite(PieceType.TRIANGLE, 1, 0, 1)
             .withBlackAlly(PieceType.CIRCLE, 3, 3, 0)
             .expectNoCapture()
+            .forActor()
             .build(),
         // no capture, circle have a free path
         CaptureTestCase.blackTriangleAt(225, 3, 3)
@@ -130,6 +112,7 @@ public class ImprisonmentCaptureTest extends AbstractCaptureTest {
             .withBlackAlly(PieceType.CIRCLE, 3, 3, 5)
             .withBlackAlly(PieceType.TRIANGLE, 35, 5, 5)
             .expectNoCapture()
+            .forActor()
             .build(),
         CaptureTestCase.blackTriangleAt(225, 3, 3)
             .againstWhite(PieceType.CIRCLE, 72, 4, 4)
@@ -145,33 +128,7 @@ public class ImprisonmentCaptureTest extends AbstractCaptureTest {
                     new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)),
                 List.of(
                     new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)))
-            .expectImprisonment(
-                PieceType.CIRCLE,
-                72,
-                new Position(4, 4),
-                new Position(5, 3),
-                List.of(
-                    new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)),
-                List.of(
-                    new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)))
-            .expectImprisonment(
-                PieceType.CIRCLE,
-                72,
-                new Position(4, 4),
-                new Position(3, 5),
-                List.of(
-                    new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)),
-                List.of(
-                    new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)))
-            .expectImprisonment(
-                PieceType.CIRCLE,
-                72,
-                new Position(4, 4),
-                new Position(5, 5),
-                List.of(
-                    new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)),
-                List.of(
-                    new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)))
+            .forActor()
             .build(),
         CaptureTestCase.blackTriangleAt(225, 3, 3)
             .againstWhite(PieceType.CIRCLE, 72, 4, 4)
@@ -187,24 +144,26 @@ public class ImprisonmentCaptureTest extends AbstractCaptureTest {
                     new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)),
                 List.of(
                     new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)))
+            .forActor()
+            .build(),
+        // test with 2 imprisonments possibles on board
+        CaptureTestCase.blackTriangleAt(225, 3, 3)
+            .againstWhite(PieceType.CIRCLE, 72, 4, 4)
+            .withBlackAlly(PieceType.CIRCLE, 3, 3, 5)
+            .withBlackAlly(PieceType.TRIANGLE, 35, 5, 5)
+            .withBlackAlly(PieceType.CIRCLE, 15, 1, 1)
+            .againstWhite(PieceType.SQUARE, 7, 5, 3)
+            .againstWhite(PieceType.CIRCLE, 3, 0, 0)
             .expectImprisonment(
                 PieceType.CIRCLE,
                 72,
                 new Position(4, 4),
-                new Position(3, 5),
+                new Position(3, 3),
                 List.of(
                     new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)),
                 List.of(
                     new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)))
-            .expectImprisonment(
-                PieceType.CIRCLE,
-                72,
-                new Position(4, 4),
-                new Position(5, 5),
-                List.of(
-                    new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)),
-                List.of(
-                    new Position(3, 3), new Position(5, 3), new Position(3, 5), new Position(5, 5)))
+            .forActor()
             .build());
   }
 }
