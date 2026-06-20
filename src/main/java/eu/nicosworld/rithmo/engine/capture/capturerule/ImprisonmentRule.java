@@ -1,5 +1,6 @@
 package eu.nicosworld.rithmo.engine.capture.capturerule;
 
+import eu.nicosworld.rithmo.engine.capture.imprisonment.Imprisonment;
 import eu.nicosworld.rithmo.engine.capture.justification.ImprisonmentJustification;
 import eu.nicosworld.rithmo.engine.capture.model.CaptureAction;
 import eu.nicosworld.rithmo.engine.capture.model.CaptureContext;
@@ -15,6 +16,11 @@ import java.util.List;
 import java.util.Optional;
 
 public final class ImprisonmentRule implements GlobalCaptureRule {
+  private enum ImprisonmentMode {
+    PRE_MOVE,
+    POST_MOVE,
+    END_TURN
+  }
 
   private final FreePathMovementValidator validator;
   private final RegularMoveGenerator moveGenerator;
@@ -25,61 +31,122 @@ public final class ImprisonmentRule implements GlobalCaptureRule {
   }
 
   @Override
-  public List<CaptureAction> findCaptures(CaptureContext context) {
-    return findImprisonmentActions(context);
+  public List<CaptureAction> findPreMoveCaptures(CaptureContext context) {
+    return findImprisonmentActions(context, ImprisonmentMode.PRE_MOVE);
   }
 
-  private List<CaptureAction> findImprisonmentActions(CaptureContext context) {
-    List<CaptureAction> captureActions = new ArrayList<>();
+  public List<CaptureAction> findPostMoveCaptures(CaptureContext context) {
+    return findImprisonmentActions(context, ImprisonmentMode.POST_MOVE);
+  }
+
+  public List<CaptureAction> findEndTurnCaptures(CaptureContext context) {
+    return findImprisonmentActions(context, ImprisonmentMode.END_TURN);
+  }
+
+  private List<CaptureAction> findImprisonmentActions(
+      CaptureContext context, ImprisonmentMode phase) {
+    List<CaptureAction> actions = new ArrayList<>();
+    List<Imprisonment> imprisonments = findImprisonment(context);
+    for (Imprisonment imprisonment : imprisonments) {
+      actions.addAll(buildCaptureActions(context.actor(), imprisonment, phase));
+    }
+    return actions;
+  }
+
+  private List<Imprisonment> findImprisonment(CaptureContext context) {
+    List<Imprisonment> imprisonments = new ArrayList<>();
 
     for (PieceAtPosition target :
         context.board().getPiecesForPlayer(context.state().currentPlayer().opponent())) {
-      List<PieceAtPosition> blockers = new ArrayList<>();
-      List<Move> possiblePositions = moveGenerator.generate(context.state(), target);
-      for (Move move : possiblePositions) {
-        Optional<Position> blockerPosition =
-            validator.isBlockedAt(context.state(), move.from(), move.to(), true);
-        if (blockerPosition.isEmpty()) {
-          blockers.clear();
-          break; // il y a au moins un regularMove possible, l'emprisonnement n'est pas possible
-        }
-        PieceAtPosition pieceAtPosition = context.board().getPieceAtPosition(blockerPosition.get());
-        blockers.add(pieceAtPosition);
-      }
-      if (!blockers.isEmpty()) {
-        if (blockers.stream()
-            .anyMatch(p -> p.piece().getPlayer().equals(target.piece().getPlayer().opponent()))) {
-          // dans ce cas il y a au moins un ennemi qui bloque la cible, donc l'emprisonnement est
-          // valide
-          captureActions.addAll(
-              buildCaptureActions(
-                  target, blockers, possiblePositions.stream().map(Move::to).toList()));
-        }
-      }
+
+      analyzeImprisonment(context, target).ifPresent(imprisonments::add);
+    }
+
+    return imprisonments;
+  }
+
+  private List<CaptureAction> buildCaptureActions(
+      PieceAtPosition actor, Imprisonment imprisonment, ImprisonmentMode phase) {
+    ImprisonmentJustification justification = imprisonment.toJustification();
+
+    return switch (phase) {
+      case PRE_MOVE -> buildDetailedCaptureAction(imprisonment, justification);
+      case POST_MOVE -> buildCaptureActionForActor(actor, imprisonment, justification);
+      case END_TURN -> buildGlobalCaptureActions(imprisonment, justification);
+    };
+  }
+
+  private List<CaptureAction> buildGlobalCaptureActions(
+      Imprisonment imprisonment, ImprisonmentJustification justification) {
+    CaptureAction captureAction =
+        CaptureAction.imprisonment(
+            null,
+            InvolvedPiece.whole(imprisonment.target()),
+            imprisonment.enemyBlockers().stream().map(InvolvedPiece::whole).toList(),
+            justification);
+
+    return List.of(captureAction);
+  }
+
+  private List<CaptureAction> buildCaptureActionForActor(
+      PieceAtPosition attacker,
+      Imprisonment imprisonment,
+      ImprisonmentJustification justification) {
+    if (!imprisonment.enemyBlockers().contains(attacker)) {
+      return List.of();
+    }
+
+    return List.of(createCaptureActionWithAllies(attacker, imprisonment, justification));
+  }
+
+  List<CaptureAction> buildDetailedCaptureAction(
+      Imprisonment imprisonment, ImprisonmentJustification justification) {
+    List<CaptureAction> captureActions = new ArrayList<>();
+    for (PieceAtPosition actor : imprisonment.enemyBlockers()) {
+      captureActions.add(createCaptureActionWithAllies(actor, imprisonment, justification));
     }
     return captureActions;
   }
 
-  private List<CaptureAction> buildCaptureActions(
-      PieceAtPosition target, List<PieceAtPosition> blockers, List<Position> possibleRegularMoves) {
-    List<CaptureAction> captureActions = new ArrayList<>();
-    ImprisonmentJustification justification =
-        new ImprisonmentJustification(
-            possibleRegularMoves, blockers.stream().map(PieceAtPosition::position).toList());
+  private CaptureAction createCaptureActionWithAllies(
+      PieceAtPosition actor, Imprisonment imprisonment, ImprisonmentJustification justification) {
+    List<PieceAtPosition> allies =
+        imprisonment.enemyBlockers().stream().filter(e -> !e.equals(actor)).toList();
+    return CaptureAction.imprisonment(
+        InvolvedPiece.whole(actor),
+        InvolvedPiece.whole(imprisonment.target()),
+        allies.stream().map(InvolvedPiece::whole).toList(),
+        justification);
+  }
 
-    List<PieceAtPosition> enemiesBlockers =
-        blockers.stream().filter(p -> AttackSupport.areEnemies(p, target)).toList();
-    for (PieceAtPosition actor : enemiesBlockers) {
-      List<PieceAtPosition> allies =
-          enemiesBlockers.stream().filter(e -> !e.equals(actor)).toList();
-      CaptureAction captureAction =
-          CaptureAction.imprisonment(
-              InvolvedPiece.whole(actor),
-              InvolvedPiece.whole(target),
-              allies.stream().map(InvolvedPiece::whole).toList(),
-              justification);
-      captureActions.add(captureAction);
+  private Optional<Imprisonment> analyzeImprisonment(
+      CaptureContext context, PieceAtPosition target) {
+
+    List<PieceAtPosition> enemyBlockers = new ArrayList<>();
+    List<PieceAtPosition> allyBlockers = new ArrayList<>();
+    List<Move> regularMoves = moveGenerator.generate(context.state(), target);
+
+    for (Move move : regularMoves) {
+      Optional<Position> blockerPos =
+          validator.isBlockedAt(context.state(), move.from(), move.to(), true);
+
+      if (blockerPos.isEmpty()) {
+        return Optional.empty();
+      }
+      PieceAtPosition blocker = context.board().getPieceAtPosition(blockerPos.get());
+      if (AttackSupport.areEnemies(blocker, target)) {
+        enemyBlockers.add(blocker);
+      } else {
+        allyBlockers.add(blocker);
+      }
     }
-    return captureActions;
+
+    if (enemyBlockers.isEmpty()) {
+      return Optional.empty();
+    }
+
+    return Optional.of(
+        new Imprisonment(
+            target, enemyBlockers, allyBlockers, regularMoves.stream().map(Move::to).toList()));
   }
 }
