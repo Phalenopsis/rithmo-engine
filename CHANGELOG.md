@@ -5,7 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.5.2] - In progress
+---
+## [0.6.0-SNAPSHOT] - In progress
+
+### Added
+
+* **Imprisonment Capture**: Implemented full imprisonment (*Obsidio*) capture logic based on movement deprivation and enemy blockade.
+* **Capture Model**: Added `Imprisonment` domain model and `ImprisonmentJustification` to expose regular-move destinations and blocking positions involved in imprisonment evaluation.
+* **Capture Engine**: Added dedicated capture evaluation phases:
+  * `findPreMoveCaptures()` for exhaustive capture discovery before move execution.
+  * `findPostMoveCaptures()` for actor-centered capture validation after a move.
+  * `findEndTurnCaptures()` for board-wide capture evaluation at end of turn.
+* **Capture Rules**: Introduced `ActiveCaptureRule` and `GlobalCaptureRule` abstractions to distinguish actor-driven captures from board-wide capture mechanisms.
+* **Capture Tests**: Added dedicated imprisonment capture test suites covering pre-move, post-move and end-turn evaluation scenarios.
+* **Performance Tests**: Added dense-board regression benchmarks covering imprisonment evaluation and complete capture-engine execution.
+
+### Changed
+
+* **Capture Documentation**: Consolidated imprisonment rules into the main capture-rules documentation and expanded the specification with blockade, shield and actor-attribution details.
+* **Movement Validation**: Enhanced `FreePathMovementValidator` to expose blocking positions and optionally evaluate destination occupancy, enabling advanced capture-rule analysis.
+* **Capture Test Infrastructure**: Extended the capture DSL to support imprisonment-specific expectations, blocker validation and phase-aware capture assertions.
+* **Capture Engine**: Active capture evaluation is now explicitly separated from global capture evaluation.
+
+### Refactored
+
+* **Capture Support**: Added `PieceAtPosition` overloads to attack-support utilities to simplify capture-rule implementations.
+* **Capture Architecture**: Split capture rules into active and global categories, preparing future board-wide rule extensions.
+* **Imprisonment Rule**: Reworked capture generation around a dedicated imprisonment analysis model, reducing duplication between detailed, actor-centered and global evaluations.
+
+### Deprecated
+
+* **Capture Engine**: Deprecated `findCaptures()` in favor of explicit phase-based capture evaluation methods.
+
+### Test
+
+* **Capture Validation**: Added regression coverage for imprisonment detection, blocker attribution, actor attribution and justification comparison.
+* **Performance Regression**: Added dense-board performance safeguards for imprisonment evaluation and complete capture-engine execution.
+
+
+## [0.5.2-SNAPSHOT] - 2026-06-07
 ### Fixed
 
 * **Goods Victory**: Fixed victory evaluation to use the total value of captured pieces rather than the captured piece count, restoring correct "Victory of Goods" behavior.
