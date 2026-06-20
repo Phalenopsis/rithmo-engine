@@ -92,19 +92,68 @@ Planned improvements:
 
 ## Git Hooks
 
-This project uses a local `pre-commit` hook to enforce code hygiene before every commit.
+This project uses local Git hooks to improve code quality and developer experience before code is pushed.
 
-The hook automatically:
+Hooks are split into two stages:
 
-* Runs the Spotless formatter
-* Rejects commits containing accidental `TestDebugger` usage
-* Ensures formatting consistency across the codebase
+* **pre-commit** → formatting + static hygiene checks
+* **pre-push** → test validation before pushing code
 
-Enable hooks after cloning:
+---
+
+## ⚙️ Enable Git Hooks
+
+After cloning the repository, enable the custom hooks path:
 
 ```bash
 git config core.hooksPath .githooks
 ```
+
+---
+
+## 🧹 Pre-commit Hook
+
+The `pre-commit` hook ensures code consistency before each commit.
+
+It automatically:
+
+* Runs Spotless formatting
+* Rejects commits containing accidental `RithmoDebug` usage in tests
+* Warns about active debug traces in unstaged files
+
+This ensures that only clean and consistent code enters the repository history.
+
+---
+
+## 🧪 Pre-push Hook
+
+The `pre-push` hook runs the test suite before pushing code.
+
+Behavior:
+
+* Runs `mvn test`
+* Allows push if tests pass
+* Blocks push to `main` if tests fail
+* Allows pushes on feature branches even if tests fail (with warning)
+* Warns the developer when CI is likely to fail
+
+
+# 🚀 Continuous Integration (CI)
+
+This project uses GitHub Actions to enforce strict quality checks on pull requests and the `main` branch.
+
+## CI Pipeline
+
+The CI runs automatically on:
+
+* push to `main`
+* pull requests targeting `main`
+
+It ensures:
+
+* Project builds successfully
+* All tests pass (`mvn verify`)
+* Code formatting is valid (`spotless:check`)
 
 ---
 
