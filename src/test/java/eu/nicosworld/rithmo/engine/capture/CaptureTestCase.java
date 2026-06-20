@@ -6,9 +6,15 @@ import eu.nicosworld.rithmo.engine.model.PlayerColor;
 import eu.nicosworld.rithmo.engine.model.Position;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.junit.jupiter.params.provider.Arguments;
 
 public class CaptureTestCase {
+  public enum CaptureTestType {
+    DETAILED,
+    FOR_ACTOR,
+    GLOBAL
+  }
 
   private final PieceType attackerType;
   private final int attackerValue;
@@ -21,6 +27,8 @@ public class CaptureTestCase {
   private final List<ExpectedCapture> expectedCaptures = new ArrayList<>();
 
   private ExpectedCapture currentExpectedCapture;
+
+  private CaptureTestType captureTestType = CaptureTestType.DETAILED;
 
   private CaptureTestCase(PieceType type, int value, int x, int y) {
     this.attackerType = type;
@@ -164,7 +172,7 @@ public class CaptureTestCase {
       List<Position> regularMovesTo,
       List<Position> blockersAt) {
     List<Position> blockersWithAttacker = new ArrayList<>(List.copyOf(blockersAt));
-    blockersWithAttacker.add(attackerPos);
+    if (Objects.nonNull(attackerPos)) blockersWithAttacker.add(attackerPos);
     return addExpected(
         type,
         value,
@@ -209,6 +217,16 @@ public class CaptureTestCase {
     return this;
   }
 
+  public CaptureTestCase global() {
+    captureTestType = CaptureTestType.GLOBAL;
+    return this;
+  }
+
+  public CaptureTestCase forActor() {
+    captureTestType = CaptureTestType.FOR_ACTOR;
+    return this;
+  }
+
   public Arguments build() {
     return Arguments.of(this);
   }
@@ -240,6 +258,10 @@ public class CaptureTestCase {
 
   public List<ExpectedCapture> getExpectedCaptures() {
     return expectedCaptures;
+  }
+
+  public CaptureTestType getCaptureTestType() {
+    return captureTestType;
   }
 
   @Override
