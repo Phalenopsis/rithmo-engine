@@ -45,7 +45,6 @@ class ProgressionEngineTechnicalTest {
         assertThrows(InvocationTargetException.class, constructor::newInstance);
     assertInstanceOf(AssertionError.class, exception.getCause());
     assertEquals("No instances", exception.getCause().getMessage());
-    fail();
   }
 
   @Test
