@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import eu.nicosworld.rithmo.engine.model.*;
-import eu.nicosworld.rithmo.engine.setup.PreDefinedState;
+import eu.nicosworld.rithmo.engine.testutils.PreDefinedState;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

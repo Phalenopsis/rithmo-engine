@@ -8,7 +8,7 @@ import eu.nicosworld.rithmo.engine.model.GameState;
 import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
 import eu.nicosworld.rithmo.engine.model.Player;
 import eu.nicosworld.rithmo.engine.model.Position;
-import eu.nicosworld.rithmo.engine.setup.PreDefinedState;
+import eu.nicosworld.rithmo.engine.testutils.PreDefinedState;
 import eu.nicosworld.rithmo.engine.testutils.StringRepresentationHelper;
 import java.util.List;
 import java.util.Set;

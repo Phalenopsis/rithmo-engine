@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 import eu.nicosworld.rithmo.engine.exception.NotEmptyPositionException;
-import eu.nicosworld.rithmo.engine.setup.PreDefinedState;
 import eu.nicosworld.rithmo.engine.testutils.PieceAtPositionHelper;
+import eu.nicosworld.rithmo.engine.testutils.PreDefinedState;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Nested;
