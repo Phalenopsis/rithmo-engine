@@ -4,7 +4,7 @@ import eu.nicosworld.rithmo.engine.model.Position;
 import java.util.List;
 import java.util.Set;
 
-public class LinePattern {
+public final class LinePattern implements GeometryPattern {
 
   /**
    * Detect if 3 or 4 positions are in line

@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class SquarePattern {
+public final class SquarePattern implements GeometryPattern {
 
   /**
    * Detects if 4 positions form a square.
