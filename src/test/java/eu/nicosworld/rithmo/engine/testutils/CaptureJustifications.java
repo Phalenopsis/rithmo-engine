@@ -1,6 +1,7 @@
 package eu.nicosworld.rithmo.engine.testutils;
 
 import eu.nicosworld.rithmo.engine.capture.justification.*;
+import java.util.List;
 import java.util.Set;
 
 public final class CaptureJustifications {
@@ -28,6 +29,11 @@ public final class CaptureJustifications {
 
   public static ProgressionJustification progression(
       int min, int mid, int max, ProgressionEvidence... evidences) {
-    return new ProgressionJustification(min, mid, max, Set.of(evidences));
+    return new ProgressionJustification(List.of(min, mid, max), Set.of(evidences));
+  }
+
+  public static ProgressionJustification progression(
+      List<Integer> values, ProgressionEvidence... evidences) {
+    return new ProgressionJustification(values, Set.of(evidences));
   }
 }
