@@ -8,7 +8,7 @@
 
     <groupId>eu.nicosworld</groupId>
     <artifactId>rithmo-engine</artifactId>
-    <version>0.6.0-SNAPSHOT</version>
+    <version>0.6.0</version>
 
     <name>Rithmo Engine</name>
     <description>Core Java engine for Rithmomachia</description>

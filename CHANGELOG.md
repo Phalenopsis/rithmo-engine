@@ -36,18 +36,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **Capture Test Infrastructure**: Extended the capture DSL to support imprisonment-specific expectations, blocker validation and phase-aware capture assertions.
 * **Capture Engine**: Active capture evaluation is now explicitly separated from global capture evaluation.
 * **Historical Documentation**: Clarified historical terminology and vocabulary used throughout the rules documentation.
-* **Progression Engine**: `ProgressionResult` now retains the analyzed values alongside detected progression types and matching triplets, allowing richer victory explanations.
 * **Victory Engine**: Added proper-victory evaluation as part of the progression-victory rules.
-
+* **Progression Engine**:
+  * `ProgressionEngine.detect()` now returns an `Optional<ProgressionResult>` to explicitly represent the absence of detected progressions.
+  * `ProgressionResult` now retains the analyzed values alongside detected progression types and matching triplets, enabling richer progression analysis and victory explanations.
 
 ### Refactored
 
+* **Progression Analysis**: Extracted progression-analysis models from capture justifications, allowing progression analysis to be shared across capture and victory evaluation.
 * **Capture Support**: Added `PieceAtPosition` overloads to attack-support utilities to simplify capture-rule implementations.
 * **Capture Architecture**: Split capture rules into active and global categories, preparing future board-wide rule extensions.
 * **Imprisonment Rule**: Reworked capture generation around a dedicated imprisonment analysis model, reducing duplication between detailed, actor-centered and global evaluations.
 * **Board Queries**: Generalized piece-retrieval APIs with predicate-based filtering and board-range selection to support progression-victory analysis.
-* **Progression Evidence**: Moved progression-evidence construction into the `ProgressionEvidence` hierarchy, centralizing evidence creation and improving extensibility.
-
 ### Fixed
 
 * **Board Builder**: Fixed predefined-pyramid initialization to preserve existing pyramid components when adding populated pyramids.
