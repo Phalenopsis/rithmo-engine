@@ -1,15 +1,23 @@
 package eu.nicosworld.rithmo.engine.victory;
 
+import static eu.nicosworld.rithmo.engine.testutils.CaptureJustifications.progression;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import eu.nicosworld.rithmo.engine.capture.justification.ArithmeticJustification;
+import eu.nicosworld.rithmo.engine.capture.justification.GeometricJustification;
+import eu.nicosworld.rithmo.engine.capture.justification.HarmonicJustification;
 import eu.nicosworld.rithmo.engine.exception.MultipleRulesException;
 import eu.nicosworld.rithmo.engine.model.*;
 import eu.nicosworld.rithmo.engine.model.victory.BodyVictory;
 import eu.nicosworld.rithmo.engine.model.victory.GoodsVictory;
 import eu.nicosworld.rithmo.engine.model.victory.LawsuitVictory;
 import eu.nicosworld.rithmo.engine.model.victory.Victory;
+import eu.nicosworld.rithmo.engine.testutils.PieceAtPositionHelper;
+import eu.nicosworld.rithmo.engine.testutils.PreDefinedState;
+import eu.nicosworld.rithmo.engine.testutils.victory.ProperVictoryAssertion;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 public class VictoryEngineTest {
@@ -136,5 +144,33 @@ public class VictoryEngineTest {
     List<Victory> result = engine.evaluate(state);
 
     assertThat(result).isEmpty();
+  }
+
+  @Test
+  void testEvaluate_excellentVictory() {
+    GameState state = PreDefinedState.progressionVictoryState_classicBoard_excellent(Player.BLACK);
+    ProperVictoryRule rule = ProperVictoryRule.fast();
+    VictoryEngine engine = new VictoryEngine(List.of(), rule);
+    List<Victory> victories = engine.evaluate(state);
+
+    assertThat(victories).hasSize(1);
+
+    PieceAtPosition bs6 = PieceAtPositionHelper.create(PieceType.SQUARE, Player.BLACK, 6, "(15,3)");
+    PieceAtPosition bt12 =
+        PieceAtPositionHelper.create(PieceType.TRIANGLE, Player.BLACK, 12, "(15,0)");
+    PieceAtPosition bc4 = PieceAtPositionHelper.create(PieceType.CIRCLE, Player.BLACK, 4, "(12,0)");
+    PieceAtPosition bc9 = PieceAtPositionHelper.create(PieceType.CIRCLE, Player.BLACK, 9, "(12,3)");
+
+    Set<PieceAtPosition> expectedCombinationPap = Set.of(bs6, bc9, bt12, bc4);
+
+    ProperVictoryAssertion.from(victories)
+        .hasWinner(Player.BLACK)
+        .hasVictoryWithPieces(expectedCombinationPap)
+        .hasJustification(
+            progression(
+                List.of(4, 9, 6, 12),
+                new HarmonicJustification(),
+                new ArithmeticJustification(3),
+                new GeometricJustification(1.5)));
   }
 }
