@@ -19,6 +19,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **Capture Rules**: Introduced `ActiveCaptureRule` and `GlobalCaptureRule` abstractions to distinguish actor-driven captures from board-wide capture mechanisms.
 * **Capture Tests**: Added dedicated imprisonment capture test suites covering pre-move, post-move and end-turn evaluation scenarios.
 * **Performance Tests**: Added dense-board regression benchmarks covering imprisonment evaluation and complete capture-engine execution.
+* **Board Home Model**: Added `BoardHome` to represent each player's home camp boundaries and ownership.
+* **Progression Victory Support**: Added board-level enemy-home detection utilities to support progression-victory evaluation.
+* **Pattern Detection**: Added `LinePattern` and `SquarePattern` domain models to detect geometric arrangements of positions used by progression-victory rules.
+* **Test Utilities**: Added `StringRepresentationHelper` and `PieceAtPositionHelper` to simplify test assertions and diagnostics.
+* **Predefined States**: Expanded `PredefinedState` with progression-victory scenarios for automated testing.
+* **Subset Generation**: Added generic `SubsetGenerator` utilities to efficiently enumerate triplets and quadruplets from arbitrary collections.
+* **Victory Pattern Engine**: Added `VictoryPattern` to generate geometric matches from board positions and introduced the sealed `GeometryPattern` hierarchy to unify line and square pattern detection.
+* **Proper Victory**: Added `ProperVictory` and integrated support for proper-victory evaluation within the victory engine.
+
 
 ### Changed
 
@@ -26,12 +35,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **Movement Validation**: Enhanced `FreePathMovementValidator` to expose blocking positions and optionally evaluate destination occupancy, enabling advanced capture-rule analysis.
 * **Capture Test Infrastructure**: Extended the capture DSL to support imprisonment-specific expectations, blocker validation and phase-aware capture assertions.
 * **Capture Engine**: Active capture evaluation is now explicitly separated from global capture evaluation.
+* **Historical Documentation**: Clarified historical terminology and vocabulary used throughout the rules documentation.
+* **Progression Engine**: `ProgressionResult` now retains the analyzed values alongside detected progression types and matching triplets, allowing richer victory explanations.
+* **Victory Engine**: Added proper-victory evaluation as part of the progression-victory rules.
+
 
 ### Refactored
 
 * **Capture Support**: Added `PieceAtPosition` overloads to attack-support utilities to simplify capture-rule implementations.
 * **Capture Architecture**: Split capture rules into active and global categories, preparing future board-wide rule extensions.
 * **Imprisonment Rule**: Reworked capture generation around a dedicated imprisonment analysis model, reducing duplication between detailed, actor-centered and global evaluations.
+* **Board Queries**: Generalized piece-retrieval APIs with predicate-based filtering and board-range selection to support progression-victory analysis.
+* **Progression Evidence**: Moved progression-evidence construction into the `ProgressionEvidence` hierarchy, centralizing evidence creation and improving extensibility.
+
+### Fixed
+
+* **Board Builder**: Fixed predefined-pyramid initialization to preserve existing pyramid components when adding populated pyramids.
+* **Progression Evidence**: Fixed geometric-ratio computation to preserve fractional ratios during progression justification generation.
 
 ### Deprecated
 
@@ -41,6 +61,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * **Capture Validation**: Added regression coverage for imprisonment detection, blocker attribution, actor attribution and justification comparison.
 * **Performance Regression**: Added dense-board performance safeguards for imprisonment evaluation and complete capture-engine execution.
+* **Board Home Validation**: Added coverage for home-camp boundaries and enemy-home piece detection.
+* **Pattern Detection Validation**: Added regression tests for line and square pattern recognition.
+* **Progression Victory Fixtures**: Added predefined progression-victory game states used across progression-rule test suites.
+* **Board Builder Validation**: Added non-regression coverage for predefined-pyramid initialization.
+* **Subset Generator Validation**: Added dedicated unit tests for generic subset generation.
+* **Progression Evidence Validation**: Added regression tests covering fractional geometric-ratio computation.
+* **Proper Victory Validation**: Added dedicated test helpers and coverage for proper-victory evaluation and victory-engine integration.
 
 
 ## [0.5.2-SNAPSHOT] - 2026-06-07
