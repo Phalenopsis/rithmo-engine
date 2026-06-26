@@ -1,4 +1,4 @@
-package eu.nicosworld.rithmo.engine.capture.justification;
+package eu.nicosworld.rithmo.engine.math.progression.model;
 
 import eu.nicosworld.rithmo.engine.math.progression.ProgressionResult;
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public sealed interface ProgressionEvidence
-    permits ArithmeticJustification, GeometricJustification, HarmonicJustification {
+    permits ArithmeticEvidence, GeometricEvidence, HarmonicEvidence {
 
   /**
    * Extracts all valid progression evidences from a ProgressionResult. It scans through all
@@ -29,13 +29,13 @@ public sealed interface ProgressionEvidence
               List<ProgressionEvidence> evidences = new ArrayList<>();
 
               if (triplet.isArithmetic()) {
-                evidences.add(new ArithmeticJustification(triplet.mid() - triplet.min()));
+                evidences.add(new ArithmeticEvidence(triplet.mid() - triplet.min()));
               }
               if (triplet.isGeometric()) {
-                evidences.add(new GeometricJustification((double) triplet.mid() / triplet.min()));
+                evidences.add(new GeometricEvidence((double) triplet.mid() / triplet.min()));
               }
               if (triplet.isHarmonic()) {
-                evidences.add(new HarmonicJustification());
+                evidences.add(new HarmonicEvidence());
               }
 
               return evidences.stream();

@@ -7,6 +7,9 @@ import eu.nicosworld.rithmo.engine.capture.CaptureEngine;
 import eu.nicosworld.rithmo.engine.capture.CaptureTestCase;
 import eu.nicosworld.rithmo.engine.capture.capturerule.*;
 import eu.nicosworld.rithmo.engine.capture.justification.*;
+import eu.nicosworld.rithmo.engine.math.progression.model.ArithmeticEvidence;
+import eu.nicosworld.rithmo.engine.math.progression.model.GeometricEvidence;
+import eu.nicosworld.rithmo.engine.math.progression.model.HarmonicEvidence;
 import eu.nicosworld.rithmo.engine.model.PieceType;
 import java.util.List;
 import java.util.stream.Stream;
@@ -140,13 +143,13 @@ public class MultiRulesTest extends AbstractCaptureTest {
                   PieceType.SQUARE, 10, assault(2, AssaultOperator.MULTIPLY, 5, 10))
               .expectAssault(PieceType.PYRAMID, 16, assault(2, AssaultOperator.MULTIPLY, 8, 16))
               .expectPartialProgression(
-                  PieceType.CIRCLE, 6, progression(3, 6, 12, new GeometricJustification(2)))
+                  PieceType.CIRCLE, 6, progression(3, 6, 12, new GeometricEvidence(2)))
               .expectProgression(
-                  PieceType.PYRAMID, 16, progression(8, 12, 16, new ArithmeticJustification(4)))
+                  PieceType.PYRAMID, 16, progression(8, 12, 16, new ArithmeticEvidence(4)))
               .expectPartialProgression(
-                  PieceType.CIRCLE, 6, progression(6, 8, 12, new HarmonicJustification()))
+                  PieceType.CIRCLE, 6, progression(6, 8, 12, new HarmonicEvidence()))
               .expectPartialProgression(
-                  PieceType.SQUARE, 10, progression(8, 10, 12, new ArithmeticJustification(2)))
+                  PieceType.SQUARE, 10, progression(8, 10, 12, new ArithmeticEvidence(2)))
               .build());
     }
 
@@ -172,13 +175,13 @@ public class MultiRulesTest extends AbstractCaptureTest {
                   PieceType.SQUARE, 10, assault(2, AssaultOperator.MULTIPLY, 5, 10))
               .expectAssault(PieceType.PYRAMID, 16, assault(2, AssaultOperator.MULTIPLY, 8, 16))
               .expectPartialProgression(
-                  PieceType.CIRCLE, 6, progression(3, 6, 12, new GeometricJustification(2)))
+                  PieceType.CIRCLE, 6, progression(3, 6, 12, new GeometricEvidence(2)))
               .expectProgression(
-                  PieceType.PYRAMID, 16, progression(8, 12, 16, new ArithmeticJustification(4)))
+                  PieceType.PYRAMID, 16, progression(8, 12, 16, new ArithmeticEvidence(4)))
               .expectPartialProgression(
-                  PieceType.CIRCLE, 6, progression(6, 8, 12, new HarmonicJustification()))
+                  PieceType.CIRCLE, 6, progression(6, 8, 12, new HarmonicEvidence()))
               .expectPartialProgression(
-                  PieceType.SQUARE, 10, progression(8, 10, 12, new ArithmeticJustification(2)))
+                  PieceType.SQUARE, 10, progression(8, 10, 12, new ArithmeticEvidence(2)))
               .build());
     }
   }

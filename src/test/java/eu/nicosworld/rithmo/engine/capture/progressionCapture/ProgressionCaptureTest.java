@@ -8,9 +8,9 @@ import eu.nicosworld.rithmo.engine.capture.AbstractCaptureTest;
 import eu.nicosworld.rithmo.engine.capture.CaptureEngine;
 import eu.nicosworld.rithmo.engine.capture.CaptureTestCase;
 import eu.nicosworld.rithmo.engine.capture.capturerule.ProgressionRule;
-import eu.nicosworld.rithmo.engine.capture.justification.ArithmeticJustification;
-import eu.nicosworld.rithmo.engine.capture.justification.GeometricJustification;
-import eu.nicosworld.rithmo.engine.capture.justification.HarmonicJustification;
+import eu.nicosworld.rithmo.engine.math.progression.model.ArithmeticEvidence;
+import eu.nicosworld.rithmo.engine.math.progression.model.GeometricEvidence;
+import eu.nicosworld.rithmo.engine.math.progression.model.HarmonicEvidence;
 import eu.nicosworld.rithmo.engine.model.PieceType;
 import java.util.List;
 import java.util.stream.Stream;
@@ -43,7 +43,7 @@ public class ProgressionCaptureTest extends AbstractCaptureTest {
             .againstWhite(PieceType.CIRCLE, 6, 0, 3)
             .withBlackAlly(PieceType.CIRCLE, 9, 1, 2)
             .expectProgression(
-                PieceType.CIRCLE, 6, progression(4, 6, 9, new GeometricJustification(1.5)))
+                PieceType.CIRCLE, 6, progression(4, 6, 9, new GeometricEvidence(1.5)))
             .build());
   }
 
@@ -52,8 +52,7 @@ public class ProgressionCaptureTest extends AbstractCaptureTest {
         blackSquareAt(1, 1, 1)
             .againstWhite(PieceType.CIRCLE, 4, 4, 1)
             .withBlackAlly(PieceType.CIRCLE, 7, 3, 2)
-            .expectProgression(
-                PieceType.CIRCLE, 4, progression(1, 4, 7, new ArithmeticJustification(3)))
+            .expectProgression(PieceType.CIRCLE, 4, progression(1, 4, 7, new ArithmeticEvidence(3)))
             .build(),
         blackTriangleAt(4, 0, 2)
             .againstWhite(PieceType.CIRCLE, 4, 2, 2)
@@ -65,9 +64,9 @@ public class ProgressionCaptureTest extends AbstractCaptureTest {
                     4,
                     4,
                     4,
-                    new ArithmeticJustification(0),
-                    new GeometricJustification(1),
-                    new HarmonicJustification()))
+                    new ArithmeticEvidence(0),
+                    new GeometricEvidence(1),
+                    new HarmonicEvidence()))
             .build(),
         // =========================================================================
         // 1. PROGRESSION ARITHMÉTIQUE
@@ -79,8 +78,7 @@ public class ProgressionCaptureTest extends AbstractCaptureTest {
         CaptureTestCase.blackCircleAt(3, 0, 0)
             .againstWhite(PieceType.CIRCLE, 5, 1, 1)
             .withBlackAlly(PieceType.TRIANGLE, 7, 3, 1)
-            .expectProgression(
-                PieceType.CIRCLE, 5, progression(3, 5, 7, new ArithmeticJustification(2)))
+            .expectProgression(PieceType.CIRCLE, 5, progression(3, 5, 7, new ArithmeticEvidence(2)))
             .build(),
 
         // Suite Décroissante : 12, 8, 4 (Raison: 4)
@@ -91,7 +89,7 @@ public class ProgressionCaptureTest extends AbstractCaptureTest {
             .againstWhite(PieceType.CIRCLE, 8, 4, 1)
             .withBlackAlly(PieceType.CIRCLE, 4, 5, 0)
             .expectProgression(
-                PieceType.CIRCLE, 8, progression(4, 8, 12, new ArithmeticJustification(4)))
+                PieceType.CIRCLE, 8, progression(4, 8, 12, new ArithmeticEvidence(4)))
             .build(),
 
         // =========================================================================
@@ -104,8 +102,7 @@ public class ProgressionCaptureTest extends AbstractCaptureTest {
         CaptureTestCase.blackTriangleAt(2, 2, 2)
             .againstWhite(PieceType.CIRCLE, 4, 4, 2)
             .withBlackAlly(PieceType.CIRCLE, 8, 5, 3)
-            .expectProgression(
-                PieceType.CIRCLE, 4, progression(2, 4, 8, new GeometricJustification(2)))
+            .expectProgression(PieceType.CIRCLE, 4, progression(2, 4, 8, new GeometricEvidence(2)))
             .build(),
 
         // =========================================================================
@@ -118,8 +115,7 @@ public class ProgressionCaptureTest extends AbstractCaptureTest {
         CaptureTestCase.blackCircleAt(3, 2, 2)
             .againstWhite(PieceType.SQUARE, 4, 3, 3)
             .withBlackAlly(PieceType.SQUARE, 6, 3, 6)
-            .expectProgression(
-                PieceType.SQUARE, 4, progression(3, 4, 6, new HarmonicJustification()))
+            .expectProgression(PieceType.SQUARE, 4, progression(3, 4, 6, new HarmonicEvidence()))
             .build(),
 
         // Autre Suite Harmonique : 2, 3, 6 (1/2 - 1/3 = 1/6 et 1/3 - 1/6 = 1/6)
@@ -129,8 +125,7 @@ public class ProgressionCaptureTest extends AbstractCaptureTest {
         CaptureTestCase.blackTriangleAt(2, 1, 1)
             .againstWhite(PieceType.CIRCLE, 3, 1, 3)
             .withBlackAlly(PieceType.CIRCLE, 6, 2, 4)
-            .expectProgression(
-                PieceType.CIRCLE, 3, progression(2, 3, 6, new HarmonicJustification()))
+            .expectProgression(PieceType.CIRCLE, 3, progression(2, 3, 6, new HarmonicEvidence()))
             .build(),
 
         // =========================================================================
@@ -155,7 +150,7 @@ public class ProgressionCaptureTest extends AbstractCaptureTest {
             // On s'attend à capturer la pyramide blanche entière (valeur globale 12),
             // mais aussi ses composants individuellement si le moteur le permet !
             .expectProgression(
-                PieceType.PYRAMID, 12, progression(10, 12, 14, new ArithmeticJustification(2)))
+                PieceType.PYRAMID, 12, progression(10, 12, 14, new ArithmeticEvidence(2)))
             .build(),
 
         // Autre cas Pyramide : Capture d'un composant spécifique par progression géométrique
@@ -175,13 +170,13 @@ public class ProgressionCaptureTest extends AbstractCaptureTest {
                 new CaptureTestCase.ComponentData(PieceType.SQUARE, 10))
             .withBlackAlly(PieceType.CIRCLE, 12, 4, 2)
             .expectPartialProgression(
-                PieceType.CIRCLE, 6, progression(3, 6, 12, new GeometricJustification(2)))
+                PieceType.CIRCLE, 6, progression(3, 6, 12, new GeometricEvidence(2)))
             .expectProgression(
-                PieceType.PYRAMID, 16, progression(8, 12, 16, new ArithmeticJustification(4)))
+                PieceType.PYRAMID, 16, progression(8, 12, 16, new ArithmeticEvidence(4)))
             .expectPartialProgression(
-                PieceType.CIRCLE, 6, progression(6, 8, 12, new HarmonicJustification()))
+                PieceType.CIRCLE, 6, progression(6, 8, 12, new HarmonicEvidence()))
             .expectPartialProgression(
-                PieceType.SQUARE, 10, progression(8, 10, 12, new ArithmeticJustification(2)))
+                PieceType.SQUARE, 10, progression(8, 10, 12, new ArithmeticEvidence(2)))
             .build(),
 
         // =========================================================================
@@ -213,7 +208,7 @@ public class ProgressionCaptureTest extends AbstractCaptureTest {
             .againstWhite(PieceType.CIRCLE, 6, 0, 3)
             .withBlackAlly(PieceType.CIRCLE, 9, 1, 2)
             .expectProgression(
-                PieceType.CIRCLE, 6, progression(4, 6, 9, new GeometricJustification(1.5)))
+                PieceType.CIRCLE, 6, progression(4, 6, 9, new GeometricEvidence(1.5)))
             .build());
   }
 }

@@ -1,6 +1,6 @@
 package eu.nicosworld.rithmo.engine.capture.capturerule;
 
-import eu.nicosworld.rithmo.engine.capture.justification.ProgressionJustification;
+import eu.nicosworld.rithmo.engine.capture.justification.ProgressionCaptureJustification;
 import eu.nicosworld.rithmo.engine.capture.model.CaptureAction;
 import eu.nicosworld.rithmo.engine.capture.model.CaptureContext;
 import eu.nicosworld.rithmo.engine.math.progression.ProgressionEngine;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class ProgressionRule implements ActiveCaptureRule {
-  private ProgressionEngine engine;
+  private final ProgressionEngine engine;
 
   public ProgressionRule() {
     engine = ProgressionEngine.fast();
@@ -35,7 +35,7 @@ public final class ProgressionRule implements ActiveCaptureRule {
                 assistedThreat.actor(),
                 assistedThreat.target(),
                 assistedThreat.ally(),
-                ProgressionJustification.from(result)));
+                ProgressionCaptureJustification.from(result)));
       }
     }
 

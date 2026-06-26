@@ -1,13 +1,13 @@
 package eu.nicosworld.rithmo.engine.victory;
 
-import static eu.nicosworld.rithmo.engine.testutils.CaptureJustifications.progression;
+import static eu.nicosworld.rithmo.engine.testutils.VictoryJustifications.progression;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import eu.nicosworld.rithmo.engine.capture.justification.ArithmeticJustification;
-import eu.nicosworld.rithmo.engine.capture.justification.GeometricJustification;
-import eu.nicosworld.rithmo.engine.capture.justification.HarmonicJustification;
 import eu.nicosworld.rithmo.engine.exception.MultipleRulesException;
+import eu.nicosworld.rithmo.engine.math.progression.model.ArithmeticEvidence;
+import eu.nicosworld.rithmo.engine.math.progression.model.GeometricEvidence;
+import eu.nicosworld.rithmo.engine.math.progression.model.HarmonicEvidence;
 import eu.nicosworld.rithmo.engine.model.*;
 import eu.nicosworld.rithmo.engine.model.victory.BodyVictory;
 import eu.nicosworld.rithmo.engine.model.victory.GoodsVictory;
@@ -169,8 +169,8 @@ public class VictoryEngineTest {
         .hasJustification(
             progression(
                 List.of(4, 9, 6, 12),
-                new HarmonicJustification(),
-                new ArithmeticJustification(3),
-                new GeometricJustification(1.5)));
+                new HarmonicEvidence(),
+                new ArithmeticEvidence(3),
+                new GeometricEvidence(1.5)));
   }
 }

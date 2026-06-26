@@ -143,12 +143,12 @@ public class CaptureTestCase {
   }
 
   public CaptureTestCase expectProgression(
-      PieceType type, int value, ProgressionJustification justification) {
+      PieceType type, int value, ProgressionCaptureJustification justification) {
     return addExpected(type, value, true, CaptureType.PROGRESSION, justification);
   }
 
   public CaptureTestCase expectPartialProgression(
-      PieceType type, int value, ProgressionJustification justification) {
+      PieceType type, int value, ProgressionCaptureJustification justification) {
     return addExpected(type, value, false, CaptureType.PROGRESSION, justification);
   }
 

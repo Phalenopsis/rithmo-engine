@@ -1,11 +1,11 @@
 package eu.nicosworld.rithmo.engine.victory;
 
-import static eu.nicosworld.rithmo.engine.testutils.CaptureJustifications.progression;
+import static eu.nicosworld.rithmo.engine.testutils.VictoryJustifications.progression;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import eu.nicosworld.rithmo.engine.capture.justification.ArithmeticJustification;
-import eu.nicosworld.rithmo.engine.capture.justification.GeometricJustification;
-import eu.nicosworld.rithmo.engine.capture.justification.HarmonicJustification;
+import eu.nicosworld.rithmo.engine.math.progression.model.ArithmeticEvidence;
+import eu.nicosworld.rithmo.engine.math.progression.model.GeometricEvidence;
+import eu.nicosworld.rithmo.engine.math.progression.model.HarmonicEvidence;
 import eu.nicosworld.rithmo.engine.model.GameState;
 import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
 import eu.nicosworld.rithmo.engine.model.PieceType;
@@ -53,7 +53,7 @@ class ProperVictoryRuleTest {
     ProperVictoryAssertion.from(victories)
         .hasWinner(Player.BLACK)
         .hasVictoryWithPieces(expectedPap)
-        .hasJustification(progression(16, 36, 56, new ArithmeticJustification(20)));
+        .hasJustification(progression(16, 36, 56, new ArithmeticEvidence(20)));
   }
 
   @Test
@@ -73,7 +73,7 @@ class ProperVictoryRuleTest {
     ProperVictoryAssertion.from(victories)
         .hasWinner(Player.BLACK)
         .hasVictoryWithPieces(expectedPap)
-        .hasJustification(progression(4, 12, 36, new GeometricJustification(3)));
+        .hasJustification(progression(4, 12, 36, new GeometricEvidence(3)));
   }
 
   @Test
@@ -93,7 +93,7 @@ class ProperVictoryRuleTest {
     ProperVictoryAssertion.from(victories)
         .hasWinner(Player.BLACK)
         .hasVictoryWithPieces(expectedPap)
-        .hasJustification(progression(6, 8, 12, new HarmonicJustification()));
+        .hasJustification(progression(6, 8, 12, new HarmonicEvidence()));
   }
 
   @Test
@@ -118,13 +118,12 @@ class ProperVictoryRuleTest {
     ProperVictoryAssertion.from(victories)
         .hasWinner(Player.BLACK)
         .hasVictoryWithPieces(expectedHarmonicPap)
-        .hasJustification(progression(6, 8, 12, new HarmonicJustification()))
+        .hasJustification(progression(6, 8, 12, new HarmonicEvidence()))
         .hasVictoryWithPieces(expectedArithmeticPap)
-        .hasJustification(progression(6, 9, 12, new ArithmeticJustification(3)))
+        .hasJustification(progression(6, 9, 12, new ArithmeticEvidence(3)))
         .hasVictoryWithPieces(expectedCombinationPap)
         .hasJustification(
-            progression(
-                List.of(6, 9, 8, 12), new HarmonicJustification(), new ArithmeticJustification(3)));
+            progression(List.of(6, 9, 8, 12), new HarmonicEvidence(), new ArithmeticEvidence(3)));
   }
 
   @Test
@@ -149,9 +148,9 @@ class ProperVictoryRuleTest {
         .hasJustification(
             progression(
                 List.of(4, 9, 6, 12),
-                new HarmonicJustification(),
-                new ArithmeticJustification(3),
-                new GeometricJustification(1.5)));
+                new HarmonicEvidence(),
+                new ArithmeticEvidence(3),
+                new GeometricEvidence(1.5)));
   }
 
   @Test
@@ -185,6 +184,6 @@ class ProperVictoryRuleTest {
     ProperVictoryAssertion.from(victories)
         .hasWinner(Player.BLACK)
         .hasVictoryWithPieces(expectedArithmeticPap)
-        .hasJustification(progression(16, 36, 56, new ArithmeticJustification(20)));
+        .hasJustification(progression(16, 36, 56, new ArithmeticEvidence(20)));
   }
 }

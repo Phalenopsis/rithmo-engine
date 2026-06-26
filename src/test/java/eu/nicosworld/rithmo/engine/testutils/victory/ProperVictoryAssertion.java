@@ -3,7 +3,7 @@ package eu.nicosworld.rithmo.engine.testutils.victory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import eu.nicosworld.rithmo.engine.capture.justification.ProgressionJustification;
+import eu.nicosworld.rithmo.engine.math.progression.model.ProgressionAnalysis;
 import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
 import eu.nicosworld.rithmo.engine.model.Player;
 import eu.nicosworld.rithmo.engine.model.victory.ProperVictory;
@@ -47,7 +47,7 @@ public class ProperVictoryAssertion {
     return this;
   }
 
-  public ProperVictoryAssertion hasJustification(ProgressionJustification expectedJustification) {
+  public ProperVictoryAssertion hasJustification(ProgressionAnalysis expectedJustification) {
     boolean match =
         victories.stream().anyMatch(v -> v.justification().equals(expectedJustification));
     assertTrue(
