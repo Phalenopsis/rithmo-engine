@@ -18,6 +18,11 @@ class ProgressionEngineTest {
   }
 
   @Test
+  void should_detect_geometric_floatingRatio() {
+    assertThatProgression(4, 6, 9).isGeometric();
+  }
+
+  @Test
   void should_detect_harmonic() {
     assertThatProgression(2, 3, 6).isHarmonic();
   }

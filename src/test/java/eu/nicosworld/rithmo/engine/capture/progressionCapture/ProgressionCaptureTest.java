@@ -39,19 +39,11 @@ public class ProgressionCaptureTest extends AbstractCaptureTest {
 
   static Stream<Arguments> singleDebugCase() {
     return Stream.of(
-        CaptureTestCase.blackPyramidAt(0, 0)
-            .withComponent(PieceType.CIRCLE, 4)
-            .withComponent(PieceType.TRIANGLE, 6)
-            .againstWhitePyramid(
-                1,
-                1,
-                new CaptureTestCase.ComponentData(PieceType.CIRCLE, 5),
-                new CaptureTestCase.ComponentData(PieceType.SQUARE, 7))
-            .withBlackAlly(PieceType.SQUARE, 14, 1, 4)
-            // On s'attend à capturer la pyramide blanche entière (valeur globale 12),
-            // mais aussi ses composants individuellement si le moteur le permet !
+        CaptureTestCase.blackSquareAt(4, 0, 0)
+            .againstWhite(PieceType.CIRCLE, 6, 0, 3)
+            .withBlackAlly(PieceType.CIRCLE, 9, 1, 2)
             .expectProgression(
-                PieceType.PYRAMID, 12, progression(10, 12, 14, new ArithmeticJustification(2)))
+                PieceType.CIRCLE, 6, progression(4, 6, 9, new GeometricJustification(1.5)))
             .build());
   }
 
@@ -215,6 +207,13 @@ public class ProgressionCaptureTest extends AbstractCaptureTest {
             .withBlackAlly(PieceType.CIRCLE, 10, 5, 2) // L'allié est à portée (diagonale)
             .withObstacleAt(2, 1) // Bloque le glissement de l'attaquant
             .expectNoCapture()
+            .build(),
+        // floating ratio
+        CaptureTestCase.blackSquareAt(4, 0, 0)
+            .againstWhite(PieceType.CIRCLE, 6, 0, 3)
+            .withBlackAlly(PieceType.CIRCLE, 9, 1, 2)
+            .expectProgression(
+                PieceType.CIRCLE, 6, progression(4, 6, 9, new GeometricJustification(1.5)))
             .build());
   }
 }
