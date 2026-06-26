@@ -1,6 +1,7 @@
 package eu.nicosworld.rithmo.engine.math.progression;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -120,6 +121,7 @@ public final class ProgressionEngine {
    * @return a ProgressionResult containing detected progressions and matching triplets
    */
   public ProgressionResult detect(int[] v) {
+    List<Integer> values = Arrays.stream(v).boxed().toList();
 
     int n = v.length;
 
@@ -168,7 +170,7 @@ public final class ProgressionEngine {
             triplets.add(new ProgressionTriplet(min, mid, max, localMask));
 
             if (globalMask == mask) {
-              return new ProgressionResult(globalMask, triplets);
+              return new ProgressionResult(values, globalMask, triplets);
             }
           }
         }
@@ -179,6 +181,6 @@ public final class ProgressionEngine {
       return ProgressionResult.none();
     }
 
-    return new ProgressionResult(globalMask, triplets);
+    return new ProgressionResult(values, globalMask, triplets);
   }
 }
