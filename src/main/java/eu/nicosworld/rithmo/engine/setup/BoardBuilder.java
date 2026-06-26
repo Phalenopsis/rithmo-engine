@@ -184,8 +184,9 @@ public class BoardBuilder {
           "No piece defined! Call piece() or a convenience method before at().");
     }
     // Finalize composite structure if needed
-    if (currentPiece instanceof Pyramid) {
-      currentPiece = new Pyramid(currentPiece.getPlayer(), new ArrayList<>(currentComponents));
+    if (currentPiece instanceof Pyramid pyramid) {
+      if (pyramid.getComponents().isEmpty())
+        currentPiece = new Pyramid(currentPiece.getPlayer(), new ArrayList<>(currentComponents));
     }
 
     board = board.addPiece(currentPiece, new Position(x, y));
