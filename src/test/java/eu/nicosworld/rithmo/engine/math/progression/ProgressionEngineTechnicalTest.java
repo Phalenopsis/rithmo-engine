@@ -43,13 +43,13 @@ class ProgressionEngineTechnicalTest {
     int[] values = {2, 4, 6};
 
     // L'arithmétique doit le trouver
-    assertTrue(arithmeticOnly.detect(values).isAny());
+    assertTrue(arithmeticOnly.detect(values).isPresent());
 
     // Le géométrique seul doit ignorer le bloc arithmétique (le if passe à false -> JAUNE PASSE AU
     // VERT)
-    assertFalse(geometricOnly.detect(values).isAny());
+    assertFalse(geometricOnly.detect(values).isPresent());
 
     // L'harmonique seul doit aussi l'ignorer
-    assertFalse(harmonicOnly.detect(values).isAny());
+    assertFalse(harmonicOnly.detect(values).isPresent());
   }
 }

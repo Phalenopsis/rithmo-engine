@@ -5,7 +5,6 @@ import eu.nicosworld.rithmo.engine.math.geometry.LinePattern;
 import eu.nicosworld.rithmo.engine.math.geometry.SquarePattern;
 import eu.nicosworld.rithmo.engine.math.geometry.VictoryPattern;
 import eu.nicosworld.rithmo.engine.math.progression.ProgressionEngine;
-import eu.nicosworld.rithmo.engine.math.progression.ProgressionResult;
 import eu.nicosworld.rithmo.engine.model.GameState;
 import eu.nicosworld.rithmo.engine.model.PieceAtPosition;
 import eu.nicosworld.rithmo.engine.model.victory.ProperVictory;
@@ -56,10 +55,7 @@ public final class ProperVictoryRule {
     List<Victory> victories = new ArrayList<>();
     for (Set<PieceAtPosition> formation : formations) {
       int[] values = formation.stream().mapToInt(p -> p.piece().getValue()).toArray();
-      ProgressionResult result = engine.detect(values);
-      if (result.isAny()) {
-        victories.add(ProperVictory.from(formation, result));
-      }
+      engine.detect(values).map(r -> ProperVictory.from(formation, r)).ifPresent(victories::add);
     }
     return victories;
   }

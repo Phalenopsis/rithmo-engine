@@ -4,7 +4,6 @@ import eu.nicosworld.rithmo.engine.capture.justification.ProgressionCaptureJusti
 import eu.nicosworld.rithmo.engine.capture.model.CaptureAction;
 import eu.nicosworld.rithmo.engine.capture.model.CaptureContext;
 import eu.nicosworld.rithmo.engine.math.progression.ProgressionEngine;
-import eu.nicosworld.rithmo.engine.math.progression.ProgressionResult;
 import eu.nicosworld.rithmo.engine.threat.model.AssistedThreat;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,16 +26,16 @@ public final class ProgressionRule implements ActiveCaptureRule {
         assistedThreat.getAllyValue()
       };
 
-      ProgressionResult result = engine.detect(values);
-
-      if (result.isAny()) {
-        captures.add(
-            CaptureAction.progression(
-                assistedThreat.actor(),
-                assistedThreat.target(),
-                assistedThreat.ally(),
-                ProgressionCaptureJustification.from(result)));
-      }
+      engine
+          .detect(values)
+          .map(
+              r ->
+                  CaptureAction.progression(
+                      assistedThreat.actor(),
+                      assistedThreat.target(),
+                      assistedThreat.ally(),
+                      ProgressionCaptureJustification.from(r)))
+          .ifPresent(captures::add);
     }
 
     return captures;

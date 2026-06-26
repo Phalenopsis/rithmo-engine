@@ -11,7 +11,7 @@ public class ProgressionAssert {
 
   private ProgressionAssert(ProgressionEngine engine, int... values) {
     this.values = values;
-    this.result = engine.detect(values);
+    this.result = engine.detect(values).orElse(ProgressionResult.none());
   }
 
   // ===== ENTRY POINT =====

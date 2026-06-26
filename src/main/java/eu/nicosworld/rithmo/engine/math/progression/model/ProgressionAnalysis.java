@@ -12,10 +12,6 @@ public record ProgressionAnalysis(List<Integer> values, Set<ProgressionEvidence>
   }
 
   public static ProgressionAnalysis from(ProgressionResult result) {
-    if (!result.isAny()) {
-      throw new IllegalArgumentException("No progression detected");
-    }
-
     return new ProgressionAnalysis(result.values(), ProgressionEvidence.from(result));
   }
 }

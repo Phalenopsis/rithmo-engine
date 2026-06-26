@@ -18,10 +18,6 @@ public sealed interface ProgressionEvidence
    * @throws IllegalArgumentException if no progression was detected at all
    */
   static Set<ProgressionEvidence> from(ProgressionResult result) {
-    if (!result.isAny()) {
-      throw new IllegalArgumentException("No progression detected");
-    }
-
     // Process all triplets (handles 1 triplet for 3 pieces, or multiple for 4 pieces)
     return result.triplets().stream()
         .flatMap(
