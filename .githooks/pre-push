@@ -1,30 +1,46 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-echo "🧪 Running test suite..."
+verify() {
+    echo "🧪 Running Maven verify..."
+    mvn -q verify
+}
 
-mvn -q test
-TEST_RESULT=$?
+IS_TAG_PUSH=false
 
-if [ $TEST_RESULT -eq 0 ]; then
-    echo "✅ Tests passed."
-    exit 0
-fi
-
-echo ""
-echo "❌ Tests failed."
-
-# Lire la branche réellement poussée
 while read local_ref local_sha remote_ref remote_sha
 do
-    BRANCH=$(echo "$local_ref" | sed 's|refs/heads/||')
-
-    if [ "$BRANCH" = "main" ]; then
-        echo "🚫 Push to main is blocked."
+    #
+    # Block pushes to main
+    #
+    if [[ "$local_ref" == refs/heads/main ]]; then
+        echo "🚫 Push to main is strictly blocked by this hook."
         exit 1
+    fi
+
+    #
+    # Release validation
+    #
+    if [[ "$local_ref" == refs/tags/v* ]]; then
+        IS_TAG_PUSH=true
+        TAG_VERSION="${local_ref#refs/tags/v}"
+        ./scripts/validate-release.sh "$TAG_VERSION"
     fi
 done
 
-echo "⚠️ Branch push allowed despite failing tests."
+if verify; then
+    echo "✅ Maven verification passed."
+    exit 0
+fi
+
+echo
+echo "❌ Maven verification failed."
+
+if [ "$IS_TAG_PUSH" = true ]; then
+    echo "🚫 Tag push aborted."
+    exit 1
+fi
+
+echo "⚠️ Push allowed despite failing verification."
 echo "⚠️ CI will likely fail."
 
 exit 0
