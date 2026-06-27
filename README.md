@@ -1,233 +1,126 @@
 # Rithmomachie — Engine
 
-Rithmomachie is a historical mathematical strategy board game that combines numerical reasoning with tactical movement and capture mechanics. The objective is to achieve specific victory conditions, either by capturing pieces or by forming numerical progressions on the board.
+Rithmomachie is a historical mathematical strategy board game combining tactical movement with numerical reasoning. Unlike most abstract strategy games, victory can be achieved not only by capturing pieces but also by constructing mathematical relationships directly on the board.
 
-This repository contains the **rithmo-engine**, a standalone module responsible for implementing the core rules of the game.
-
----
-
-## ⚙️ rithmo-engine
-
-The engine is a **pure, rule-based system** that evaluates game situations without managing game flow.
-
-It is responsible for:
-
-* Generating piece movements (regular and irregular)
-* Detecting capture opportunities (multiple capture rules)
-* Evaluating victory conditions (initial implementation)
-
-### Key characteristics
-
-* **Stateless**: no internal game progression
-* **Deterministic**: same input → same output
-* **Modular**: each rule system (movement, capture, victory) is independent
-* **Reusable**: designed to be used by external orchestrators
-
-**Current version:** `0.3.0`
+This repository contains **rithmo-engine**, a standalone Java library implementing the game's rule engine.
 
 ---
 
-## 🧠 Design Philosophy
+# ⚙️ What is rithmo-engine?
 
-This project follows a strict separation of concerns:
+The engine is a **pure, deterministic rule evaluator**.
 
-* **Engine** → computes what is possible
-* **Core (external)** → decides what is played and applies game rules over time
+Given a game state, it computes:
 
-The engine deliberately does **not**:
+* legal movements
+* capture opportunities
+* victory conditions
+* mathematical relationships between pieces
+
+The engine intentionally contains **no game flow management**.
+
+It does **not**:
 
 * manage turns
 * apply moves
 * mutate game sessions
-* enforce game flow
+* decide which move is played
+
+Those responsibilities belong to the external **rithmo-core** project.
 
 ---
 
-## 🔗 Related Project
+# ✨ Features
 
-* **rithmo-core** (separate repository)
-  Handles game orchestration:
+Current implementation includes:
 
-    * turn processing
-    * move application
-    * capture resolution
-    * game session management
+* ✅ Regular and irregular movement generation
+* ✅ Complete capture engine
 
-The core uses this engine as a dependency.
+  * Ambush
+  * Assault
+  * Encounter
+  * Power
+  * Progression
+  * Imprisonment (*Obsidio*)
+* ✅ Mathematical progression detection
 
----
+  * Arithmetic
+  * Geometric
+  * Harmonic
+* ✅ Geometric pattern detection
 
-## 📚 Game Documentation
+  * Lines
+  * Squares
+* ✅ Victory engine
 
-Before implementing the engine, the rules of the game were carefully analyzed and structured to handle the many historical variations of Rithmomachie.
-
-* [Game Rules](doc/rules.fr.md) – Overview and references
-* [Board](doc/board.fr.md) – Board layout and setup
-* [Mathematical Concepts](doc/math.fr.md) – Arithmetic, geometric, harmonic progressions
-* [Piece Movement](doc/move.fr.md) – Movement rules
-* [Captures](doc/capture.fr.md) – Capture mechanics
-* [Victory Conditions](doc/victory.fr.md) – Victory rules
-
-> All documents are written in French (`.fr.md`) and include diagrams and examples.
-
----
-
-## 🚧 Project Status
-
-The engine currently supports:
-
-* ✅ Movement system (regular + irregular)
-* ✅ Capture system (multiple rules)
-* ✅ Pyramid mechanics (including partial capture)
-* ✅ Victory engine (body condition — initial implementation)
-
-Planned improvements:
-
-* Additional victory conditions (progressions, combinations)
-* Extended rule coverage
-* API stabilization
----
-
-# 🛠️ Development Environment
-
-## Git Hooks
-
-This project uses local Git hooks to improve code quality and developer experience before code is pushed.
-
-Hooks are split into two stages:
-
-* **pre-commit** → formatting + static hygiene checks
-* **pre-push** → test validation before pushing code
+  * Body Victory
+  * Goods Victory
+  * Lawsuit Victory
+  * Proper Victory
+* ✅ Extensive testing utilities
 
 ---
 
-## ⚙️ Enable Git Hooks
+# 🧠 Design Philosophy
 
-After cloning the repository, enable the custom hooks path:
+The project follows a strict separation of concerns.
+
+| Project           | Responsibility                                    |
+| ----------------- | ------------------------------------------------- |
+| **rithmo-engine** | Computes what is possible                         |
+| **rithmo-core**   | Applies rules over time and orchestrates the game |
+
+The engine is designed to remain:
+
+* Stateless
+* Deterministic
+* Modular
+* Easily testable
+* Reusable by any frontend or orchestration layer
+
+---
+
+# 📚 Documentation
+
+Game documentation:
+
+* [Rules](doc/rules.fr.md)
+* [Board](doc/board.fr.md)
+* [Mathematics](doc/math.fr.md)
+* [Movement](doc/move.fr.md)
+* [Captures](doc/capture.fr.md)
+* [Victory Conditions](doc/victory.fr.md)
+
+Development documentation:
+
+* [Contributing Guide](doc/contributing.md)
+* [Release Process](doc/release.md)
+
+---
+
+# 🔗 Related Project
+
+**rithmo-core**
+
+The game orchestration layer built on top of this engine.
+
+---
+
+# 🚀 Building
 
 ```bash
-git config core.hooksPath .githooks
+mvn verify
 ```
 
 ---
 
-## 🧹 Pre-commit Hook
+# 📜 Changelog
 
-The `pre-commit` hook ensures code consistency before each commit.
-
-It automatically:
-
-* Runs Spotless formatting
-* Rejects commits containing accidental `RithmoDebug` usage in tests
-* Warns about active debug traces in unstaged files
-
-This ensures that only clean and consistent code enters the repository history.
+See [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
-## 🧪 Pre-push Hook
+# 📄 License
 
-The `pre-push` hook runs the test suite before pushing code.
-
-Behavior:
-
-* Runs `mvn test`
-* Allows push if tests pass
-* Blocks push to `main` if tests fail
-* Allows pushes on feature branches even if tests fail (with warning)
-* Warns the developer when CI is likely to fail
-
-
-# 🚀 Continuous Integration (CI)
-
-This project uses GitHub Actions to enforce strict quality checks on pull requests and the `main` branch.
-
-## CI Pipeline
-
-The CI runs automatically on:
-
-* push to `main`
-* pull requests targeting `main`
-
-It ensures:
-
-* Project builds successfully
-* All tests pass (`mvn verify`)
-* Code formatting is valid (`spotless:check`)
-
----
-
-## Code Formatting
-
-This project uses Spotless with Google Java Format.
-
-Formatting is enforced automatically through the pre-commit hook.
-
-### Manual formatting
-
-Format the whole project:
-
-```bash
-mvn spotless:apply
-```
-
-Validate formatting without modifying files:
-
-```bash
-mvn spotless:check
-```
-
----
-
-### Formatter Rules
-
-The formatter automatically handles:
-
-* Import ordering
-* Removal of unused imports
-* Indentation normalization
-* Empty-line cleanup
-* Standardized Java formatting
-
----
-
-### Preserving intentional formatting
-
-Some test assertions use visual indentation to express decision trees.
-
-For these rare cases, formatting can be locally disabled:
-
-```java
-// spotless:off
-StatusDTOAssertion.from(nextStatus)
-        .status()
-            .isInPostCapturePhase()
-        .decisions()
-            .canCaptureInOneDecision("WT12(2,1)")
-            .hasCaptureCiblesFor("BC4(1,2)", "WT12(2,1)")
-            .cannotCaptureWith("BC8(1,0)", "WT12(2,1)");
-// spotless:on
-```
-
----
-
-## 📜 Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for version history and details.
-
----
-
-## 🎯 Purpose
-
-This project aims to:
-
-* Provide a **clear and structured model** of Rithmomachie rules
-* Offer a **testable and reusable game engine**
-* Serve as a foundation for building higher-level game systems
-
----
-
-## ⚠️ Notes
-
-* Rithmomachie has many historical variants; this project implements a **consistent and explicit ruleset**
-* The implementation is driven by prior rule formalization, not the other way around
+(To be added.)
