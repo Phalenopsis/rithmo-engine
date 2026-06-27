@@ -1,7 +1,9 @@
-package eu.nicosworld.rithmo.engine.math;
+package eu.nicosworld.rithmo.engine.math.progression;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * ProgressionEngine is a lightweight rule engine used to detect numeric progressions inside a set
@@ -119,7 +121,8 @@ public final class ProgressionEngine {
    * @param v input values (size ≥ 3, typically ≤ 8)
    * @return a ProgressionResult containing detected progressions and matching triplets
    */
-  public ProgressionResult detect(int[] v) {
+  public Optional<ProgressionResult> detect(int[] v) {
+    List<Integer> values = Arrays.stream(v).boxed().toList();
 
     int n = v.length;
 
@@ -168,7 +171,7 @@ public final class ProgressionEngine {
             triplets.add(new ProgressionTriplet(min, mid, max, localMask));
 
             if (globalMask == mask) {
-              return new ProgressionResult(globalMask, triplets);
+              return Optional.of(new ProgressionResult(values, globalMask, triplets));
             }
           }
         }
@@ -176,9 +179,9 @@ public final class ProgressionEngine {
     }
 
     if (globalMask == 0) {
-      return ProgressionResult.none();
+      return Optional.empty();
     }
 
-    return new ProgressionResult(globalMask, triplets);
+    return Optional.of(new ProgressionResult(values, globalMask, triplets));
   }
 }

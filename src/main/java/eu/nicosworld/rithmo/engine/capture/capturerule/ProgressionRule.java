@@ -1,16 +1,15 @@
 package eu.nicosworld.rithmo.engine.capture.capturerule;
 
-import eu.nicosworld.rithmo.engine.capture.justification.ProgressionJustification;
+import eu.nicosworld.rithmo.engine.capture.justification.ProgressionCaptureJustification;
 import eu.nicosworld.rithmo.engine.capture.model.CaptureAction;
 import eu.nicosworld.rithmo.engine.capture.model.CaptureContext;
-import eu.nicosworld.rithmo.engine.math.ProgressionEngine;
-import eu.nicosworld.rithmo.engine.math.ProgressionResult;
+import eu.nicosworld.rithmo.engine.math.progression.ProgressionEngine;
 import eu.nicosworld.rithmo.engine.threat.model.AssistedThreat;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class ProgressionRule implements ActiveCaptureRule {
-  private ProgressionEngine engine;
+  private final ProgressionEngine engine;
 
   public ProgressionRule() {
     engine = ProgressionEngine.fast();
@@ -27,16 +26,16 @@ public final class ProgressionRule implements ActiveCaptureRule {
         assistedThreat.getAllyValue()
       };
 
-      ProgressionResult result = engine.detect(values);
-
-      if (result.isAny()) {
-        captures.add(
-            CaptureAction.progression(
-                assistedThreat.actor(),
-                assistedThreat.target(),
-                assistedThreat.ally(),
-                ProgressionJustification.from(result)));
-      }
+      engine
+          .detect(values)
+          .map(
+              r ->
+                  CaptureAction.progression(
+                      assistedThreat.actor(),
+                      assistedThreat.target(),
+                      assistedThreat.ally(),
+                      ProgressionCaptureJustification.from(r)))
+          .ifPresent(captures::add);
     }
 
     return captures;

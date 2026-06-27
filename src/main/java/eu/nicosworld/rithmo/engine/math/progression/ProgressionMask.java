@@ -1,4 +1,4 @@
-package eu.nicosworld.rithmo.engine.math;
+package eu.nicosworld.rithmo.engine.math.progression;
 
 /**
  * Utility class representing progression types using a bitmask.

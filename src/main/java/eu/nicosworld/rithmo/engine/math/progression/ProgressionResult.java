@@ -1,4 +1,4 @@
-package eu.nicosworld.rithmo.engine.math;
+package eu.nicosworld.rithmo.engine.math.progression;
 
 import java.util.Collections;
 import java.util.List;
@@ -6,25 +6,30 @@ import java.util.List;
 /**
  * Represents the result of a progression detection performed by {@link ProgressionEngine}.
  *
- * <p>This class contains both:
+ * <p>A progression result encapsulates both the analyzed values and every progression detected
+ * among them.
+ *
+ * <p>It contains:
  *
  * <ul>
- *   <li>A global bitmask indicating which progression types were detected
- *   <li>The list of all valid triplets that matched at least one progression rule
+ *   <li>the ordered values that were analyzed
+ *   <li>a global bitmask indicating which progression types were detected
+ *   <li>the list of all valid triplets matching at least one progression rule
  * </ul>
  *
  * <h2>Design intent</h2>
  *
- * <p>The result is immutable and safe to use for:
+ * <p>The result is immutable and can safely be reused by:
  *
  * <ul>
- *   <li>game rule evaluation (capture logic)
- *   <li>UI feedback (highlighting valid progressions)
- *   <li>debug / explanation layer
+ *   <li>game rule evaluation
+ *   <li>victory justification and explanation
+ *   <li>UI feedback (highlighting detected progressions)
+ *   <li>debugging and testing
  * </ul>
  *
- * <p>A single result may contain multiple progression types simultaneously (e.g. arithmetic +
- * harmonic on different triplets).
+ * <p>A single result may contain several progression types simultaneously (for example, arithmetic
+ * and harmonic progressions detected on different triplets).
  *
  * <h2>Bitmask usage</h2>
  *
@@ -45,20 +50,23 @@ import java.util.List;
  *     // at least one arithmetic progression was found
  * }
  *
- * for (ProgressionTriplet t : result.triplets()) {
- *     // display or process each detected triplet
+ * List<Integer> analyzedValues = result.values();
+ *
+ * for (ProgressionTriplet triplet : result.triplets()) {
+ *     // inspect each detected progression
  * }
  * }</pre>
  */
-public record ProgressionResult(int mask, List<ProgressionTriplet> triplets) {
-
+public record ProgressionResult(List<Integer> values, int mask, List<ProgressionTriplet> triplets) {
   /**
-   * Creates a progression result.
+   * Creates an immutable progression result.
    *
+   * @param values the ordered values that were analyzed
    * @param mask bitmask of detected progression types
-   * @param triplets list of detected valid triplets (immutable copy is created internally)
+   * @param triplets detected progression triplets (defensively copied)
    */
-  public ProgressionResult(int mask, List<ProgressionTriplet> triplets) {
+  public ProgressionResult(List<Integer> values, int mask, List<ProgressionTriplet> triplets) {
+    this.values = List.copyOf(values);
     this.mask = mask;
     this.triplets = List.copyOf(triplets);
   }
@@ -69,7 +77,7 @@ public record ProgressionResult(int mask, List<ProgressionTriplet> triplets) {
    * @return a result with empty mask and no triplets
    */
   public static ProgressionResult none() {
-    return new ProgressionResult(0, Collections.emptyList());
+    return new ProgressionResult(List.of(), 0, Collections.emptyList());
   }
 
   /**

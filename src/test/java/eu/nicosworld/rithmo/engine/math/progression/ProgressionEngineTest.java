@@ -1,6 +1,6 @@
-package eu.nicosworld.rithmo.engine.math;
+package eu.nicosworld.rithmo.engine.math.progression;
 
-import static eu.nicosworld.rithmo.engine.math.ProgressionAssert.assertThatProgression;
+import static eu.nicosworld.rithmo.engine.math.progression.ProgressionAssert.assertThatProgression;
 
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +15,11 @@ class ProgressionEngineTest {
   @Test
   void should_detect_geometric() {
     assertThatProgression(2, 6, 18).isGeometric();
+  }
+
+  @Test
+  void should_detect_geometric_floatingRatio() {
+    assertThatProgression(4, 6, 9).isGeometric();
   }
 
   @Test

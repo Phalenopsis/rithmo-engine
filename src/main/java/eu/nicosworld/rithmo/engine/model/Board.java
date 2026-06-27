@@ -5,18 +5,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public class Board {
+  private static final int NUMBER_OF_COLUMNS = 16;
+  private static final int NUMBER_OF_LINES = 8;
   private final Piece[][] grid;
   private PieceAtPosition blackPyramid;
   private PieceAtPosition whitePyramid;
+  private final BoardHome blackHome;
+  private final BoardHome whiteHome;
 
   public Board(int columns, int lines) {
     grid = new Piece[columns][lines];
+    int homeLimit = columns / 4;
+    blackHome = new BoardHome(Player.BLACK, 0, homeLimit - 1);
+    whiteHome = new BoardHome(Player.WHITE, columns - homeLimit, columns - 1);
   }
 
   public Board() {
-    this(16, 8);
+    this(NUMBER_OF_COLUMNS, NUMBER_OF_LINES);
   }
 
   public int getWidth() {
@@ -33,6 +41,18 @@ public class Board {
 
   public Optional<PieceAtPosition> getWhitePyramid() {
     return getPyramid(whitePyramid);
+  }
+
+  public BoardHome getBlackHome() {
+    return blackHome;
+  }
+
+  public BoardHome getWhiteHome() {
+    return whiteHome;
+  }
+
+  private BoardHome getHome(Player player) {
+    return player.equals(Player.BLACK) ? getBlackHome() : getWhiteHome();
   }
 
   private Optional<PieceAtPosition> getPyramid(PieceAtPosition expected) {
@@ -74,18 +94,22 @@ public class Board {
     set(pos, null);
   }
 
-  public List<PieceAtPosition> getPiecesWithPositions() {
-    List<PieceAtPosition> result = new ArrayList<>();
-    int width = grid.length;
+  private List<PieceAtPosition> getPiecesWithPositions(Predicate<Piece> filter) {
+    return getPiecesWithPositions(0, grid.length - 1, filter);
+  }
 
-    for (int x = 0; x < width; x++) {
+  private List<PieceAtPosition> getPiecesWithPositions(
+      int startColumn, int endColumn, Predicate<Piece> filter) {
+    List<PieceAtPosition> result = new ArrayList<>();
+
+    for (int x = startColumn; x <= endColumn; x++) {
       int height = grid[x].length;
 
       for (int y = 0; y < height; y++) {
 
         Piece p = grid[x][y];
 
-        if (p != null) {
+        if (Objects.nonNull(p) && filter.test(p)) {
           result.add(new PieceAtPosition(p, new Position(x, y)));
         }
       }
@@ -94,10 +118,26 @@ public class Board {
     return result;
   }
 
+  private Predicate<Piece> pieceForPlayer(Player player) {
+    return p -> p.getPlayer().equals(player);
+  }
+
+  public List<PieceAtPosition> getPiecesWithPositions() {
+    return getPiecesWithPositions(0, grid.length - 1, p -> true);
+  }
+
   public List<PieceAtPosition> getPiecesForPlayer(Player player) {
-    return getPiecesWithPositions().stream()
-        .filter(pap -> pap.piece().getPlayer().equals(player))
-        .toList();
+    return getPiecesWithPositions(pieceForPlayer(player));
+  }
+
+  public List<PieceAtPosition> getPieceInEnemyHome(Player activePlayer) {
+    BoardHome enemyHome = getEnemyHome(activePlayer);
+    return getPiecesWithPositions(
+        enemyHome.minLimit(), enemyHome.maxLimit(), pieceForPlayer(activePlayer));
+  }
+
+  private BoardHome getEnemyHome(Player activePlayer) {
+    return getHome(activePlayer.opponent());
   }
 
   List<Piece> getAllPieces() {
@@ -105,17 +145,13 @@ public class Board {
   }
 
   public Position findPosition(Piece p) {
-    // On parcourt les colonnes (le premier index)
     for (int col = 0; col < grid.length; col++) {
-      // On parcourt les lignes (le second index)
       for (int line = 0; line < grid[col].length; line++) {
-        // On compare l'objet dans la grille avec la pièce recherchée
         if (grid[col][line] != null && grid[col][line].equals(p)) {
           return new Position(col, line);
         }
       }
     }
-    // Si on arrive ici, la pièce n'a pas été trouvée
     return null;
   }
 

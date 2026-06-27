@@ -8,9 +8,17 @@ import java.util.*;
 public class VictoryEngine {
 
   private final List<VictoryRule> rules;
+  private final ProperVictoryRule properRule;
+
+  public VictoryEngine(List<VictoryRule> rules, ProperVictoryRule properRule) {
+    this.rules = rules;
+    this.properRule = properRule;
+    checkRulesUnicity();
+  }
 
   public VictoryEngine(List<VictoryRule> rules) {
     this.rules = rules;
+    this.properRule = null;
     checkRulesUnicity();
   }
 
@@ -21,6 +29,7 @@ public class VictoryEngine {
 
       victory.ifPresent(victories::add);
     }
+    if (Objects.nonNull(properRule)) victories.addAll(properRule.evaluate(state));
     return victories;
   }
 

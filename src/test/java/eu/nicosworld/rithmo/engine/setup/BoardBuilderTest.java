@@ -73,6 +73,29 @@ class BoardBuilderTest {
   }
 
   @Test
+  @DisplayName("Should build a pyramid with its custom components")
+  void shouldBuildPyramidWithComponents_PreBuiltPyramid() {
+    Pyramid prebuiltPyramid =
+        PyramidBuilder.forPlayer(Player.BLACK)
+            .withSquare(34)
+            .withTriangle(3)
+            .withCircle(19)
+            .build();
+    // When manually assembling a pyramid with specific components
+    Board board = new BoardBuilder().withPiece(prebuiltPyramid).at(4, 4).build();
+
+    Piece piece = board.getPieceAt(new Position(4, 4));
+
+    // Then the piece should be a Pyramid instance with the correct components
+    assertThat(piece).isInstanceOf(Pyramid.class);
+    Pyramid pyramid = (Pyramid) piece;
+    assertThat(pyramid.getComponents()).hasSize(3);
+    assertThat(pyramid.getComponents().get(0).getValue()).isEqualTo(34);
+    assertThat(pyramid.getComponents().get(1).getValue()).isEqualTo(3);
+    assertThat(pyramid.getComponents().get(2).getValue()).isEqualTo(19);
+  }
+
+  @Test
   @DisplayName("Should throw exception when adding component to a non-pyramid")
   void shouldThrowExceptionForComponentOnSimplePiece() {
     // Given a builder initialized with a simple piece (circle)

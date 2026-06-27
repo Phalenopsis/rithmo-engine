@@ -39,7 +39,7 @@ public record CaptureAction(
       InvolvedPiece actor,
       InvolvedPiece target,
       InvolvedPiece supporter,
-      ProgressionJustification justification) {
+      ProgressionCaptureJustification justification) {
     return new CaptureAction(
         actor, target, List.of(supporter), CaptureType.PROGRESSION, justification);
   }

@@ -23,9 +23,16 @@ L'association des trois types simples de victoires communes permet d'obtenir les
 Les victoires propres sont composées des victoires médiocres, des grandes victoires et des victoires excellentes.
 
 Pour obtenir l'une de ces victoires, il faut d'abord prendre la pyramide adverse, puis positionner trois ou quatre pions en ligne ou en carré dans le camp de l'adversaire en formant une progression arithmétique, géométrique ou harmonique.
+
+Si une pyramide fait partie des pions alignés pour former cette progression, seule sa valeur propre peut être utilisée ; ses composants ne peuvent en aucun cas être pris en compte individuellement pour valider la victoire
+
 ### Victoires médiocres
 
-Les trois victoires médiocres : il faut obtenir l'une des trois progressions (arithmétique, géométrique ou harmonique).
+Il est à noter que le terme **médiocre** provient historiquement du latin *mediocris* (« moyen », « intermédiaire »), sans connotation péjorative.
+
+Les trois victoires médiocres consistent à obtenir l'une des trois progressions :
+arithmétique, géométrique ou harmonique.
+
 
 #### Exemple
 Les noirs obtiennent une victoire médiocre par alignement de 16, 36 et 56 qui sont trois nombres formant une victoire arithmétique.

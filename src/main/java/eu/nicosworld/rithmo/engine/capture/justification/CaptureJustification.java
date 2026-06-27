@@ -6,4 +6,4 @@ public sealed interface CaptureJustification
         EncounterJustification,
         ImprisonmentJustification,
         PowerJustification,
-        ProgressionJustification {}
+        ProgressionCaptureJustification {}

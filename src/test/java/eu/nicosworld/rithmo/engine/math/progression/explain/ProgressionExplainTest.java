@@ -1,9 +1,9 @@
-package eu.nicosworld.rithmo.engine.math.explain;
+package eu.nicosworld.rithmo.engine.math.progression.explain;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import eu.nicosworld.rithmo.engine.math.ProgressionMask;
-import eu.nicosworld.rithmo.engine.math.ProgressionTriplet;
+import eu.nicosworld.rithmo.engine.math.progression.ProgressionMask;
+import eu.nicosworld.rithmo.engine.math.progression.ProgressionTriplet;
 import org.junit.jupiter.api.Test;
 
 class ProgressionExplainTest {
