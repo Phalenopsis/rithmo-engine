@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
-## [0.6.0-SNAPSHOT] - In progress
+## [0.6.0] - 2026-06-27
 
 ### Added
 
@@ -27,7 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **Subset Generation**: Added generic `SubsetGenerator` utilities to efficiently enumerate triplets and quadruplets from arbitrary collections.
 * **Victory Pattern Engine**: Added `VictoryPattern` to generate geometric matches from board positions and introduced the sealed `GeometryPattern` hierarchy to unify line and square pattern detection.
 * **Proper Victory**: Added `ProperVictory` and integrated support for proper-victory evaluation within the victory engine.
-
+* **Release Automation**: Added a dedicated GitHub Actions workflow to automatically validate and publish releases to GitHub Packages when pushing version tags.
+* **Release Validation**: Added reusable release-validation tooling ensuring version consistency between `pom.xml`, Git tags and `CHANGELOG.md` before publication.
 
 ### Changed
 

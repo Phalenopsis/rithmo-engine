@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+          # Generates a temporary ~/.m2/settings.xml
+          server-id: github
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
+
+      # 1. Fast fail: Validate metadata before running heavy Maven builds
+      - name: Validate release
+        run: bash ./scripts/validate-release.sh "${GITHUB_REF_NAME#v}"
+
+      # 2. Run compilation, unit tests, and integration tests
+      - name: Verify
+        run: mvn -B verify
+
+      # 3. Publish artifacts if all previous checks passed
+      - name: Deploy
+        run: mvn -B deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
