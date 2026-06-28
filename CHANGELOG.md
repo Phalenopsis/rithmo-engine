@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **CaptureContext Constructor**: Now requires a third parameter: `RegularThreats` (provided by `RegularThreatEngine`).
 * **Sealed Interfaces**: 
   * Added `ImprisonmentJustification` and `ProgressionCaptureJustification` to `CaptureJustification`.
-  * Added `ProperVictory` to `Victory`. *(Note: If these are sealed interfaces, adding permitted subclasses can break pattern matching in client code).*
+  * Added `ProperVictory` to `Victory`.
+  * (Note: If these are sealed interfaces, adding permitted subclasses can break pattern matching in client code).
 
 ### Added
 * **Imprisonment Capture**: Implemented full imprisonment...
