@@ -20,7 +20,7 @@ import java.util.Objects;
  */
 public class BoardBuilder {
 
-  private Board board = new Board();
+  private Board board;
 
   private final Player white = Player.WHITE;
   private final Player black = Player.BLACK;
@@ -40,7 +40,8 @@ public class BoardBuilder {
    * @return this builder instance
    */
   public BoardBuilder piece(PieceType type, int value, PlayerColor color) {
-
+    if (Objects.nonNull(currentPiece))
+      throw new IllegalStateException("A piece is already defined! Place it with at() method.");
     Player owner = color.equals(PlayerColor.BLACK) ? black : white;
 
     // Special case: composite piece (Pyramid)
@@ -72,6 +73,8 @@ public class BoardBuilder {
    * @return this builder instance
    */
   public BoardBuilder withPiece(Piece piece) {
+    if (Objects.nonNull(currentPiece))
+      throw new IllegalStateException("A piece is already defined! Place it with at() method.");
     this.currentPiece = Objects.requireNonNull(piece);
     this.currentComponents = new ArrayList<>();
     return this;
@@ -86,7 +89,6 @@ public class BoardBuilder {
    * @throws IllegalStateException if current piece is not a pyramid
    */
   public BoardBuilder withComponent(PieceType type, int value) {
-
     if (!(currentPiece instanceof Pyramid)) {
       throw new IllegalStateException("Cannot add components to a non-pyramid piece");
     }
@@ -217,6 +219,10 @@ public class BoardBuilder {
    * @return a copy of the constructed board
    */
   public Board build() {
+    if (Objects.nonNull(this.currentPiece)) {
+      throw new IllegalStateException(
+          "Builder finalized but a piece was declared without being placed at a position!");
+    }
     return board.copy();
   }
 }
