@@ -205,4 +205,42 @@ class BoardBuilderTest {
 
     assertThat(values).containsExactlyInAnyOrder(16, 25, 36, 49, 64);
   }
+
+  @Test
+  @DisplayName("Should throw error when at() called without piece")
+  void shouldThrowWhenAtCalledWithoutPiece() {
+
+    assertThatThrownBy(() -> new BoardBuilder(12, 8).at(3, 2).build())
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessage("No piece defined! Call piece() or a convenience method before at().");
+  }
+
+  @Test
+  @DisplayName("Should throw error when at() called after another at()")
+  void shouldThrowWhenAtCalledAfterAnotherAt() {
+
+    assertThatThrownBy(() -> new BoardBuilder(12, 8).whiteSquare(5).at(3, 2).at(3, 1).build())
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessage("No piece defined! Call piece() or a convenience method before at().");
+  }
+
+  @Test
+  @DisplayName("Should throw error when build() called without placing piece")
+  void shouldThrowWhenBuildCalledWithoutPlacingPiece() {
+
+    assertThatThrownBy(() -> new BoardBuilder(12, 8).whiteSquare(5).build())
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessage(
+            "Builder finalized but a piece was declared without being placed at a position!");
+  }
+
+  @Test
+  @DisplayName("Should throw error when build() called without placing piece")
+  void shouldThrowWhenPieceCreatedWithoutPlacingPreviousPiece() {
+
+    assertThatThrownBy(
+            () -> new BoardBuilder(12, 8).whiteSquare(5).blackSquare(15).at(4, 5).build())
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessage("A piece is already defined! Place it with at() method.");
+  }
 }
